@@ -1,5 +1,10 @@
 /*
 
+Change Detection 
+- is a mechanism by which Angular keeps the UI in sync with the application's data model.
+- Angular follows a tree-like structure, starting from the root component and traversing down to the child components. 
+  Angular checks for changes in the component's properties and the properties of its child components.
+
 how Angular's change detection works:
 
 - Angular uses Javascript feature called Zones
@@ -12,7 +17,7 @@ how Angular's change detection works:
     - OnPush (only checks a component for changes if its input properties have changed or event emitted)
         this will reduce change detection overhead.
 
-- Marking Components for Check: ( ChangeDetectorRef.markForCheck() )
+- Marking Components for Check: ( ChangeDetectorRef.markForCheck() ) //marking Darty
     explicitly using the ChangeDetectorRef.markForCheck() method. 
     This method marks the component and its ancestors for change detection, 
     ensuring that they are checked during the next change detection cycle.
