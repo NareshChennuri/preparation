@@ -1,4 +1,35 @@
 /*
+
+Good code
+=================
+- Readability 
+    easy to read and understand
+    consistent naming convetions
+    meaningful variable and function names
+- Modularity
+    components with clear responsibilities
+    need to keep in mind for separation of concerns
+- Maintainability
+    easy to maintain and modify
+    well documented for complex logic
+- Efficiency
+    in terms of time and space complexity
+    avoid duplication 
+    optimize performance where needed
+- Scalability
+    it should accomodate growth & complexity
+    without need of refactoring
+    should write code with flexibility in mind
+    
+Bad Code
+=============
+- Spaghetti code
+- Poor naming conventions
+- Hard coded values
+- Lack of documentation
+- inefficient algorithms
+- Ignored best practices
+
 There are several important aspects to pay attention to in order to esure the code is aligned with the best practices.
 
 Firstly we need to understand the functional requirements for the code changes and verify wheather the code fix is properly imeplemented or not as per the user story.
@@ -53,6 +84,21 @@ Provide constructive feedback in a respectful manner.
 Focus on the code, not the person.
 Suggest improvements and offer alternatives rather than dictating changes.
 Remember that the goal of a code review is not just to find issues but to improve the overall quality of the codebase and help the team members grow as developers. A balanced approach that considers both technical and human aspects of code reviews can lead to a more positive and productive collaboration within the team.
+
+
+Git PreCommit hooks - husky
+==========================
+
+npm install husky --save-dev
+npm install prettier --save-dev
+npm install tslint-config-prettier --save-dev
+
+"husky": {
+  "hooks": {
+    "pre-commit": "npm run prettier --staged && ng lint && npm test",
+    "pre-push": "ng build --aot true"
+  }
+}   
 
 
 */
