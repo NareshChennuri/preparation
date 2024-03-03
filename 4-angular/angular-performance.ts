@@ -14,6 +14,11 @@ common performance bottlenecks
         - Network-First Strategy (Only when the network fails does the application look to the cache for data.)
         - Stale-While-Revalidate Strategy (It serves from the cache for immediate response, but updates the cache with fresh data from the network in the background for future requests.)
  - Memory Leaks (angular built in tools - memory profiling, unsubscribe from observables)
+ - you should never use function calls in Angular template expressions
+    - function call executed on every change detection and it will decrease the application performance
+    - instead use pure pipes
+    - use changeDetection strategy OnPush
+    - add the logic in ngOnChanges() hook (only when the input is changed) 
 
 Angular Load Performance
 Angular Runtime Performance
