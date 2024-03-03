@@ -1,0 +1,82 @@
+/*
+
+In SCSS (Sassy CSS), 
+
+mixins are powerful feature in SCSS
+- using Mixins we can define 
+- reusable blocks of CSS code
+
+Mixins are handy for applying consistent styles across your project, 
+- it reduces redundancy
+- makes code more modular and maintainable
+- useful with vendor prefixing
+- creating complex layouts
+- generating utility classes.
+
+A mixin is created using the @mixin directive followed by a name and a block of CSS code. You can include variables within mixins to make them more flexible.
+
+To use a mixin, you use the @include directive followed by the name of the mixin. This inserts the CSS defined in the mixin at that point in your stylesheet.
+
+@mixin
+========================
+using mixin you can create reusable css code, 
+and we can use it throughout the website.
+
+@mixin highlight-text {
+  color: red;
+  font-size: 25px;
+  font-weight: bold;
+  border: 1px solid blue;
+}
+
+.danger {
+  @include highlight-text;
+  background-color: green;
+}
+
+A mixin can also include other mixins:
+
+@mixin special-text {
+  @include highlight-text;
+  @include link;
+  @include special-border;
+}
+
+You can create Mixin functions as well which will accept arguments.
+and you can pass variables to the mixin function
+
+It is also possible to define default values for mixin variables:
+
+@mixin bordered($color: blue, $width: 1px) {
+  border: $width solid $color;
+}
+
+Another good use of a mixin is for vendor prefixes.
+
+@mixin transform($property) {
+  -webkit-transform: $property;
+  -ms-transform: $property;
+  transform: $property;
+}
+
+.myBox {
+  @include transform(rotate(20deg));
+}
+
+@extend
+===========================
+The @extend directive lets you share a set of CSS properties from one selector to another.
+
+.button-basic  {
+  border: none;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.button-report  {
+  @extend .button-basic;
+  background-color: red;
+}
+*/
