@@ -1,6 +1,113 @@
 /*
 
+Angular uses Jasmine & Karma
+
+Jasmine
+- behaviour-driven javascript testing framework
+Karma
+- is a tool for executing the test suites
+Protractor
+- is an E2E test framework 
+
+Cyper (E2E) test framework similar to Selinium 
+
+
+- in Jasmine we write test specs and they are grouped in test suites
+
+- test suites are defined in Jasmine "describe()"
+
+- test specification is described by "it()"
+
+- it should described the functional specification of the feature we are testing
+
+- utility functions
+    pending() // making test case in pending state
+    fail() // making the test case to fail
+    expect().toBe() // test case assertions
+    spyOn(logger, 'log');
+
+//calculator.service.spec.ts
+------------------------------------
+import {CaclulateService} from './calculator.service';
+import {LoggerService} from './logger.service';
+
+describe(CalculateService, () => {
+    it('should add two numbers', () => {
+        const calculator = new CalculatorService(new LoggerService());
+        const result = calculator.add(2,2);
+        expect(result).toBe(4, "unexpected addition result");
+    });
+
+    if('should subtract two numbers', () => {
+        const logger = new LoggerService();
+        spyOn(logger, 'log'); // spying on 'log' method
+        const calculator = new Calculator(logger);
+        const result = calculator.subtract(2,2);
+        expect(result).toBe(0, "unexpected subtraction result");
+        expect(logger.log).toHaveBeenCalledTimes(1); // define how many times 'log' function is called
+    });
+});
+
 > npm run test
+
+--------------------------
+
+const logger = jasmine.createSpyObj('LoggerService', ["log"]); // spying on LoggerService - log method
+
+--------------------------
+beforeEach() // initialization logic goes here
+
+describe('CalculatorService', () => {
+
+    let calculator: CalculatorService,
+        loggerSpy: any;
+
+    beforeEach(() => {
+        loggerSpy = jasmine.createSpyObj('LoggerService', ['log']);
+        calculator = new CalculatorService(loggerSpy);
+    })
+
+    if('should ad two numbers', ()=> {
+        const result = calculator.add(2,2);
+        expect(result).toBe(4);
+        expect(loggerSpy.log).toHaveBeenCalledTimes(1);
+    })
+});
+
+--------------------------------
+xdescribe() // disabling the test suite
+xit() // disabling the test spec
+
+fdescribe() // focus on describe block
+fit() // focus on test spec (only this test spec will run remaining test will be skipped)
+--------------------------------
+HttpClientTestingModule // for mocking http calls
+
+let coursesService: CoursesService,
+    httpTestingController: HttpTestingController;
+
+beforeEach(() => {
+    TestBed.configureTestingModule({
+        providers: [CoursesService, HttpClientTestingModule]
+    });
+    coursesService = TestBed.inject(CoursesService);
+    httpTestingController = TestBed.inject(HttpTestingController);
+});
+
+it('should retrieve all courses', () => {
+    coursesService.findAllCourses()
+    .subscribe(courses => {
+        expect(courses).toBeTruthy('No courses returned');
+        expect(courses.length).toBe(12, 'Incorrect number of courses');
+        const course = courses.find(course => course.id == 12);
+        expect(course.titles.description).toBe('Angular Testing Course');
+    });
+
+    const req = httpTestingController.expectOne('/api/courses');
+    expect(req.request.method).toEqual('GET');
+    req.flush({payload: Object.values(COURSES)}); // from mock data
+    httpTestingController.verify();
+});
 
 Karma is a tool for executing source code against test code inside a browser environment
 Jasmine is a javascript testing framework
