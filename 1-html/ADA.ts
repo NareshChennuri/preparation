@@ -1,8 +1,17 @@
 /*
 
 First and foremost rule in ADA 
+
 - it must be accessible, 
-- means must be visible or audible and operable.
+
+    To ensure a website is accessible, we need to consider some important practices like: 
+    using semantic HTML to provide meaning to the content structure, 
+    providing alternative text for images, 
+    ensure sufficient color contrast, 
+    and make the website keyboard-friendly. 
+    Also, utilize ARIA roles and properties where necessary, 
+    and make sure form inputs are correctly labeled
+    also you should add transcripts for media.
 
 all users must be able to interact with the application using their preferred input method.
 
