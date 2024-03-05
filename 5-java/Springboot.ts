@@ -3,7 +3,7 @@
 Spring Boot 
 - opensource java based framework
 - it simplyfies the development process
-- we can build applications quickly and easitly
+- we can build applications quickly and easily
 - it has auto configuration you can setup the environmemnt rapidly.
 - built in support for many popular databases, messaging systems, caching solutions
 
