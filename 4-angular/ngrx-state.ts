@@ -3,7 +3,7 @@
 ngrx is a library for managing state in Angular applications using the Redux pattern. 
 
 - State Management in a centralized manner. 
-- like a single immutable data store.
+- like a single immutable data store. (i.e ReadOnly)
 
 - "Actions" whenever there is a state change angular triggers "Actions"
 
@@ -22,7 +22,7 @@ ngrx is a library for managing state in Angular applications using the Redux pat
         on(UserActions.registerFailure, (state, { error }) => ({ ...state, error, loading: false }))
       );
 
-- "State" holds the application state (single source of truth)
+- "Store" holds the application state (single source of truth)
 
       export interface AppState {
         user: UserState;
@@ -74,6 +74,8 @@ Action Creators: Action creators are functions used to create action objects. Th
 Immutable State: ngrx promotes immutable state by enforcing strict rules against direct state mutation. Instead, state changes are achieved by creating new state objects based on the previous state and the action received.
 
 Integration with Angular: ngrx seamlessly integrates with Angular applications, providing decorators, utilities, and best practices for incorporating ngrx into Angular projects.
+
+You can debug the State changes by using Redux plugin for Chrome.
 
 Overall, ngrx simplifies state management in Angular applications by introducing a clear and structured approach based on the Redux pattern. It enhances application scalability, maintainability, and testability by promoting a single source of truth and predictable data flow.
 
