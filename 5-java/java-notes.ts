@@ -70,5 +70,94 @@ StringBuilder class is mutable, but does not share the Spring's special features
 
 Both are classes, but the String class is in a special category in the Java language.
 
+---------------------------
+What are the different methods every class inherited from Object 
+
+    @Override
+    - equals(Object obj)
+    - hashCode() // memory location of the obj
+    - finalize()
+    - clone()
+    - toStirng() // Student@23827693 ==> classname & hexdec number of mem location
+----------------------------
+String Immutability
+
+- Memory 
+- Thread Safe
+- Security
+----------------------------
+== vs equals()
+
+== -> compares the memory location (shallow comp)
+equals -> by default do the same as '==', except for String Primitives and Enums
+ -> you can implement deep comp by overriding
+ 
+    String s1 = new String("abc");
+    String s2 = new String("abc");
+
+    s1==s2 // false
+    s1.equals(s2) // true
+
+    Integer i1 = 123;
+    Integer i2 = 123;
+
+    i1==i2 // false
+    i1.equals(i2) // true
+----------------------------------
+final finally and finalize
+
+final -> const you can override class / method / variables
+
+finally -> try catch finally (close the resources)
+
+finalize() -> JVM calls before the garbage collection
+    -> you can use it for cleanup of the resources
+----------------------------------
+Generics & Type Erasure
+
+- We can specify the data type 
+
+    List<Integer> empIds = new ArrayList<>;
+    empIds.add(123);
+    empIds.add("John"); //Compiler error
+
+- Type Erasure (After compilation generics code will be removed at the runtime for backword comparision)    
+
+----------------------------------
+Collections frame work important Classes/Interfaces
+
+List (dups) - Set (No dups) - Queue (FIFO) - BlockingQueue (Producer & Consumer pattern) - Map (Key, Value pairs)
+
+List -> ArrayList, LinkedList, Vector
+Set -> HashSet->LinkedHashSet, SortedSet->TreeSet
+Queue -> PriorityQueue
+BlockingQueue
+Map -> HashMap->LinkedHashMap, Hashtable, SortedMap->TreeMap
+
+
+ArrayList -> Array (Usecase: Read Intensive)
+    - Add O(n)
+    - RandomAccess O(1)
+
+LinkedList -> Prev Next (Usecase: if there are more update)
+    - Add O(1)    
+    - RandomAccess O(n)
+
+Vector -> ThreadSafe (but slow, degrades performance)    
+----------------------------------
+
+----------------------------------
+
+----------------------------------
+
+----------------------------------
+
+----------------------------------
+
+----------------------------------
+
+----------------------------------
+
+
 
 */
