@@ -74,6 +74,59 @@ css variables or custom properties
   color: var(--primary-color);
 }
 
+Display Types
+----------------------
+display: block;
+
+  Elements with this property value create a block-level box.
+  Block-level elements start on a new line and take up the full width available.
+  Examples include <div>, <p>, <header>, <footer>, <section>, etc.
+
+display: inline;
+
+  Elements with this property value generate an inline box.
+  Inline elements do not start on a new line and only take up as much width as necessary.
+  Examples include <span>, <a>, <strong>, <em>, input button etc.
+
+display: inline-block;
+
+  Combines features of both block and inline elements.
+  Similar to inline elements, but can have margins, padding, and width/height.
+  Elements are displayed inline, but can have block-level properties applied.
+  Useful for creating elements that flow horizontally and can have block-level styling.
+
+display: flex;
+
+  Establishes a flex container for its children.
+  Allows for flexible layouts and distribution of space among items in a container.
+  Flex items can be laid out in any direction (row or column) and can be aligned and ordered accordingly.
+  Provides powerful alignment and distribution capabilities for responsive design.
+
+display: grid;
+
+  Creates a grid container for its children.
+  Defines columns and rows in a layout, allowing for precise control over the placement and sizing of items.
+  Grid layout is highly flexible and can adapt to various screen sizes and content structures.
+  Offers powerful capabilities for creating complex and responsive layouts with ease.
+
+display: none;
+
+  Hides the element from the layout entirely.
+  The element and its content are not rendered, and it does not take up any space in the document flow.
+  Useful for hiding elements dynamically or for accessibility purposes.
+
+display: table;
+
+  Renders an element as a block-level table.
+  Useful for creating table-like structures without using actual <table> elements.
+  Similar to <table> in behavior, but allows for more flexibility in styling.
+
+display: table-cell;
+
+  Renders an element as a table cell inside a table-like structure.
+  Useful for creating layouts that mimic table behavior, such as aligning content vertically within a row.
+
+
 Display position
 ---------------------------------------
 

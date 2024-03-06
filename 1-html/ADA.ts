@@ -2,9 +2,9 @@
 
 First and foremost rule in ADA 
 
-- it must be accessible, 
+- it must be accessible to every user
+  for that we need to consider few important aspects like  
 
-    To ensure a website is accessible, we need to consider some important practices like: 
     using semantic HTML to provide meaning to the content structure, 
     providing alternative text for images, 
     ensure sufficient color contrast, 

@@ -28,6 +28,21 @@ Forcing users to perform unwanted actions without their consent by tricking them
 - implement anti-CSRF tokens to ensure that requests come from legitimate sources. 
 - add user authentication for sensitive actions.
 
+    - use HttpClientXsrfModule to send xsrf-cookie header
+
+    //app.config.js
+    export const appConfig: ApplicationConfig = {
+        providers: [
+            importProvidersFrom(HttpClientModule),
+            importProvidersFrom(
+                HttpClientXsrfModule.withOptions({
+                cookieName: 'My-Xsrf-Cookie',
+                headerName: 'My-Xsrf-Header',
+            })
+            ),
+        ]
+    };
+
 Cross-Origin Resource Sharing (CORS):
 ========================================
 CORS allows web servers to specify which origins are permitted to access their resources and under what conditions. 

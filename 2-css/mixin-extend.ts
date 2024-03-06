@@ -79,4 +79,17 @@ The @extend directive lets you share a set of CSS properties from one selector t
   @extend .button-basic;
   background-color: red;
 }
+
+
+Mixins are used for generating reusable blocks of styles with dynamic values, 
+while extends are used for sharing styles between selectors.
+
+Mixins allow for parameterization and dynamic generation of styles, 
+while extends simply inherit styles from other selectors.
+
+Mixins can result in increased CSS output size if used excessively, 
+while extends can lead to cleaner output but can cause specificity issues if used improperly.
+
+Mixins are more flexible and powerful for creating dynamic and reusable styles, 
+while extends are more straightforward and suitable for sharing common styles.
 */

@@ -1,7 +1,8 @@
 /*
 
-Good code
-=================
+- understand the functional requirement
+- edge cases
+- consistent coding conventions (such as naming conventions, indentation, and formatting.)
 - Readability 
     easy to read and understand
     consistent naming convetions
@@ -20,7 +21,10 @@ Good code
     it should accomodate growth & complexity
     without need of refactoring
     should write code with flexibility in mind
-    
+
+Provide constructive feedback in a respectful manner.
+Suggest improvements and offer alternatives rather than dictating changes.
+
 Bad Code
 =============
 - Spaghetti code
@@ -45,6 +49,7 @@ Code Readability and Maintainability:
 
 Consistency: Ensure that the code follows consistent coding conventions, such as naming conventions, indentation, and formatting.
 Comments and Documentation: Check for meaningful comments that explain complex logic, assumptions, or decision-making. Also, verify that relevant functions, classes, and modules are appropriately documented.
+
 Modularity: Assess whether the code is modular and follows the Single Responsibility Principle. Each function or class should have a clear and distinct purpose.
 Performance:
 
@@ -57,6 +62,7 @@ Error Handling: Verify that the code includes appropriate error-handling mechani
 Testing:
 
 Test Coverage: Check if the code is adequately tested with unit tests, integration tests, and end-to-end tests. Verify that new code changes are covered by tests.
+
 Edge Cases: Assess whether the tests cover edge cases and various scenarios, ensuring comprehensive test coverage.
 Security:
 
@@ -82,6 +88,7 @@ Code Reviews Etiquette:
 
 Provide constructive feedback in a respectful manner.
 Focus on the code, not the person.
+
 Suggest improvements and offer alternatives rather than dictating changes.
 Remember that the goal of a code review is not just to find issues but to improve the overall quality of the codebase and help the team members grow as developers. A balanced approach that considers both technical and human aspects of code reviews can lead to a more positive and productive collaboration within the team.
 
