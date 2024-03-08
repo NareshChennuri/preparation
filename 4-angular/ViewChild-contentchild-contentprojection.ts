@@ -1,5 +1,16 @@
 /*
 
+content projection
+-------------------
+    <child-el> some content </child-el>
+
+    child-el.html
+    ---------------
+    <ng-content></ng-content>  // will be replaced with "some content"
+
+
+    
+
 @ContentChild, @ContentChildren, @ViewChild, and @ViewChildren 
 - used to query and access elements within components
 
