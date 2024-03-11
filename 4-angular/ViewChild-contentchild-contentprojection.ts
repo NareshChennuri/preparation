@@ -1,18 +1,38 @@
 /*
 
-content projection
+@ViewChild and @ViewChildren 
+    - query elements and get the reference within the component's own template.
+
+@ContentChild and @ContentChildren (content projection)
+    - query elements and get the reference from the content projected into the component via ng-content.
+
+
+@ContentChild and @ViewChild 
+    - retrieve the first occurrence
+@ContentChildren and @ViewChildren 
+    - retrieve multiple occurrences.
+
+@ContentChildren and @ViewChildren return a QueryList, 
+which is a live collection that updates automatically when the queried elements change.
+
+
+
+content projection (configurable components) (content between the element tags)
 -------------------
+    - we can customize look and feel of a component via content projection
     <child-el> some content </child-el>
 
     child-el.html
     ---------------
     <ng-content></ng-content>  // will be replaced with "some content"
+    <ng-content select=".some-class"></ng-content>
+    <ng-content select="img"></ng-content>
 
 
-    
 
-@ContentChild, @ContentChildren, @ViewChild, and @ViewChildren 
-- used to query and access elements within components
+
+
+
 
 - @ContentChildren and @ViewChildren return a QueryList
 
@@ -44,10 +64,7 @@ Used to query and access multiple occurrences of a directive or element within t
 Example: @ViewChildren(SomeComponent) someComponents: QueryList<SomeComponent>;
 Key differences:
 
-@ContentChild and @ContentChildren query elements projected into the component via ng-content.
-@ViewChild and @ViewChildren query elements within the component's own template.
-@ContentChild and @ViewChild retrieve the first occurrence, while @ContentChildren and @ViewChildren retrieve multiple occurrences.
-@ContentChildren and @ViewChildren return a QueryList, which is a live collection that updates automatically when the queried elements change.
+
 
 
 
