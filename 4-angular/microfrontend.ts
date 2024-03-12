@@ -1,5 +1,12 @@
 /*
 
+const element = createCustomElement(CourseTitleComponent, {injector: this.injector});
+customElements.define('app-course-title', element); // customElements is available in window
+
+in app-module --> entryComponents: [CourseTitleComponent]
+
+
+
 - Technology Flexibility: 
   - can be developed using different tech stacks
 
@@ -22,9 +29,9 @@
 ----------------------------------------------
 - install @angular/elements package and import
 - ng new mfe - Create a new Angular project    
-- remove the bootstrap from @ngModule()
+- remove the default bootstrap from @ngModule()
 - app module add ngDoBootStrap() 
-- inside the method createCustomElement and pass the component which you wants make it mfe 
+- inside the method we need to use the createCustomElement and pass the component which you wants make it mfe 
 - also pass the injector
 - customeElements.define give the mfe name and pass the element
 
@@ -48,7 +55,7 @@ export class AppModule {
     const element = createCustomElement(AppComponent, {
       injector: this.injector,
     });
-    customElements.define('app-micro-fe', element);
+    customElements.define('app-micro-fe', element); // customElements is available in window
   }
 }
 
