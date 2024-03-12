@@ -1,5 +1,22 @@
 /*
 
+Box-model
+---------------
+a box that wraps around every HTML element. It consists of: content, padding, borders and margins
+
+Content - The content of the box, where text and images appear
+Padding - Clears an area around the content. The padding is transparent
+Border - A border that goes around the padding and content
+Margin - Clears an area outside the border. The margin is transparent
+
+Border-box
+------------------
+If you want to make sure that all form elements in your design have the same height, just declare box-sizing: border-box
+
+* { box-sizing: border-box } // Include padding and border in the element's total width and height:
+  
+
+
 Specificity is calculated based on the selector type 
 
 Inline Styles: 
@@ -145,19 +162,29 @@ it is the default type of positioning, these elements will stack in a standard o
 
 Relative:
 
-The relative positioning, if you just give an element position:relative it will initially seem to do nothing. when you give top/left/right/bottom values, the element will begin to move around its relatively positioned element, here two things happen. First, you will see the element move off from the side specified, so if you wrote top:50px; the element will move 50px off from the top, or basically down. When you do this though, it doesn’t effect any other static elements around it. so the environment will not disturb.
+ - if you give position: relative it will not do anything unless you give top, bottom, right, left values
+ - it doesn't effect any other static elements around it
+ - it won't disturb the environment
 
 Absolute:
 
-An absolutely positioned element is actually removed from the DOM and positioned based on its nearest relatively positioned parent element. unlike a relatively positioned element it will effect the environment, when you give an element position:absolute its like it no longer exists. This means that other static elements will move up to fill in the space. The position of the absolute element is determined by its parent elements. If all of the parent elements are either static, or there are none, then the element is positioned based on the <body>.
+ - removed from the DOM and positioned based on its nearest relatively positioned parent element. 
+ - it will effect the environment
+ - its like it no longer exists and the other static elements will move up to fill in the space. 
+ - The position is determined by its parent elements. If all of the parent elements are either static, or there are none, then the element is positioned based on the <body>.
 
 Fixed:
 
-Fixed elements are completely independent of everything else on the web page. Regardless of any parents, a fixed position element will always be positioned based on the browser window. The interesting thing about fixed position elements is that when the page is scrolled, the element stays “fixed” and is always visible.
+ - Fixed elements are completely independent 
+ - it will always be positioned based on the browser window. 
+ - when the page is scrolled, the element stays “fixed” and is always visible.
+ - ex: menu bar, support center or feedback social media icons
 
 Sticky: 
 
-A sticky element will just sit there like a static element, but as you scroll past it, if it’s parent element has room (usually: extra height) the sticky element will behave as if it’s fixed - until that parent element is out of room.
+ - A sticky element toggles between relative and fixed , depending on the scroll position. 
+ - It is positioned relative until a given offset position is met in the viewport - then it "sticks" in place.
+ - ex: table headers, advertisement banners,
 
 <style>
       .parent {
