@@ -1,6 +1,9 @@
 /*
 
-RxJS operators are pure function that takes an observable as input and provides the output also in the form of observable. We have to use a pipe() method to work with operators.
+RxJS operators 
+- are pure function that 
+- takes an observable as input and provides the output also in the form of observable. 
+- We have to use a pipe() method to work with operators.
 
 Following is a list of most used operators in RxJS:
 

@@ -9,7 +9,7 @@ Karma
 Protractor
 - is an E2E test framework 
 
-Cyper (E2E) test framework similar to Selinium 
+Cypress (E2E) test framework similar to Selinium 
 
 
 - in Jasmine we write test specs and they are grouped in test suites
