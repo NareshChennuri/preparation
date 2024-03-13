@@ -157,8 +157,10 @@ Display position
 }
 
 Static:
-
-it is the default type of positioning, these elements will stack in a standard one-after-another order.
+- HTML elements are positioned static by default.
+- Static elements not affected by the top, bottom, left, and right properties.
+- Static elements always positioned according to the normal flow of the page:
+- these elements will stack in a standard one-after-another order.
 
 Relative:
 
