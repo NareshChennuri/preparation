@@ -32,12 +32,18 @@ Element Selectors, Pseudo-Elements:
   These selectors have the lowest specificity. They target HTML elements directly (e.g., div, p, span) or pseudo-elements (e.g., ::before, ::after).
 
 -------------
+CSS Combinators
+
+descendant selector (space)
+child selector (>)
+adjacent sibling selector (+)
+general sibling selector (~)
 
 div, p - Selects all <div> elements and all <p> elements
 div p - Selects all <p> elements that are anywhere inside a <div> element
 div > p - Selects all <p> elements where the immediate parent is a <div> element
-div + p - Selects the first <p> elements that is placed immediately after a <div> element
-div ~ p - Selects all <p> elements that are anywhere preceded by a <div> element
+div + p - Selects the first <p> elements that is placed immediately after a </div> element
+div ~ p - Selects all <p> elements that are anywhere preceded by a </div> element
 
 -------------
 
@@ -165,7 +171,7 @@ Static:
 Relative:
 
  - if you give position: relative it will not do anything unless you give top, bottom, right, left values
- - it doesn't effect any other static elements around it
+ - Other content will not be adjusted to fit into any gap left by the element.
  - it won't disturb the environment
 
 Absolute:
@@ -178,8 +184,10 @@ Absolute:
 Fixed:
 
  - Fixed elements are completely independent 
- - it will always be positioned based on the browser window. 
- - when the page is scrolled, the element stays “fixed” and is always visible.
+ - it is positioned relative to the viewport 
+ - when the page is scrolled, the element stays in the same place.
+ - top, right, bottom, and left properties are used to position the element.
+ - A fixed element does not leave a gap in the page
  - ex: menu bar, support center or feedback social media icons
 
 Sticky: 
