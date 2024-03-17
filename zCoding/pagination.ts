@@ -1,6 +1,15 @@
 import 'zone.js';
-import {Component, OnInit, EventEmitter, Input, Output, Pipe, PipeTransform} from '@angular/core';
-import {bootstrapApplication} from '@angular/platform-browser';
+import {
+  Component,
+  OnInit,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  Pipe,
+  PipeTransform,
+} from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -37,7 +46,6 @@ export class PaginationControlsComponent {
   standalone: true,
 })
 export class PaginatePipe implements PipeTransform {
-
   transform(array: any[], itemsPerPage: number, currentPage: number): any[] {
     if (!array || !itemsPerPage || !currentPage) {
       return [];
@@ -50,12 +58,17 @@ export class PaginatePipe implements PipeTransform {
     // slice the array to get the current page
     return array.slice(startIndex, endIndex);
   }
-
 }
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, FormsModule, HttpClientModule, PaginatePipe, PaginationControlsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    PaginatePipe,
+    PaginationControlsComponent,
+  ],
   standalone: true,
   template: `
     <table *ngIf="data">
@@ -72,18 +85,20 @@ export class PaginatePipe implements PipeTransform {
 <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
   `,
 })
-export class App implements OnInit{
-  data: any[] =  [];
+export class App implements OnInit {
+  data: any[] = [];
   currentPage = 1;
   totalPages = 1;
   itemsPerPage = 2;
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   ngOnInit() {
-    this.http.get('https://jsonplaceholder.typicode.com/users').subscribe((d: any)=>{
-      this.data = d;
-      this.totalPages = Math.ceil(this.data.length / 2);
-    });
+    this.http
+      .get('https://jsonplaceholder.typicode.com/users')
+      .subscribe((d: any) => {
+        this.data = d;
+        this.totalPages = Math.ceil(this.data.length / 2);
+      });
   }
 
   previousPage() {
