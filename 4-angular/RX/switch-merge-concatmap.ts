@@ -1,9 +1,16 @@
 /*
+// C
+of('A', 'B', 'C').pipe(swichMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
+// A B C -> at a time
+of('A', 'B', 'C').pipe(mergeMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
+// A B C -> after 1 sec each will print
+of('A', 'B', 'C').pipe(concatMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
+
 
 switchMap, concatMap, mergeMap/flatMap, exhaustMap (higherorder operators in rxjs)
 - basically they Maps each emitted value to another observable
 
-switchMap  
+switchMap  (Cancels previous inner observable subscriptions)
   - useful for scenarios like autocomplete
   - Cancels previous inner observable subscriptions when a new value arrives,
     [1,2,3,4] ==> 4
@@ -13,7 +20,7 @@ switchMap
     tes -> cancel
     test -> 200 success
 
-concatMap -
+concatMap - (sequential execution, maintains order)
   - Useful for sequential HTTP requests
   - maintains the order
   - ensures the order of emitted values, it processes each observable one at a time
@@ -25,7 +32,7 @@ concatMap -
    tes -> 200 success
    test -> 200 success
 
-mergeMap/flatMap -
+mergeMap/flatMap - (sequential execution similar to concatMap, can't predict order)
   - similar to concatMap
   - can't predict the order
 

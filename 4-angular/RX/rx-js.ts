@@ -1,10 +1,14 @@
 /**
 
+of(1, 2, 3).pipe(delay(1000)).subscribe(console.log);
+
+from([1, 2, 3]).pipe(delay(1000)).subscribe(console.log);
+
+
 RxJs is a third party Javascript library which provides reactive programming support. 
 It allows you to work with asynchronous data streams and handle events - over the time. 
 
-basically RxJs is based on Observables, which are data streams 
-you can be subscribe and process using the rxjs operators. 
+you can subscribe to the data streams called 'Observables' and process using the rxjs operators. 
 
 It provides a powerful and flexible way to handle complex asynchronous operations in Angular.
 
