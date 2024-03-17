@@ -1,12 +1,12 @@
 /*
 
-forkJoin:
+forkJoin: (multiple Http calls parallel - combines the results once all done)
 -------------
   Use Case: When you need to make several HTTP requests in parallel and wait for all of them to complete before taking further action.
 
   Example: Fetching data from multiple endpoints and processing the combined result once all requests are finished.
 
-zip:
+zip: (deprecated)
 -------------
   Use Case: When you need to combine the latest values from multiple streams, but only when all streams have emitted a value.
 
