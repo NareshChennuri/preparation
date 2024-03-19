@@ -1,5 +1,27 @@
 /*
 
+#1 Zero coupling between child projects
+- No importing of functions/objects/classes/etc
+- No shared state
+- Shared libraries through ModuleFederation is OK
+
+#2 Near-zero coupling between container and child apps
+- Container shouldn't assume that a child is using a particular framework
+- Any necessary communication done with callbacks or simple events
+
+#3 CSS from one project shouldn't affect another
+
+#4 Version control (monorepo/separate) shouldn't have any impact on the overall project
+- Some people want to use monorepos
+- Some people want to keep everything in a separate repo
+
+#5 Container should be able to decide to always use the latest version of a microfrontend or specify a specific version
+- Container will alwasy use the latest version of a child app (doesn't require a redeploy of container)
+- Container can specify exactly what version of a child it wants to use  (requies a redeploy to change)
+
+
+=======================
+
 const element = createCustomElement(CourseTitleComponent, {injector: this.injector});
 customElements.define('app-course-title', element); // customElements is available in window
 
