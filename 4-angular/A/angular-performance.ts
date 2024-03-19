@@ -1,5 +1,15 @@
 /*
 
+Lazy Loading:
+Production Build Optimization: (ng build --prod)
+Bundle Size Reduction: (webpack-bundle-analyzer tools to analyze and remove unnecessary dependencies)
+Change Detection Optimization: (OnPush)
+Async Pipe: (eleminates manual subscription and cleanup)
+TrackBy Function: (reduces unnecessary DOM manipulations while rendering the list of data)
+Performance Monitoring and Profiling: (lighthouse dev tools, angular memory profiling)
+network caching strategies
+
+
 common performance bottlenecks 
  - Large Bundle sizes (lazy loading)
     - code splitting
