@@ -1,4 +1,8 @@
 /*
+  install chrom redux extension  
+  > ng add @ngrx/store @ngrx/store-devtools @ngrx/schematics
+
+  > ng generate store State --module=app.module.ts --root=true --statePath=store --stateInterface=AppState
 
 ngrx is a library for managing state in Angular applications using the Redux pattern. 
 
@@ -28,8 +32,7 @@ ngrx is a library for managing state in Angular applications using the Redux pat
         user: UserState;
       }
 
-- "Selectors" provides a way to access and transform the application state 
-   without directly accessing the store.
+- "Selectors" provides a way to access the application state without directly accessing the store.
 
       export const selectUserState = createFeatureSelector<UserState>('user');
 
