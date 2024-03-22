@@ -3,7 +3,7 @@
     <label for="name">Name:</label>
     <input type="text" class="form-control" id="name" name="name" ngModel required>
     <div *ngIf="myForm.controls['name'].invalid && (myForm.controls['name'].dirty || myForm.controls['name'].touched)">
-      <div *ngIf="myForm.controls['name'].errors.required">Name is required.</div>
+      <div *ngIf="myForm.controls['name'].errors?.['required']">Name is required.</div>
     </div>
   </div>
 
@@ -11,8 +11,8 @@
     <label for="email">Email:</label>
     <input type="email" class="form-control" id="email" name="email" ngModel required email>
     <div *ngIf="myForm.controls['email'].invalid && (myForm.controls['email'].dirty || myForm.controls['email'].touched)">
-      <div *ngIf="myForm.controls['email'].errors.required">Email is required.</div>
-      <div *ngIf="myForm.controls['email'].errors.email">Invalid email format.</div>
+      <div *ngIf="myForm.controls['email'].errors?.['required']">Email is required.</div>
+      <div *ngIf="myForm.controls['email'].errors?.['email']">Invalid email format.</div>
     </div>
   </div>
 

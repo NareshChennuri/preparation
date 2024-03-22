@@ -97,7 +97,7 @@ export class App implements OnInit {
       .get('https://jsonplaceholder.typicode.com/users')
       .subscribe((d: any) => {
         this.data = d;
-        this.totalPages = Math.ceil(this.data.length / 2);
+        this.totalPages = Math.ceil(this.data.length / this.itemsPerPage);
       });
   }
 

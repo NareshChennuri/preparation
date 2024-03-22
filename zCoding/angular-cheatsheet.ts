@@ -50,16 +50,27 @@ import { NgModule } from '@angular/core';
 <div [ngStyle]="{'property': 'value'}"> 
 <div [ngStyle]="dynamicStyles()">
 
-
-
-template: 'Hello {{name}}' 
-templateUrl: 'my-component.html'
-styles: ['.primary {color: red}'] 
-styleUrls: ['my-component.css']
+@Component({
+    selector: 'app-root',
+    imports: [CommonModule, FormsModule],
+    standalone: true,
+    styles: [
+      '.check1d { text-decoration: line-through}',
+      'ul {list-style: none}',
+    ],
+    template: 'Hello {{name}}',
+    templateUrl: 'my-component.html',
+    styles: ['.primary {color: red}'] ,
+    styleUrls: ['my-component.css']
+  });
 
 import { Input, … } from '@angular/core';
 @Input() myProperty;
 @Output() myEvent = new EventEmitter();
+
+
+<app-child [message]="parentMessage" (messageEvent)="receiveMessage($event)"></app-child>
+
 
 @HostBinding('class.valid') isValid;
 @HostListener('click', ['$event']) onClick(e) {…}
