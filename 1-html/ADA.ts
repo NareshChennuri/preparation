@@ -1,4 +1,38 @@
 /*
+live regions, landmarks, 
+role = [log, status, alert, marquee, progressbar, timer]
+
+aria-live="polite" - 
+aria-live="assertive" - alert
+
+<div id="clock" role="timer" aria-live="polite" aria-atomic="true">…</div>
+<div class="notification" aria-live="assertive">This is the notification!!</div>
+
+aria-hidden="true"
+
+aria-labelledby
+arila-label
+
+==========
+
+ function srSpeak(text, priority) {
+      var el = document.createElement("div");
+      var id = "speak-" + Date.now();
+      el.setAttribute("id", id);
+      el.setAttribute("aria-live", priority || "polite");
+      el.classList.add("visually-hidden");
+      document.body.appendChild(el);
+
+      window.setTimeout(function () {
+        document.getElementById(id).innerHTML = text;
+      }, 100);
+
+      window.setTimeout(function () {
+          document.body.removeChild(document.getElementById(id));
+      }, 1000);
+  }
+  
+==========
 
 First and foremost rule in ADA 
 
