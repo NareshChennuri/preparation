@@ -31,7 +31,7 @@ arila-label
           document.body.removeChild(document.getElementById(id));
       }, 1000);
   }
-  
+
 ==========
 
 First and foremost rule in ADA 

@@ -2,12 +2,12 @@ import 'zone.js';
 import {Component, inject} from '@angular/core';
 import {bootstrapApplication} from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl} from '@angular/forms';
-import { JsonPipe, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports:[FormsModule, JsonPipe, NgIf],
+  imports:[FormsModule, NgIf],
   template: `
     <form #f="ngForm" (ngSubmit)="onSubmit(f)">
       <div>
@@ -42,7 +42,7 @@ export class App2 {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports:[ReactiveFormsModule, JsonPipe, NgIf],
+  imports:[ReactiveFormsModule, NgIf],
   template: `
     <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
       <div>
