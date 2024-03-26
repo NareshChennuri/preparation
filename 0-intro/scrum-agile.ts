@@ -1,12 +1,14 @@
 /**
  * 
+PI planning - Product Backlog Refinement as a group (as required)
+
 2 weeks sprint
-Daily Scrum (15 mins max)
+Sprint Planning once per sprint (4 hours max)
 Sprint Review once per sprint (2 hours max)
 Sprint Retrospective once per sprint (2 hours max)
-Sprint Planning once per sprint (4 hours max)
+Daily Scrum (15 mins max)
 
-PI planning - Product Backlog Refinement as a group (as required)
+
 
 Sprint retrospectives are crucial meetings in the Agile development process where the team reflects on the completed sprint and identifies opportunities for improvement. The focus is on the team's processes, collaboration, and overall effectiveness. Here are key topics to discuss during a sprint retrospective:
 

@@ -1,7 +1,21 @@
 /*
 
+Bad Code
+=============
+- Spaghetti code
+- Poor naming conventions
+- Hard coded values
+- Lack of documentation
+- inefficient algorithms
+- Ignored best practices
+
+
 - understand the functional requirement
 - edge cases
+
+Provide constructive feedback in a respectful manner.
+Suggest improvements and offer alternatives rather than dictating changes.
+
 - consistent coding conventions (such as naming conventions, indentation, and formatting.)
 - Readability 
     easy to read and understand
@@ -22,17 +36,9 @@
     without need of refactoring
     should write code with flexibility in mind
 
-Provide constructive feedback in a respectful manner.
-Suggest improvements and offer alternatives rather than dictating changes.
 
-Bad Code
-=============
-- Spaghetti code
-- Poor naming conventions
-- Hard coded values
-- Lack of documentation
-- inefficient algorithms
-- Ignored best practices
+
+
 
 There are several important aspects to pay attention to in order to esure the code is aligned with the best practices.
 
