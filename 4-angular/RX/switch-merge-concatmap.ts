@@ -20,7 +20,7 @@ switchMap  (Cancels previous inner observable subscriptions)
     tes -> cancel
     test -> 200 success
 
-concatMap - (sequential execution, maintains order)
+concatMap - (one at a time, sequential execution, maintains order)
   - Useful for sequential HTTP requests
   - maintains the order
   - ensures the order of emitted values, it processes each observable one at a time

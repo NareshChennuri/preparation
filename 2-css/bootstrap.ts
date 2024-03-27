@@ -1,6 +1,10 @@
 /*
 
-Bootstrap is a css framework for faster and easier web development. Bootstrap includes HTML and CSS based design templates for typography, forms, buttons, tables, navigation, modals, image carousels and many other, as well as optional JavaScript plugins.
+Bootstrap is a css framework 
+- for faster and easier web development
+- includes HTML and CSS based design templates 
+- for typography, forms, buttons, tables, navigation, modals, image carousels 
+- and many other, as well as optional JavaScript plugins.
 
 Bootstrap is simple to use and anyone with a basic understanding of HTML and CSS can get started.
 
@@ -37,7 +41,9 @@ installing bootstrap in angular
 
 $ npm install bootstrap@3 jquery --save
 
-add the file paths to the styles and scripts array in file .angular-cli.json:
+add the file paths to the styles and scripts array in file 
+
+> angular-cli.json:
 
 "styles": [
     "styles.css",
