@@ -3,6 +3,8 @@
 > ng update @angular/cli
 > ng update @angular/core
 
+> ng generate @angular/core:control-flow
+
 upgrading a fairly simple government site from Angular 5 to 12. 
 
 I Used the official Angular upgrade guide 
