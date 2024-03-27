@@ -1,5 +1,22 @@
 /*
 
+> ng update @angular/cli
+> ng update @angular/core
+
+upgrading a fairly simple government site from Angular 5 to 12. 
+
+I Used the official Angular upgrade guide 
+and paid attention to every step on their checklist. 
+I had very little break in the app itself. 
+Most of the work was upgrading everything sequentially using the Angular CLI and npm. 
+Most of it is done using the angular CLI 
+but at certain points you will need to force upgrades to typescript and zone.js with npm, 
+breaking the current version of Angular, to satisfy dependencies for the next. 
+
+You have to use npx to stop Angular from trying to use the latest version of the CLI. 
+You’ll know that’s failing because it wants Node 18.
+
+
 Upgrading an Angular app involves updating your application's dependencies, codebase, and configurations to a newer version of Angular. The process can vary based on the difference between the current and target Angular versions. Here's a general outline of the steps to upgrade an Angular app:
 
 Review the Release Notes:
@@ -18,7 +35,7 @@ Update your Angular CLI to the latest version. You can do this by running the fo
 
 Update Angular Core Packages:
 Update the core Angular packages (such as @angular/core, @angular/common, @angular/router, etc.) by running:
-
+ng update @angular/cli
 > ng update @angular/core
 
 This command will analyze your app's dependencies and suggest updates.
