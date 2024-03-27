@@ -24,7 +24,7 @@ export class AppRoutingModule { }
 
 =================================
 
-/**  Pre Loading 
+/**  Pre Loading (data: { preload: true })
  * 
  * Lazy loading speeds up our application load time by splitting it into multiple bundles, and loading them on demand. 
  * The issue with lazy loading, of course, is that when the user navigates to the lazy-loadable section of the application, 
