@@ -4,8 +4,34 @@ ng generate component recurrence-options
 
 ng generate service recurrence
 
+function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+  
+  function addWeeks(date: Date, weeks: number): Date {
+    return addDays(date, weeks * 7);
+  }
+  
+  function addMonths(date: Date, months: number): Date {
+    const result = new Date(date);
+    const d = result.getDate();
+    result.setMonth(result.getMonth() + months);
+    // Handle the case where the new month has fewer days than the original date
+    if (result.getDate() !== d) {
+      result.setDate(0);
+    }
+    return result;
+  }
+  
+  function setDate(date: Date, dayOfMonth: number): Date {
+    const result = new Date(date);
+    result.setDate(dayOfMonth);
+    return result;
+  }
+  
 import { Injectable } from '@angular/core';
-import { addDays, addMonths, setDate, addWeeks } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
