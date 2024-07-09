@@ -145,43 +145,44 @@ export class RecurrenceOptionsComponent {
 }
 
 <div>
-  <label>
-    Recurrence Type:
-    <select [(ngModel)]="recurrenceType" (ngModelChange)="recurrenceTypeChange.emit($event)">
-      <option value="daily">Daily</option>
-      <option value="weekly">Weekly</option>
-      <option value="monthly">Monthly</option>
-    </select>
-  </label>
-  <br>
-  <div *ngIf="recurrenceType === 'weekly'">
+  <mat-form-field appearance="fill">
+    <mat-label>Recurrence Type</mat-label>
+    <mat-select [(value)]="recurrenceType" (selectionChange)="recurrenceTypeChange.emit($event.value)">
+      <mat-option value="daily">Daily</mat-option>
+      <mat-option value="weekly">Weekly</mat-option>
+      <mat-option value="monthly">Monthly</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <ng-container *ngIf="recurrenceType === 'weekly'">
     <label>Select Days:</label>
     <div *ngFor="let day of daysOfWeek">
-      <input type="checkbox" [value]="day.value" (change)="toggleDaySelection(day.value)" [checked]="selectedDays.includes(day.value)">
-      {{ day.name }}
+      <mat-checkbox [(ngModel)]="selectedDays" (ngModelChange)="toggleDaySelection(day.value)">
+        {{ day.name }}
+      </mat-checkbox>
     </div>
-    <br>
-    <label>
-      Interval in Weeks:
-      <input [(ngModel)]="interval" (ngModelChange)="intervalChange.emit($event)" type="number" min="1" required>
-    </label>
-  </div>
-  <div *ngIf="recurrenceType === 'monthly'">
-    <label>
-      Day of Month:
-      <input [(ngModel)]="dayOfMonth" (ngModelChange)="dayOfMonthChange.emit($event)" type="number" min="1" max="31" required>
-    </label>
-    <br>
-  </div>
-  <label>
-    Interval:
-    <input [(ngModel)]="interval" (ngModelChange)="intervalChange.emit($event)" type="number" min="1" required>
-  </label>
-  <br>
-  <label>
-    Occurrences:
-    <input [(ngModel)]="occurrences" (ngModelChange)="occurrencesChange.emit($event)" type="number" min="1" required>
-  </label>
+    <mat-form-field appearance="fill">
+      <mat-label>Interval in Weeks</mat-label>
+      <input matInput [(ngModel)]="interval" (ngModelChange)="intervalChange.emit($event)" type="number" min="1" required>
+    </mat-form-field>
+  </ng-container>
+
+  <ng-container *ngIf="recurrenceType === 'monthly'">
+    <mat-form-field appearance="fill">
+      <mat-label>Day of Month</mat-label>
+      <input matInput [(ngModel)]="dayOfMonth" (ngModelChange)="dayOfMonthChange.emit($event)" type="number" min="1" max="31" required>
+    </mat-form-field>
+  </ng-container>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Interval</mat-label>
+    <input matInput [(ngModel)]="interval" (ngModelChange)="intervalChange.emit($event)" type="number" min="1" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Occurrences</mat-label>
+    <input matInput [(ngModel)]="occurrences" (ngModelChange)="occurrencesChange.emit($event)" type="number" min="1" required>
+  </mat-form-field>
 </div>
 
 
@@ -206,7 +207,7 @@ export class EventFormComponent {
   rrule: string = '';
 
   constructor(private recurrenceService: RecurrenceService) { }
-  
+
   handleRecurrenceTypeChange(type: string) {
     this.recurrenceType = type;
   }
