@@ -30,7 +30,7 @@ function addDays(date: Date, days: number): Date {
     result.setDate(dayOfMonth);
     return result;
   }
-  
+
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -206,6 +206,26 @@ export class EventFormComponent {
   rrule: string = '';
 
   constructor(private recurrenceService: RecurrenceService) { }
+  
+  handleRecurrenceTypeChange(type: string) {
+    this.recurrenceType = type;
+  }
+
+  handleIntervalChange(interval: number) {
+    this.interval = interval;
+  }
+
+  handleOccurrencesChange(occurrences: number) {
+    this.occurrences = occurrences;
+  }
+
+  handleSelectedDaysChange(days: string[]) {
+    this.selectedDays = days;
+  }
+
+  handleDayOfMonthChange(day: number) {
+    this.dayOfMonth = day;
+  }
 
   createEvent() {
     const { dates, rrule } = this.recurrenceService.generateRecurrence(
@@ -234,11 +254,16 @@ export class EventFormComponent {
   </label>
   <br>
   <app-recurrence-options 
-    [(recurrenceType)]="recurrenceType"
-    [(interval)]="interval"
-    [(occurrences)]="occurrences"
-    [(selectedDays)]="selectedDays"
-    [(dayOfMonth)]="dayOfMonth">
+    [recurrenceType]="recurrenceType"
+    [interval]="interval"
+    [occurrences]="occurrences"
+    [selectedDays]="selectedDays"
+    [dayOfMonth]="dayOfMonth"
+    (recurrenceTypeChange)="handleRecurrenceTypeChange($event)"
+    (intervalChange)="handleIntervalChange($event)"
+    (occurrencesChange)="handleOccurrencesChange($event)"
+    (selectedDaysChange)="handleSelectedDaysChange($event)"
+    (dayOfMonthChange)="handleDayOfMonthChange($event)">
   </app-recurrence-options>
   <br>
   <button type="submit">Create Event</button>
