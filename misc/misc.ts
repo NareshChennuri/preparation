@@ -164,12 +164,14 @@ export class RecurrenceOptionsComponent {
     { name: 'Saturday', value: 'saturday' }
   ];
 
-  toggleDaySelection(day: string) {
-    const index = this.selectedDays.indexOf(day);
-    if (index > -1) {
-      this.selectedDays.splice(index, 1);
-    } else {
+  toggleDaySelection(day: string, event: any) {
+    if (event.checked) {
       this.selectedDays.push(day);
+    } else {
+      const index = this.selectedDays.indexOf(day);
+      if (index > -1) {
+        this.selectedDays.splice(index, 1);
+      }
     }
     this.selectedDaysChange.emit(this.selectedDays);
   }
@@ -192,9 +194,9 @@ export class RecurrenceOptionsComponent {
     <ng-container *ngIf="recurrenceType === 'weekly'">
       <label>Select Days:</label>
       <div *ngFor="let day of daysOfWeek">
-        <mat-checkbox [(ngModel)]="selectedDays" (ngModelChange)="toggleDaySelection(day.value)">
-          {{ day.name }}
-        </mat-checkbox>
+      <mat-checkbox [checked]="selectedDays.includes(day.value)" (change)="toggleDaySelection(day.value, $event)">
+      {{ day.name }}
+    </mat-checkbox>
       </div>
       <mat-form-field appearance="fill">
         <mat-label>Interval in Weeks</mat-label>
