@@ -92,7 +92,7 @@ export class RecurringPatternWidgetComponent implements OnInit {
         this.bymonthday = rule.options.bymonthday[0];
       } else {
         this.bysetpos = rule.options.bysetpos[0];
-        this.byweekday = rule.options.byweekday || [];
+        this.byweekday = rule.options.byweekday?.map(day => RRule[day.weekday]) || [];
       }
       this.monthlyInterval = rule.options.interval;
     } else if (this.frequency === 'YEARLY') {
@@ -121,7 +121,7 @@ export class RecurringPatternWidgetComponent implements OnInit {
         options.byweekday = this.byweekday.map(day => day.weekday); // Convert Weekday objects to numbers
       }
     } else if (this.frequency === 'WEEKLY') {
-      options.byweekday = this.byweekday.map(day => day.weekday); // Convert Weekday objects to numbers
+      options.byweekday = this.byweekday;
     } else if (this.frequency === 'MONTHLY') {
       if (this.monthlyOption === 'day') {
         options.bymonthday = this.bymonthday;
@@ -431,3 +431,158 @@ onSubmit() {
   }
 
 <app-recurring-pattern-widget [recurrenceRule]="eventRecurrenceRule" #recurringPatternWidget></app-recurring-pattern-widget>
+
+
+
+==================
+
+
+import { Injectable } from '@angular/core';
+import { addMonths, startOfWeek, startOfMonth, addDays, isSameDay } from 'date-fns';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RecurrenceService {
+  generateRecurrence(startDate: Date, recurrenceType: string, interval: number, occurrences: number, selectedDays: string[], dayOfMonth?: number): { dates: Date[], rrule: string } {
+    let dates: Date[] = [];
+    let rrule = '';
+
+    switch (recurrenceType) {
+      case 'daily':
+        // Implement daily recurrence logic
+        break;
+      case 'weekly':
+        // Implement weekly recurrence logic
+        break;
+      case 'monthly':
+        if (selectedDays.length > 0 && dayOfMonth === undefined) {
+          // Monthly weekday logic
+          rrule = `FREQ=MONTHLY;INTERVAL=${interval};BYDAY=${selectedDays.join(',')};BYSETPOS=${this.getWeekdayPosition(startDate)}`;
+          dates = this.generateMonthlyWeekdayRecurrence(startDate, interval, occurrences, selectedDays);
+        } else {
+          // Monthly day of month logic
+          rrule = `FREQ=MONTHLY;INTERVAL=${interval};BYMONTHDAY=${dayOfMonth}`;
+          dates = this.generateMonthlyDayOfMonthRecurrence(startDate, interval, occurrences, dayOfMonth);
+        }
+        break;
+      default:
+        break;
+    }
+
+    return { dates, rrule };
+  }
+
+  private generateMonthlyWeekdayRecurrence(startDate: Date, interval: number, occurrences: number, selectedDays: string[]): Date[] {
+    let dates: Date[] = [];
+    let currentDate = startDate;
+    let count = 0;
+
+    while (count < occurrences) {
+      for (let i = 0; i < selectedDays.length; i++) {
+        const date = this.findNthWeekdayOfMonth(currentDate, selectedDays[i]);
+        if (date) {
+          dates.push(date);
+          count++;
+          if (count >= occurrences) {
+            break;
+          }
+        }
+      }
+      currentDate = addMonths(currentDate, interval);
+    }
+
+    return dates;
+  }
+
+  private findNthWeekdayOfMonth(startDate: Date, dayOfWeek: string): Date | undefined {
+    const startOfMonthDate = startOfMonth(startDate);
+    let currentDate = startOfWeek(startOfMonthDate, { weekStartsOn: 1 }); // Start of the month, Monday-based week
+    const dayIndex = this.getWeekdayIndex(dayOfWeek);
+
+    let nthWeekdayCount = 0;
+
+    while (true) {
+      if (currentDate.getMonth() !== startDate.getMonth()) {
+        break;
+      }
+      if (currentDate.getDay() === dayIndex) {
+        nthWeekdayCount++;
+        if (nthWeekdayCount === this.getWeekdayPosition(startDate)) {
+          return currentDate;
+        }
+      }
+      currentDate = addDays(currentDate, 1);
+    }
+
+    return undefined;
+  }
+
+  private getWeekdayPosition(date: Date): number {
+    const day = date.getDate();
+    const weekDay = date.getDay();
+    const week = Math.ceil(day / 7);
+
+    return week;
+  }
+
+  private getWeekdayIndex(dayOfWeek: string): number {
+    switch (dayOfWeek) {
+      case 'sunday':
+        return 0;
+      case 'monday':
+        return 1;
+      case 'tuesday':
+        return 2;
+      case 'wednesday':
+        return 3;
+      case 'thursday':
+        return 4;
+      case 'friday':
+        return 5;
+      case 'saturday':
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
+  private generateMonthlyDayOfMonthRecurrence(startDate: Date, interval: number, occurrences: number, dayOfMonth: number): Date[] {
+    // Implement logic to generate monthly day of month recurrence
+    return [];
+  }
+}
+
+
+
+=============
+
+
+ // Helper method to parse BYDAY value like '2FR' into Weekday object
+ private parseByDay(byday: string): Weekday[] {
+  const days: Weekday[] = [];
+  const parts = byday.match(/^(\d)(\w\w)$/);
+  if (parts && parts.length === 3) {
+    const setPos = parseInt(parts[1], 10);
+    const day = parts[2];
+    const weekday = this.getWeekday(day);
+    if (weekday) {
+      days.push(weekday.nth(setPos));
+    }
+  }
+  return days;
+}
+
+// Helper method to map string day to RRule Weekday object
+private getWeekday(day: string): Weekday | null {
+  switch (day) {
+    case 'MO': return RRule.MO;
+    case 'TU': return RRule.TU;
+    case 'WE': return RRule.WE;
+    case 'TH': return RRule.TH;
+    case 'FR': return RRule.FR;
+    case 'SA': return RRule.SA;
+    case 'SU': return RRule.SU;
+    default: return null;
+  }
+}
