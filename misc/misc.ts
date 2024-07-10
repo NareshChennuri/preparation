@@ -19,7 +19,135 @@ imports: [
     MatDatepickerModule,
     MatNativeDateModule
   ],
-  
+
+import { Component, Input, OnInit } from '@angular/core';
+import { RRule, rrulestr, Weekday } from 'rrule';
+
+@Component({
+  selector: 'app-recurring-pattern-widget',
+  templateUrl: './recurring-pattern-widget.component.html',
+  styleUrls: ['./recurring-pattern-widget.component.css']
+})
+export class RecurringPatternWidgetComponent implements OnInit {
+  @Input() recurrenceRule: string | null = null;
+  // Input properties
+  frequency: string = 'DAILY';
+  interval: number = 1;
+  dailyOption: string = 'every';
+  weeklyInterval: number = 1;
+  monthlyOption: string = 'day';
+  monthlyInterval: number = 1;
+  bymonthday: number = 1;
+  bysetpos: number = 1;
+  byweekday: Weekday[] = []; // Use Weekday type from rrule
+  yearlyOption: string = 'day';
+  yearBymonth: number = 1;
+  yearByweekday: Weekday = RRule.MO; // Default to Monday
+  yearBysetpos: number = 1;
+  count: number | null = null;
+  until: Date | null = null;
+
+  // Dropdown options
+  frequencies = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'];
+  dailyOptions = ['every', 'weekday'];
+  monthlyOptions = ['day', 'weekday'];
+  yearlyOptions = ['day', 'weekday'];
+  weekdays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+  setposOptions = ['1st', '2nd', '3rd', '4th', 'last'];
+  months = Array.from({ length: 12 }, (_, i) => i + 1);
+
+  ngOnInit() {
+    if (this.recurrenceRule) {
+      this.parseRRule(this.recurrenceRule);
+    } else {
+      // Default values when recurrenceRule is empty
+      this.frequency = 'DAILY';
+      this.interval = 1;
+    }
+  }
+
+  toggleWeekday(day: string, event: any) {
+    if (event.target.checked) {
+      this.byweekday.push(RRule[day]);
+    } else {
+      this.byweekday = this.byweekday.filter(d => d !== RRule[day]);
+    }
+  }
+
+  parseRRule(rruleStr: string) {
+    const rule = rrulestr(rruleStr) as RRule;
+
+    this.frequency = RRule.FREQUENCIES[rule.options.freq];
+    this.interval = rule.options.interval;
+
+    if (this.frequency === 'DAILY') {
+      this.dailyOption = rule.options.byweekday ? 'weekday' : 'every';
+    } else if (this.frequency === 'WEEKLY') {
+      this.weeklyInterval = rule.options.interval;
+      this.byweekday = rule.options.byweekday || [];
+    } else if (this.frequency === 'MONTHLY') {
+      this.monthlyOption = rule.options.bysetpos ? 'weekday' : 'day';
+      if (this.monthlyOption === 'day') {
+        this.bymonthday = rule.options.bymonthday[0];
+      } else {
+        this.bysetpos = rule.options.bysetpos[0];
+        this.byweekday = [rule.options.byweekday[0]];
+      }
+      this.monthlyInterval = rule.options.interval;
+    } else if (this.frequency === 'YEARLY') {
+      this.yearBymonth = rule.options.bymonth[0];
+      this.yearlyOption = rule.options.bysetpos ? 'weekday' : 'day';
+      if (this.yearlyOption === 'day') {
+        this.bymonthday = rule.options.bymonthday[0];
+      } else {
+        this.yearBysetpos = rule.options.bysetpos[0];
+        this.yearByweekday = rule.options.byweekday[0];
+      }
+    }
+
+    this.count = rule.options.count || null;
+    this.until = rule.options.until ? new Date(rule.options.until) : null;
+  }
+
+  generateRRule(): string {
+    const options: any = {
+      freq: RRule[this.frequency],
+      interval: this.frequency === 'WEEKLY' ? this.weeklyInterval : this.frequency === 'MONTHLY' ? this.monthlyInterval : this.interval,
+    };
+
+    if (this.frequency === 'DAILY') {
+      if (this.dailyOption === 'weekday') {
+        options.byweekday = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR];
+      }
+    } else if (this.frequency === 'WEEKLY') {
+      options.byweekday = this.byweekday;
+    } else if (this.frequency === 'MONTHLY') {
+      if (this.monthlyOption === 'day') {
+        options.bymonthday = this.bymonthday;
+      } else if (this.monthlyOption === 'weekday') {
+        options.bysetpos = [this.bysetpos];
+        options.byweekday = [this.byweekday[0]];
+      }
+    } else if (this.frequency === 'YEARLY') {
+      options.bymonth = this.yearBymonth;
+      if (this.yearlyOption === 'day') {
+        options.bymonthday = this.bymonthday;
+      } else if (this.yearlyOption === 'weekday') {
+        options.bysetpos = [this.yearBysetpos];
+        options.byweekday = [this.yearByweekday];
+      }
+    }
+
+    if (this.count) {
+      options.count = this.count;
+    } else if (this.until) {
+      options.until = this.until;
+    }
+
+    const rule = new RRule(options);
+    return rule.toString();
+  }
+}
 
 import { Component, Input, OnInit } from '@angular/core';
 import { RRule, rrulestr } from 'rrule';
