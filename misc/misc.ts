@@ -1,6 +1,26 @@
 npm install rrule
 ng generate component recurring-pattern-widget
 
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+  ],
+  
+
 import { Component, Input, OnInit } from '@angular/core';
 import { RRule, rrulestr } from 'rrule';
 
