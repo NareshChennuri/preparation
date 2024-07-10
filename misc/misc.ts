@@ -82,6 +82,7 @@ export class RecurringPatternWidgetComponent implements OnInit {
 
     if (this.frequency === 'DAILY') {
       this.dailyOption = rule.options.byweekday ? 'weekday' : 'every';
+      this.byweekday = rule.options.byweekday?.map(day => RRule[day.weekday]) || [];
     } else if (this.frequency === 'WEEKLY') {
       this.weeklyInterval = rule.options.interval;
       this.byweekday = rule.options.byweekday || [];
@@ -91,7 +92,7 @@ export class RecurringPatternWidgetComponent implements OnInit {
         this.bymonthday = rule.options.bymonthday[0];
       } else {
         this.bysetpos = rule.options.bysetpos[0];
-        this.byweekday = [rule.options.byweekday[0]];
+        this.byweekday = rule.options.byweekday || [];
       }
       this.monthlyInterval = rule.options.interval;
     } else if (this.frequency === 'YEARLY') {
@@ -117,16 +118,16 @@ export class RecurringPatternWidgetComponent implements OnInit {
 
     if (this.frequency === 'DAILY') {
       if (this.dailyOption === 'weekday') {
-        options.byweekday = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR];
+        options.byweekday = this.byweekday.map(day => day.weekday); // Convert Weekday objects to numbers
       }
     } else if (this.frequency === 'WEEKLY') {
-      options.byweekday = this.byweekday;
+      options.byweekday = this.byweekday.map(day => day.weekday); // Convert Weekday objects to numbers
     } else if (this.frequency === 'MONTHLY') {
       if (this.monthlyOption === 'day') {
         options.bymonthday = this.bymonthday;
       } else if (this.monthlyOption === 'weekday') {
         options.bysetpos = [this.bysetpos];
-        options.byweekday = [this.byweekday[0]];
+        options.byweekday = this.byweekday.map(day => day.weekday); // Convert Weekday objects to numbers
       }
     } else if (this.frequency === 'YEARLY') {
       options.bymonth = this.yearBymonth;
@@ -134,7 +135,7 @@ export class RecurringPatternWidgetComponent implements OnInit {
         options.bymonthday = this.bymonthday;
       } else if (this.yearlyOption === 'weekday') {
         options.bysetpos = [this.yearBysetpos];
-        options.byweekday = [this.yearByweekday];
+        options.byweekday = [this.yearByweekday.weekday]; // Convert Weekday object to number
       }
     }
 
