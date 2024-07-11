@@ -605,3 +605,34 @@ private convertSetposToNumber(setpos: string): number | null {
   const match = setpos.match(/^(\d+)(st|nd|rd|th)$/);
   return match ? parseInt(match[1], 10) : null;
 }
+
+
+=============
+
+// Helper method to map day to RRule Weekday object
+private getWeekday(day: string | number): Weekday {
+  if (typeof day === 'string') {
+    switch (day) {
+      case 'MO': return RRule.MO;
+      case 'TU': return RRule.TU;
+      case 'WE': return RRule.WE;
+      case 'TH': return RRule.TH;
+      case 'FR': return RRule.FR;
+      case 'SA': return RRule.SA;
+      case 'SU': return RRule.SU;
+      default: throw new Error(`Invalid weekday: ${day}`);
+    }
+  } else if (typeof day === 'number') {
+    switch (day) {
+      case 0: return RRule.MO;
+      case 1: return RRule.TU;
+      case 2: return RRule.WE;
+      case 3: return RRule.TH;
+      case 4: return RRule.FR;
+      case 5: return RRule.SA;
+      case 6: return RRule.SU;
+      default: throw new Error(`Invalid weekday number: ${day}`);
+    }
+  }
+  throw new Error(`Invalid weekday: ${day}`);
+}
