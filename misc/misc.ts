@@ -639,9 +639,10 @@ private getWeekday(day: string | number): Weekday {
 
 ==============
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 public class Schedule {
+
     private String frequency;
     private int interval;
     private String dailyOption;
@@ -651,161 +652,135 @@ public class Schedule {
     private int bymonthday;
     private String bysetpos;
     private String byweekday;
-    private String yearOption;
+    private String yearlyOption;
     private int yearBymonth;
-    private YearByWeekday yearByweekday;
+    private YearByweekday yearByweekday;
     private int yearBysetpos;
     private String rrule;
 
-    @JsonProperty("frequency")
+    // Getters and setters
+
     public String getFrequency() {
         return frequency;
     }
 
-    @JsonProperty("frequency")
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
 
-    @JsonProperty("interval")
     public int getInterval() {
         return interval;
     }
 
-    @JsonProperty("interval")
     public void setInterval(int interval) {
         this.interval = interval;
     }
 
-    @JsonProperty("dailyOption")
     public String getDailyOption() {
         return dailyOption;
     }
 
-    @JsonProperty("dailyOption")
     public void setDailyOption(String dailyOption) {
         this.dailyOption = dailyOption;
     }
 
-    @JsonProperty("weeklyInterval")
     public int getWeeklyInterval() {
         return weeklyInterval;
     }
 
-    @JsonProperty("weeklyInterval")
     public void setWeeklyInterval(int weeklyInterval) {
         this.weeklyInterval = weeklyInterval;
     }
 
-    @JsonProperty("monthlyOption")
     public String getMonthlyOption() {
         return monthlyOption;
     }
 
-    @JsonProperty("monthlyOption")
     public void setMonthlyOption(String monthlyOption) {
         this.monthlyOption = monthlyOption;
     }
 
-    @JsonProperty("monthlyInterval")
     public int getMonthlyInterval() {
         return monthlyInterval;
     }
 
-    @JsonProperty("monthlyInterval")
     public void setMonthlyInterval(int monthlyInterval) {
         this.monthlyInterval = monthlyInterval;
     }
 
-    @JsonProperty("bymonthday")
     public int getBymonthday() {
         return bymonthday;
     }
 
-    @JsonProperty("bymonthday")
     public void setBymonthday(int bymonthday) {
         this.bymonthday = bymonthday;
     }
 
-    @JsonProperty("bysetpos")
     public String getBysetpos() {
         return bysetpos;
     }
 
-    @JsonProperty("bysetpos")
     public void setBysetpos(String bysetpos) {
         this.bysetpos = bysetpos;
     }
 
-    @JsonProperty("byweekday")
     public String getByweekday() {
         return byweekday;
     }
 
-    @JsonProperty("byweekday")
     public void setByweekday(String byweekday) {
         this.byweekday = byweekday;
     }
 
-    @JsonProperty("yearOption")
-    public String getYearOption() {
-        return yearOption;
+    public String getYearlyOption() {
+        return yearlyOption;
     }
 
-    @JsonProperty("yearOption")
-    public void setYearOption(String yearOption) {
-        this.yearOption = yearOption;
+    public void setYearlyOption(String yearlyOption) {
+        this.yearlyOption = yearlyOption;
     }
 
-    @JsonProperty("yearBymonth")
     public int getYearBymonth() {
         return yearBymonth;
     }
 
-    @JsonProperty("yearBymonth")
     public void setYearBymonth(int yearBymonth) {
         this.yearBymonth = yearBymonth;
     }
 
-    @JsonProperty("yearByweekday")
-    public YearByWeekday getYearByweekday() {
+    public YearByweekday getYearByweekday() {
         return yearByweekday;
     }
 
-    @JsonProperty("yearByweekday")
-    public void setYearByweekday(YearByWeekday yearByweekday) {
+    public void setYearByweekday(YearByweekday yearByweekday) {
         this.yearByweekday = yearByweekday;
     }
 
-    @JsonProperty("yearBysetpos")
     public int getYearBysetpos() {
         return yearBysetpos;
     }
 
-    @JsonProperty("yearBysetpos")
     public void setYearBysetpos(int yearBysetpos) {
         this.yearBysetpos = yearBysetpos;
     }
 
-    @JsonProperty("rrule")
     public String getRrule() {
         return rrule;
     }
 
-    @JsonProperty("rrule")
     public void setRrule(String rrule) {
         this.rrule = rrule;
     }
 
-    public static class YearByWeekday {
+    public static class YearByweekday {
         private int weekday;
 
-        @JsonProperty("weekday")
+        // Getter and setter
+
         public int getWeekday() {
             return weekday;
         }
 
-        @JsonProperty("weekday")
         public void setWeekday(int weekday) {
             this.weekday = weekday;
         }
@@ -813,33 +788,28 @@ public class Schedule {
 }
 
 
---------------
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 public class Main {
     public static void main(String[] args) {
-        String jsonString = "{ \"frequency\": \"MONTHLY\", \"interval\": 1, \"dailyOption\": \"every\", \"weeklyInterval\": 1, \"monthlyOption\": \"weekday\", \"monthlyInterval\": 3, \"bymonthday\": 1, \"bysetpos\": \"2nd\", \"byweekday\": \"WE\", \"yearOption\": \"day\", \"yearBymonth\": 1, \"yearByweekday\": { \"weekday\": 0 }, \"yearBysetpos\": 1, \"rrule\": \"RRULE:FREQ=MONTHLY;INTERVAL=3;BYDAY=+2WE\" }";
+        String jsonString = "{ \"frequency\": \"MONTHLY\", \"interval\": 1, \"dailyOption\": \"every\", \"weeklyInterval\": 1, \"monthlyOption\": \"weekday\", \"monthlyInterval\": 3, \"bymonthday\": 1, \"bysetpos\": \"2nd\", \"byweekday\": \"WE\", \"yearlyOption\": \"day\", \"yearBymonth\": 1, \"yearByweekday\": { \"weekday\": 0 }, \"yearBysetpos\": 1, \"rrule\": \"RRULE:FREQ=MONTHLY;INTERVAL=3;BYDAY=+2WE\" }";
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            Schedule schedule = objectMapper.readValue(jsonString, Schedule.class);
-            System.out.println("Frequency: " + schedule.getFrequency());
-            System.out.println("Interval: " + schedule.getInterval());
-            System.out.println("Daily Option: " + schedule.getDailyOption());
-            System.out.println("Weekly Interval: " + schedule.getWeeklyInterval());
-            System.out.println("Monthly Option: " + schedule.getMonthlyOption());
-            System.out.println("Monthly Interval: " + schedule.getMonthlyInterval());
-            System.out.println("By Month Day: " + schedule.getBymonthday());
-            System.out.println("By Set Pos: " + schedule.getBysetpos());
-            System.out.println("By Weekday: " + schedule.getByweekday());
-            System.out.println("Year Option: " + schedule.getYearOption());
-            System.out.println("Year By Month: " + schedule.getYearBymonth());
-            System.out.println("Year By Weekday: " + schedule.getYearByweekday().getWeekday());
-            System.out.println("Year By Set Pos: " + schedule.getYearBysetpos());
-            System.out.println("RRULE: " + schedule.getRrule());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Gson gson = new Gson();
+        Schedule schedule = gson.fromJson(jsonString, Schedule.class);
+
+        System.out.println("Frequency: " + schedule.getFrequency());
+        System.out.println("Interval: " + schedule.getInterval());
+        System.out.println("Daily Option: " + schedule.getDailyOption());
+        System.out.println("Weekly Interval: " + schedule.getWeeklyInterval());
+        System.out.println("Monthly Option: " + schedule.getMonthlyOption());
+        System.out.println("Monthly Interval: " + schedule.getMonthlyInterval());
+        System.out.println("Bymonthday: " + schedule.getBymonthday());
+        System.out.println("Bysetpos: " + schedule.getBysetpos());
+        System.out.println("Byweekday: " + schedule.getByweekday());
+        System.out.println("Yearly Option: " + schedule.getYearlyOption());
+        System.out.println("Year Bymonth: " + schedule.getYearBymonth());
+        System.out.println("Year Byweekday: " + schedule.getYearByweekday().getWeekday());
+        System.out.println("Year Bysetpos: " + schedule.getYearBysetpos());
+        System.out.println("Rrule: " + schedule.getRrule());
     }
 }
