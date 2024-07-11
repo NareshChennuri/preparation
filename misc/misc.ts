@@ -586,3 +586,22 @@ private getWeekday(day: string): Weekday | null {
     default: return null;
   }
 }
+
+================
+
+// Helper method to convert setpos from number to string
+private convertSetposToString(setpos: number | number[]): string | null {
+  const pos = Array.isArray(setpos) ? setpos[0] : setpos;
+  if (pos === -1) return 'last';
+  const suffix = (pos === 1 || pos === 21 || pos === 31) ? 'st' :
+                 (pos === 2 || pos === 22) ? 'nd' :
+                 (pos === 3 || pos === 23) ? 'rd' : 'th';
+  return pos + suffix;
+}
+
+// Helper method to convert setpos from string to number
+private convertSetposToNumber(setpos: string): number | null {
+  if (setpos === 'last') return -1;
+  const match = setpos.match(/^(\d+)(st|nd|rd|th)$/);
+  return match ? parseInt(match[1], 10) : null;
+}
