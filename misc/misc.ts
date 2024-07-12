@@ -829,3 +829,51 @@ SUMMARY:Weekly Meeting
 RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE;UNTIL=20240717T000000Z
 END:VEVENT
 END:VCALENDAR
+
+
+=====
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.DayOfWeek;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
+
+public class NextStartDate {
+    public static String getNextStartDate(String startDate, List<DayOfWeek> byDays) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        LocalDate date = LocalDate.parse(startDate, formatter);
+
+        // Get the current day of the week
+        DayOfWeek currentDay = date.getDayOfWeek();
+
+        // Sort byDays to make sure they are in ascending order
+        Collections.sort(byDays);
+
+        // Find the next valid day
+        DayOfWeek nextDay = byDays.stream()
+                                  .filter(day -> day.getValue() > currentDay.getValue())
+                                  .findFirst()
+                                  .orElse(byDays.get(0)); // If no valid day is found, take the first day of the next week
+
+        // Calculate the days to add
+        int daysToAdd = nextDay.getValue() - currentDay.getValue();
+        if (daysToAdd <= 0) {
+            daysToAdd += 7;
+        }
+
+        LocalDate nextStartDate = date.plusDays(daysToAdd);
+
+        // Format the new date as 'MM-dd-yyyy'
+        return nextStartDate.format(formatter);
+    }
+
+    public static void main(String[] args) {
+        String startDate = "07-15-2024";
+        List<DayOfWeek> byDays = Arrays.asList(DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+
+        System.out.println(getNextStartDate(startDate, byDays));
+        // Output: '07-18-2024'
+    }
+}
