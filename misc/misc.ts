@@ -877,3 +877,233 @@ public class NextStartDate {
         // Output: '07-18-2024'
     }
 }
+
+
+
+===========
+
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-label>Select Frequency</mat-label>
+    <mat-select formControlName="frequency">
+      <mat-option *ngFor="let freq of frequencies" [value]="freq">{{ freq }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Interval</mat-label>
+    <input matInput type="number" formControlName="interval" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Select Weekdays</mat-label>
+    <div *ngFor="let day of weekdays">
+      <mat-checkbox (change)="onCheckboxChange($event)" [value]="day">{{ day }}</mat-checkbox>
+    </div>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Select Set Position</mat-label>
+    <mat-select formControlName="bysetpos">
+      <mat-option *ngFor="let pos of setposOptions" [value]="pos">{{ pos }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Count</mat-label>
+    <input matInput type="number" formControlName="count" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Until</mat-label>
+    <input matInput type="date" formControlName="until" />
+  </mat-form-field>
+</form>
+
+<!-- Display the next and last occurrence dates -->
+<div *ngIf="nextOccurrence">
+  <p>Next occurrence: {{ nextOccurrence }}</p>
+</div>
+<div *ngIf="lastOccurrence">
+  <p>Last occurrence: {{ lastOccurrence }}</p>
+</div>
+
+<!-- Display an error message if the date range is invalid -->
+<div *ngIf="dateRangeError">
+  <p style="color: red;">Error: The event start date and end date are not within the valid date range for the recurrence pattern.</p>
+</div>
+
+
+==============
+
+import { Component, OnInit, Input } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { RRule, Weekday } from 'rrule';
+
+@Component({
+  selector: 'app-recurring-pattern-widget',
+  templateUrl: './recurring-pattern-widget.component.html',
+  styleUrls: ['./recurring-pattern-widget.component.css']
+})
+export class RecurringPatternWidgetComponent implements OnInit {
+  @Input() rruleStr: string = '';
+  @Input() eventStartDate: string = ''; // 'YYYY-MM-DD' format
+  @Input() eventEndDate: string = ''; // 'YYYY-MM-DD' format
+  
+  form: FormGroup;
+  frequencies = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'];
+  weekdays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+  setposOptions = ['1st', '2nd', '3rd', '4th', 'last'];
+
+  nextOccurrence: string | null = null; // To store the next occurrence date
+  lastOccurrence: string | null = null; // To store the last occurrence date
+  dateRangeError: boolean = false; // To indicate if there's an error with the date range
+
+  constructor(private fb: FormBuilder) {
+    this.form = this.fb.group({
+      frequency: ['DAILY'],
+      interval: [1],
+      byweekday: this.fb.array([]),
+      bysetpos: [null],
+      count: [null],
+      until: [null],
+    });
+
+    this.form.valueChanges.subscribe(() => {
+      this.generateRRule();
+    });
+  }
+
+  ngOnInit() {
+    if (this.rruleStr) {
+      this.parseRRule(this.rruleStr);
+    }
+  }
+
+  get byweekday(): FormArray {
+    return this.form.get('byweekday') as FormArray;
+  }
+
+  onCheckboxChange(event: any) {
+    const checkArray: FormArray = this.form.get('byweekday') as FormArray;
+    if (event.target.checked) {
+      checkArray.push(this.fb.control(event.target.value));
+    } else {
+      const index = checkArray.controls.findIndex(x => x.value === event.target.value);
+      checkArray.removeAt(index);
+    }
+  }
+
+  generateRRule(): string {
+    const formValue = this.form.value;
+
+    const options: any = {
+      freq: RRule[formValue.frequency],
+      interval: formValue.interval,
+    };
+
+    if (formValue.byweekday.length) {
+      options.byweekday = formValue.byweekday.map(day => this.getWeekday(day));
+    }
+
+    if (formValue.bysetpos !== null) {
+      options.bysetpos = this.convertSetposToNumber(formValue.bysetpos);
+    }
+
+    if (formValue.count) {
+      options.count = formValue.count;
+    } else if (formValue.until) {
+      options.until = formValue.until;
+    }
+
+    const rule = new RRule(options);
+    this.calculateNextAndLastOccurrence(rule);
+    return rule.toString();
+  }
+
+  parseRRule(rruleStr: string) {
+    const rule = RRule.fromString(rruleStr);
+    this.form.patchValue({
+      frequency: RRule.FREQUENCIES[rule.options.freq].toUpperCase(),
+      interval: rule.options.interval || 1,
+      bysetpos: rule.options.bysetpos ? this.convertSetposToString(rule.options.bysetpos) : null,
+      count: rule.options.count || null,
+      until: rule.options.until || null
+    });
+
+    if (rule.options.byweekday) {
+      rule.options.byweekday.forEach((weekday: Weekday) => {
+        this.byweekday.push(this.fb.control(this.parseWeekday(weekday)));
+      });
+    }
+
+    this.calculateNextAndLastOccurrence(rule);
+  }
+
+  private convertSetposToString(setpos: number | number[]): string | null {
+    const pos = Array.isArray(setpos) ? setpos[0] : setpos;
+    if (pos === -1) return 'last';
+    const suffix = (pos === 1 || pos === 21 || pos === 31) ? 'st' :
+                   (pos === 2 || pos === 22) ? 'nd' :
+                   (pos === 3 || pos === 23) ? 'rd' : 'th';
+    return pos + suffix;
+  }
+
+  private convertSetposToNumber(setpos: string): number | null {
+    if (setpos === 'last') return -1;
+    const match = setpos.match(/^(\d+)(st|nd|rd|th)$/);
+    return match ? parseInt(match[1], 10) : null;
+  }
+
+  private getWeekday(day: string | number): Weekday {
+    if (typeof day === 'string') {
+      switch (day) {
+        case 'MO': return RRule.MO;
+        case 'TU': return RRule.TU;
+        case 'WE': return RRule.WE;
+        case 'TH': return RRule.TH;
+        case 'FR': return RRule.FR;
+        case 'SA': return RRule.SA;
+        case 'SU': return RRule.SU;
+        default: throw new Error(`Invalid weekday: ${day}`);
+      }
+    } else if (typeof day === 'number') {
+      switch (day) {
+        case 0: return RRule.MO;
+        case 1: return RRule.TU;
+        case 2: return RRule.WE;
+        case 3: return RRule.TH;
+        case 4: return RRule.FR;
+        case 5: return RRule.SA;
+        case 6: return RRule.SU;
+        default: throw new Error(`Invalid weekday number: ${day}`);
+      }
+    }
+    throw new Error(`Invalid weekday: ${day}`);
+  }
+
+  private parseWeekday(weekday: Weekday): string {
+    const day = weekday.toString().toUpperCase();
+    const nth = weekday.nth();
+    return nth ? `${nth}${day}` : day;
+  }
+
+  // Calculate the next and last occurrence of the event
+  private calculateNextAndLastOccurrence(rule: RRule) {
+    const startDate = new Date(this.eventStartDate);
+    const endDate = new Date(this.eventEndDate);
+    const nextDate = rule.after(startDate, true);
+    this.nextOccurrence = nextDate ? nextDate.toISOString().split('T')[0] : null;
+
+    const allOccurrences = rule.between(startDate, endDate, true);
+    const lastDate = allOccurrences.length > 0 ? allOccurrences[allOccurrences.length - 1] : null;
+    this.lastOccurrence = lastDate ? lastDate.toISOString().split('T')[0] : null;
+
+    // Check if the event start date and event end date fall within the date range
+    if (!this.nextOccurrence || !this.lastOccurrence || startDate > endDate) {
+      this.dateRangeError = true;
+    } else {
+      this.dateRangeError = false;
+    }
+  }
+}
