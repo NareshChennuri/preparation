@@ -1107,3 +1107,13 @@ export class RecurringPatternWidgetComponent implements OnInit {
     }
   }
 }
+
+
+===
+
+
+this.startDateMismatchError = nextDate && (new Date(this.eventStartDate).toISOString().split('T')[0] !== nextDate.toISOString().split('T')[0]);
+
+<div *ngIf="startDateMismatchError">
+  <p style="color: red;">Error: The event start date does not match the next occurrence date.</p>
+</div>
