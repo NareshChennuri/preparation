@@ -1117,3 +1117,52 @@ this.startDateMismatchError = nextDate && (new Date(this.eventStartDate).toISOSt
 <div *ngIf="startDateMismatchError">
   <p style="color: red;">Error: The event start date does not match the next occurrence date.</p>
 </div>
+
+
+=======================
+
+
+function isMatchingDate(date, position, dayOfWeek) {
+  const dayMap = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  
+  if (!(dayOfWeek in dayMap)) {
+    throw new Error('Invalid day of week');
+  }
+  
+  const givenDate = new Date(date);
+  const month = givenDate.getMonth();
+  const year = givenDate.getFullYear();
+  const dayOfWeekIndex = dayMap[dayOfWeek];
+  
+  let occurrence = 0;
+  let currentDate = new Date(year, month, 1);
+  let matchingDates = [];
+  
+  while (currentDate.getMonth() === month) {
+    if (currentDate.getDay() === dayOfWeekIndex) {
+      matchingDates.push(new Date(currentDate));
+      occurrence++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  
+  let targetDate;
+  if (position === 'last') {
+    targetDate = matchingDates[matchingDates.length - 1];
+  } else {
+    const targetOccurrence = parseInt(position, 10);
+    if (targetOccurrence > occurrence) {
+      return false;
+    }
+    targetDate = matchingDates[targetOccurrence - 1];
+  }
+
+  return givenDate.getTime() === targetDate.getTime();
+}
+
+// Example usage
+const date = '2024-07-25'; // The date to check
+const position = '4th'; // Can be '1st', '2nd', '3rd', '4th', or 'last'
+const dayOfWeek = 'TH'; // Can be 'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
+
+console.log(isMatchingDate(date, position, dayOfWeek));  // Output: true or false based on the criteria
