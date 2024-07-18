@@ -1166,3 +1166,50 @@ const position = '4th'; // Can be '1st', '2nd', '3rd', '4th', or 'last'
 const dayOfWeek = 'TH'; // Can be 'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
 
 console.log(isMatchingDate(date, position, dayOfWeek));  // Output: true or false based on the criteria
+
+==================
+function isMatchingDate(date, position, dayOfWeek, month) {
+  const dayMap = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  
+  if (!(dayOfWeek in dayMap)) {
+    throw new Error('Invalid day of week');
+  }
+  
+  const givenDate = new Date(date);
+  const year = givenDate.getFullYear();
+  const monthIndex = month - 1; // Convert month to zero-based index
+  const dayOfWeekIndex = dayMap[dayOfWeek];
+  
+  let occurrence = 0;
+  let currentDate = new Date(year, monthIndex, 1);
+  let matchingDates = [];
+  
+  while (currentDate.getMonth() === monthIndex) {
+    if (currentDate.getDay() === dayOfWeekIndex) {
+      matchingDates.push(new Date(currentDate));
+      occurrence++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  
+  let targetDate;
+  if (position === 'last') {
+    targetDate = matchingDates[matchingDates.length - 1];
+  } else {
+    const targetOccurrence = parseInt(position, 10);
+    if (targetOccurrence > occurrence) {
+      return false;
+    }
+    targetDate = matchingDates[targetOccurrence - 1];
+  }
+
+  return givenDate.getTime() === targetDate.getTime();
+}
+
+// Example usage
+const date = '2024-07-25'; // The date to check
+const position = '4th'; // Can be '1st', '2nd', '3rd', '4th', or 'last'
+const dayOfWeek = 'TH'; // Can be 'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
+const month = 7; // Month as a number (1 for January, 12 for December)
+
+console.log(isMatchingDate(date, position, dayOfWeek, month));  // Output: true or false based on the criteria
