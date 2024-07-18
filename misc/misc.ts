@@ -1213,3 +1213,23 @@ const dayOfWeek = 'TH'; // Can be 'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
 const month = 7; // Month as a number (1 for January, 12 for December)
 
 console.log(isMatchingDate(date, position, dayOfWeek, month));  // Output: true or false based on the criteria
+
+
+=============
+
+function isWithinThreeDays(date) {
+  const givenDate = new Date(date);
+  const currentDate = new Date();
+  
+  // Calculate the difference in milliseconds
+  const diffTime = Math.abs(currentDate - givenDate);
+  
+  // Convert milliseconds to days
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  // Check if the difference in days is 3 or less
+  return diffDays <= 3;
+}
+
+// Example usage:
+console.log(isWithinThreeDays('2024-07-15')); // Replace with your date to test
