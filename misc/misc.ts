@@ -1239,3 +1239,22 @@ function isWithinThreeDays(date) {
 // Example usage:
 console.log(isWithinThreeDays('2024-07-15')); // Replace with your date to test
 
+========
+
+function isWithinNextThreeDays(date) {
+  const givenDate = new Date(date);
+  const currentDate = new Date();
+
+  // Get the UTC date for both dates
+  const givenDateUTC = Date.UTC(givenDate.getUTCFullYear(), givenDate.getUTCMonth(), givenDate.getUTCDate());
+  const currentDateUTC = Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate());
+
+  // Calculate the difference in milliseconds
+  const diffTime = givenDateUTC - currentDateUTC;
+
+  // Convert milliseconds to days
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  // Check if the given date is within the next 3 days (excluding today)
+  return diffDays > 0 && diffDays <= 3;
+}
