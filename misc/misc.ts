@@ -1258,3 +1258,40 @@ function isWithinNextThreeDays(date) {
   // Check if the given date is within the next 3 days (excluding today)
   return diffDays > 0 && diffDays <= 3;
 }
+
+
+=================
+
+
+function deepEqual(obj1, obj2) {
+  if (obj1 === obj2) {
+    return true; // They are the same object
+  }
+
+  if (obj1 == null || typeof obj1 !== 'object' || obj2 == null || typeof obj2 !== 'object') {
+    return false; // If either is null or not an object
+  }
+
+  let keys1 = Object.keys(obj1);
+  let keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) {
+    return false; // Different number of properties
+  }
+
+  for (let key of keys1) {
+    if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+      return false; // Different properties or values
+    }
+  }
+
+  return true; // All properties and values are equal
+}
+
+// Example usage:
+const obj1 = { name: "John", age: 30 };
+const obj2 = { name: "John", age: 30 };
+const obj3 = { name: "Jane", age: 25 };
+
+console.log(deepEqual(obj1, obj2)); // true
+console.log(deepEqual(obj1, obj3)); // false
