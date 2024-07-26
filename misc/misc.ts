@@ -1421,3 +1421,22 @@ groups: any[] = [
 ];
 
 modelGroup: any[]; // the selected values
+
+
+selectAll(select: NgModel) {
+  let values: any[] = []; // array which will contain all values
+
+  // loop through all groups and add their items' values to the array
+  for(let group of this.groups){
+    for(let item of group.items){
+      values.push(item.value);
+    }
+  }
+
+  // submit the array with all values
+  select.update.emit(values);
+}
+
+deselectAll(select: NgModel) {
+  select.update.emit([]);
+}
