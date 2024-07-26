@@ -1295,3 +1295,129 @@ const obj3 = { name: "Jane", age: 25 };
 
 console.log(deepEqual(obj1, obj2)); // true
 console.log(deepEqual(obj1, obj3)); // false
+
+===========================
+
+<mat-form-field>
+	<mat-select placeholder="State2" [(ngModel)]="modelGroup" multiple #itemSelect="ngModel">
+
+		<mat-option class="filter-option" disabled="disabled">
+			<button mat-button (click)="selectAll(itemSelect)">Seleziona Tutti</button>
+			<button mat-button (click)="deselectAll(itemSelect)">Deseleziona Tutti</button>
+		</mat-option>
+
+    <!-- Loop through each group via the groups array -->
+		<mat-optgroup *ngFor="let group of groups" [label]="group.name">
+			<mat-option *ngFor="let item of group.items" [value]="item.value">
+				{{item.label}}
+			</mat-option>
+		</mat-optgroup>
+	</mat-select>
+</mat-form-field>
+
+
+
+groups: any[] = [
+  {
+    name: 'ETHERNET',
+    items: [
+      {
+        label: "640K",
+        value: "BS640KB_ETHERNET",
+        defaultValue: true
+      },
+      {
+        label: "7MB",
+        value: "BS7MB_ETHERNET",
+        defaultValue: true
+      },
+      {
+        label: "7MB NOQinQ",
+        value: "BS7MB_ETHERNET_NOQinQ",
+        defaultValue: true
+      },
+      {
+        label: "20MB",
+        value: "BS20MB_ETHERNET",
+        defaultValue: true
+      }
+    ]
+  },
+  {
+    name: 'ATM',
+    items: [
+      {
+        label: "640K",
+        value: "BS640K_ATM",
+        defaultValue: true
+      },
+      {
+        label: "7MB",
+        value: "BS7M_ATM",
+        defaultValue: true
+      },
+      {
+        label: "20MB",
+        value: "BS20M_ATM",
+        defaultValue: true
+      }
+    ]
+  },
+  {
+    name: 'ETH',
+    items: [
+      {
+        label: "2MB",
+        value: "BS2MB_SHDSL_ETH",
+        defaultValue: true
+      },
+      {
+        label: "4MB IMA",
+        value: "BS4MB_SHDSL_ETH_IMA",
+        defaultValue: true
+      },
+      {
+        label: "6MB IMA",
+        value: "BS6MB_SHDSL_ETH_IMA",
+        defaultValue: true
+      },
+      {
+        label: "8MB IMA",
+        value: "BS8MB_SHDSL_ETH_IMA",
+        defaultValue: true
+      }
+    ]
+  },
+  {
+    name: 'SHDSL ATM',
+    items: [
+      {
+        label: "2MB",
+        value: "BS2MB_SHDSL",
+        defaultValue: true
+      },
+      {
+        label: "4MB B",
+        value: "BS4MB_SHDSL_B",
+        defaultValue: true
+      },
+      {
+        label: "4MB IMA",
+        value: "BS4MB_SHDSL_IMA",
+        defaultValue: true
+      },
+      {
+        label: "6MB IMA",
+        value: "BS6MB_SHDSL_IMA",
+        defaultValue: true
+      },
+      {
+        label: "8MB IMA",
+        value: "BS8MB_SHDSL_IMA",
+        defaultValue: true
+      }
+    ]
+  }
+];
+
+modelGroup: any[]; // the selected values
