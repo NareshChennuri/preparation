@@ -1440,3 +1440,140 @@ selectAll(select: NgModel) {
 deselectAll(select: NgModel) {
   select.update.emit([]);
 }
+
+=======================
+[
+  { "id": 1, "name": "Finance" },
+  { "id": 2, "name": "Healthcare" },
+  { "id": 3, "name": "Technology" },
+  { "id": 4, "name": "Retail" },
+  { "id": 5, "name": "Education" },
+  { "id": 6, "name": "Manufacturing" },
+  { "id": 7, "name": "Real Estate" },
+  { "id": 8, "name": "Transportation" },
+  { "id": 9, "name": "Entertainment" },
+  { "id": 10, "name": "Hospitality" }
+]
+[
+  { "id": 1, "name": "North America" },
+  { "id": 2, "name": "Europe" },
+  { "id": 3, "name": "Asia" },
+  { "id": 4, "name": "South America" },
+  { "id": 5, "name": "Australia" },
+  { "id": 6, "name": "Africa" },
+  { "id": 7, "name": "Middle East" },
+  { "id": 8, "name": "Central America" },
+  { "id": 9, "name": "Caribbean" },
+  { "id": 10, "name": "Antarctica" }
+]
+
+
+import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { ApiService } from './api.service';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  linesOfBusiness: any[] = [];
+  filteredLinesOfBusiness: Observable<any[]>;
+  businessControl = new FormControl();
+
+  regions: any[] = [];
+  filteredRegions: Observable<any[]>;
+  regionControl = new FormControl();
+
+  chipList: string[] = [];
+
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.apiService.getLinesOfBusiness().subscribe(data => {
+      this.linesOfBusiness = data;
+      this.filteredLinesOfBusiness = this.businessControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value, this.linesOfBusiness))
+      );
+    });
+
+    this.apiService.getRegions().subscribe(data => {
+      this.regions = data;
+      this.filteredRegions = this.regionControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value, this.regions))
+      );
+    });
+  }
+
+  private _filter(value: string, options: any[]): any[] {
+    const filterValue = value.toLowerCase();
+    return options.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
+  addChip(event: any, control: FormControl): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.chipList.push(value);
+    }
+    event.chipInput!.clear();
+    control.setValue('');
+  }
+
+  removeChip(chip: string): void {
+    const index = this.chipList.indexOf(chip);
+    if (index >= 0) {
+      this.chipList.splice(index, 1);
+    }
+  }
+}
+
+
+<div class="container">
+  <!-- Line of Business Autocomplete -->
+  <mat-form-field>
+    <input matInput [formControl]="businessControl" [matAutocomplete]="businessAuto" placeholder="Line of Business">
+    <mat-autocomplete #businessAuto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredLinesOfBusiness | async" [value]="option.name">
+        {{ option.id }} - {{ option.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Region Autocomplete -->
+  <mat-form-field>
+    <input matInput [formControl]="regionControl" [matAutocomplete]="regionAuto" placeholder="Region">
+    <mat-autocomplete #regionAuto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredRegions | async" [value]="option.name">
+        {{ option.id }} - {{ option.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <!-- Chip List -->
+  <mat-chip-list #chipList>
+    <mat-chip *ngFor="let chip of chipList" (removed)="removeChip(chip)">
+      {{ chip }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input matInput placeholder="New chip" [formControl]="businessControl" (matChipInputTokenEnd)="addChip($event, businessControl)">
+    <input matInput placeholder="New chip" [formControl]="regionControl" (matChipInputTokenEnd)="addChip($event, regionControl)">
+  </mat-chip-list>
+</div>
+
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+mat-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
