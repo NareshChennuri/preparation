@@ -1442,138 +1442,232 @@ deselectAll(select: NgModel) {
 }
 
 =======================
-[
-  { "id": 1, "name": "Finance" },
-  { "id": 2, "name": "Healthcare" },
-  { "id": 3, "name": "Technology" },
-  { "id": 4, "name": "Retail" },
-  { "id": 5, "name": "Education" },
-  { "id": 6, "name": "Manufacturing" },
-  { "id": 7, "name": "Real Estate" },
-  { "id": 8, "name": "Transportation" },
-  { "id": 9, "name": "Entertainment" },
-  { "id": 10, "name": "Hospitality" }
-]
-[
-  { "id": 1, "name": "North America" },
-  { "id": 2, "name": "Europe" },
-  { "id": 3, "name": "Asia" },
-  { "id": 4, "name": "South America" },
-  { "id": 5, "name": "Australia" },
-  { "id": 6, "name": "Africa" },
-  { "id": 7, "name": "Middle East" },
-  { "id": 8, "name": "Central America" },
-  { "id": 9, "name": "Caribbean" },
-  { "id": 10, "name": "Antarctica" }
-]
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
+import {MatChipInputEvent} from '@angular/material/chips';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
-
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { ApiService } from './api.service';
-
+/**
+ * @title Chips Autocomplete
+ */
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'chips-autocomplete-example',
+  templateUrl: 'chips-autocomplete-example.html',
+  styleUrls: ['chips-autocomplete-example.css'],
 })
-export class AppComponent implements OnInit {
-  linesOfBusiness: any[] = [];
-  filteredLinesOfBusiness: Observable<any[]>;
-  businessControl = new FormControl();
+export class ChipsAutocompleteExample {
+  separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  regions: any[] = [];
-  filteredRegions: Observable<any[]>;
-  regionControl = new FormControl();
+  // Line of Business
+  lobCtrl = new FormControl('');
+  filteredLobs: Observable<{ key: string, value: string }[]>;
+  selectedLobs: { key: string, value: string }[] = [];
+  allLobs: { key: string, value: string }[] = [
+    { key: '101', value: 'Finance' },
+    { key: '102', value: 'Healthcare' },
+    { key: '103', value: 'Education' },
+    { key: '104', value: 'Technology' },
+    { key: '105', value: 'Retail' }
+  ];
 
-  chipList: string[] = [];
+  // Regions
+  regionCtrl = new FormControl('');
+  filteredRegions: Observable<{ key: string, value: string }[]>;
+  selectedRegions: { key: string, value: string }[] = [];
+  allRegions: { key: string, value: string }[] = [
+    { key: '201', value: 'North America' },
+    { key: '202', value: 'Europe' },
+    { key: '203', value: 'Asia' },
+    { key: '204', value: 'South America' },
+    { key: '205', value: 'Africa' }
+  ];
 
-  constructor(private apiService: ApiService) {}
+  selectable = true;
+  removable = true;
 
-  ngOnInit() {
-    this.apiService.getLinesOfBusiness().subscribe(data => {
-      this.linesOfBusiness = data;
-      this.filteredLinesOfBusiness = this.businessControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value, this.linesOfBusiness))
-      );
-    });
+  @ViewChild('lobInput') lobInput: ElementRef<HTMLInputElement>;
+  @ViewChild('regionInput') regionInput: ElementRef<HTMLInputElement>;
 
-    this.apiService.getRegions().subscribe(data => {
-      this.regions = data;
-      this.filteredRegions = this.regionControl.valueChanges.pipe(
-        startWith(''),
-        map(value => this._filter(value, this.regions))
-      );
-    });
+  constructor() {
+    // Line of Business
+    this.filteredLobs = this.lobCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterLobs(value || ''))
+    );
+
+    // Regions
+    this.filteredRegions = this.regionCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterRegions(value || ''))
+    );
   }
 
-  private _filter(value: string, options: any[]): any[] {
-    const filterValue = value.toLowerCase();
-    return options.filter(option => option.name.toLowerCase().includes(filterValue));
-  }
+  // Line of Business methods
+  addLob(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value.trim();
 
-  addChip(event: any, control: FormControl): void {
-    const value = (event.value || '').trim();
     if (value) {
-      this.chipList.push(value);
+      const lob = this.allLobs.find(l => l.value.toLowerCase() === value.toLowerCase());
+      if (lob && !this.selectedLobs.includes(lob)) {
+        this.selectedLobs.push(lob);
+      }
     }
-    event.chipInput!.clear();
-    control.setValue('');
+
+    if (input) {
+      input.value = '';
+    }
+
+    this.lobCtrl.setValue(null);
   }
 
-  removeChip(chip: string): void {
-    const index = this.chipList.indexOf(chip);
+  removeLob(lob: { key: string, value: string }): void {
+    const index = this.selectedLobs.indexOf(lob);
     if (index >= 0) {
-      this.chipList.splice(index, 1);
+      this.selectedLobs.splice(index, 1);
     }
+    this.filterLobs();
+  }
+
+  selectedLob(event: MatAutocompleteSelectedEvent): void {
+    const lob = event.option.value;
+    if (!this.selectedLobs.includes(lob)) {
+      this.selectedLobs.push(lob);
+    }
+    this.lobInput.nativeElement.value = '';
+    this.lobCtrl.setValue(null);
+    this.filterLobs();
+  }
+
+  private _filterLobs(value: string): { key: string, value: string }[] {
+    const filterValue = value.toLowerCase();
+    return this.allLobs.filter(lob => 
+      lob.value.toLowerCase().includes(filterValue) && 
+      !this.selectedLobs.includes(lob)
+    );
+  }
+
+  // Regions methods
+  addRegion(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value.trim();
+
+    if (value) {
+      const region = this.allRegions.find(r => r.value.toLowerCase() === value.toLowerCase());
+      if (region && !this.selectedRegions.includes(region)) {
+        this.selectedRegions.push(region);
+      }
+    }
+
+    if (input) {
+      input.value = '';
+    }
+
+    this.regionCtrl.setValue(null);
+  }
+
+  removeRegion(region: { key: string, value: string }): void {
+    const index = this.selectedRegions.indexOf(region);
+    if (index >= 0) {
+      this.selectedRegions.splice(index, 1);
+    }
+    this.filterRegions();
+  }
+
+  selectedRegion(event: MatAutocompleteSelectedEvent): void {
+    const region = event.option.value;
+    if (!this.selectedRegions.includes(region)) {
+      this.selectedRegions.push(region);
+    }
+    this.regionInput.nativeElement.value = '';
+    this.regionCtrl.setValue(null);
+    this.filterRegions();
+  }
+
+  private _filterRegions(value: string): { key: string, value: string }[] {
+    const filterValue = value.toLowerCase();
+    return this.allRegions.filter(region => 
+      region.value.toLowerCase().includes(filterValue) && 
+      !this.selectedRegions.includes(region)
+    );
+  }
+
+  private filterLobs() {
+    this.filteredLobs = this.lobCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterLobs(value || ''))
+    );
+  }
+
+  private filterRegions() {
+    this.filteredRegions = this.regionCtrl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterRegions(value || ''))
+    );
   }
 }
 
 
-<div class="container">
-  <!-- Line of Business Autocomplete -->
-  <mat-form-field>
-    <input matInput [formControl]="businessControl" [matAutocomplete]="businessAuto" placeholder="Line of Business">
-    <mat-autocomplete #businessAuto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredLinesOfBusiness | async" [value]="option.name">
-        {{ option.id }} - {{ option.name }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
+/**  Copyright 2020 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license */
 
-  <!-- Region Autocomplete -->
-  <mat-form-field>
-    <input matInput [formControl]="regionControl" [matAutocomplete]="regionAuto" placeholder="Region">
-    <mat-autocomplete #regionAuto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredRegions | async" [value]="option.name">
-        {{ option.id }} - {{ option.name }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
 
-  <!-- Chip List -->
-  <mat-chip-list #chipList>
-    <mat-chip *ngFor="let chip of chipList" (removed)="removeChip(chip)">
-      {{ chip }}
-      <mat-icon matChipRemove>cancel</mat-icon>
+    <mat-form-field class="example-chip-list" appearance="fill">
+  <mat-chip-list #chipList1>
+    <mat-chip
+      *ngFor="let lob of selectedLobs"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="removeLob(lob)">
+      {{lob.value}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
     </mat-chip>
-    <input matInput placeholder="New chip" [formControl]="businessControl" (matChipInputTokenEnd)="addChip($event, businessControl)">
-    <input matInput placeholder="New chip" [formControl]="regionControl" (matChipInputTokenEnd)="addChip($event, regionControl)">
+    <input
+      placeholder="New line of business..."
+      #lobInput
+      [formControl]="lobCtrl"
+      [matAutocomplete]="lobAuto"
+      [matChipInputFor]="chipList1"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="addLob($event)">
   </mat-chip-list>
-</div>
+  <mat-autocomplete #lobAuto="matAutocomplete" (optionSelected)="selectedLob($event)">
+    <mat-option *ngFor="let lob of filteredLobs | async" [value]="lob">
+      {{lob.value}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
 
+<mat-form-field class="example-chip-list" appearance="fill">
+  <mat-chip-list #chipList2>
+    <mat-chip
+      *ngFor="let region of selectedRegions"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="removeRegion(region)">
+      {{region.value}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+    <input
+      placeholder="New region..."
+      #regionInput
+      [formControl]="regionCtrl"
+      [matAutocomplete]="regionAuto"
+      [matChipInputFor]="chipList2"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="addRegion($event)">
+  </mat-chip-list>
+  <mat-autocomplete #regionAuto="matAutocomplete" (optionSelected)="selectedRegion($event)">
+    <mat-option *ngFor="let region of filteredRegions | async" [value]="region">
+      {{region.value}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
 
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-mat-chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.example-chip-list {
+  width: 100%;
 }
