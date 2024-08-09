@@ -1671,3 +1671,25 @@ export class ChipsAutocompleteExample {
 .example-chip-list {
   width: 100%;
 }
+
+
+
+===============
+
+
+const { facilitatorForm, learningForm } = data;
+
+const teamMemberDetails = {
+  ...learningForm, // Spread the properties of learningForm into teamMemberDetails
+  role: facilitatorForm.role, // Add the role from facilitatorForm
+  facilitatorDetails: { 
+    // Spread the remaining properties from facilitatorForm into facilitatorDetails
+    biggestStrength: facilitatorForm.biggestStrength,
+    helpTFG: facilitatorForm.helpTFG,
+    language: facilitatorForm.language,
+    personalAchievement: facilitatorForm.personalAchievement,
+    programOffering: facilitatorForm.programOffering
+  }
+};
+
+console.log(teamMemberDetails);
