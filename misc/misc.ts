@@ -1906,3 +1906,76 @@ teamData = [
   // More data here
 ];
 
+
+
+=============
+
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+
+@Component({
+  selector: 'app-codeathon-teams',
+  templateUrl: './codeathon-teams.component.html',
+  styleUrls: ['./codeathon-teams.component.css']
+})
+export class CodeathonTeamsComponent {
+  @Input() teams: any[] = [];
+  @Output() backAction = new EventEmitter<void>();
+  @Output() nextAction = new EventEmitter<void>();
+
+  displayedColumns: string[] = ['teamName', 'teamSize', 'membersEnrolled', 'teamMembers', 'action'];
+  dataSource = new MatTableDataSource(this.teams);
+
+  constructor(public dialog: MatDialog) {}
+
+  joinTeam(team: any) {
+    console.log('Joining team:', team);
+  }
+
+  editTeam(team: any) {
+    console.log('Editing team:', team);
+  }
+
+  deleteTeam(team: any) {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialog);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'ok') {
+        this.teams = this.teams.filter(t => t !== team);
+        this.dataSource.data = this.teams;
+      }
+    });
+  }
+
+  back() {
+    this.backAction.emit();
+  }
+
+  next() {
+    this.nextAction.emit();
+  }
+}
+
+@Component({
+  selector: 'delete-confirmation-dialog',
+  template: `
+    <h1 mat-dialog-title>Confirm Delete</h1>
+    <div mat-dialog-content>Are you sure you want to delete this team?</div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-button (click)="onOk()">Ok</button>
+    </div>
+  `,
+})
+export class DeleteConfirmationDialog {
+  constructor(private dialogRef: MatDialogRef<DeleteConfirmationDialog>) {}
+
+  onCancel() {
+    this.dialogRef.close('cancel');
+  }
+
+  onOk() {
+    this.dialogRef.close('ok');
+  }
+}
