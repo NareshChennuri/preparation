@@ -2000,3 +2000,134 @@ onNumberTypeKeyUp(event: KeyboardEvent): void {
   // Update the input field with the cleaned value
   inputElement.value = this.inputValue;
 }
+
+
+=========
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
+@Component({
+  selector: 'app-codeathon-teams-manage',
+  templateUrl: './codeathon-teams-manage.component.html',
+  styleUrls: ['./codeathon-teams-manage.component.css']
+})
+export class CodeathonTeamsManageComponent implements OnInit {
+  @Input() teamData: any;
+  @Input() mode: 'create' | 'edit' = 'create';
+
+  teamForm: FormGroup;
+  teamMembers: string[] = [];
+  allMembers: string[] = ['John', 'Jane', 'Alice', 'Bob', 'Charlie'];
+
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  selectable = true;
+  removable = true;
+  filteredMembers: string[] = this.allMembers;
+
+  constructor(private fb: FormBuilder) {
+    this.teamForm = this.fb.group({
+      teamName: ['', Validators.required],
+      lockTeam: [false],
+      teamMembers: [this.teamMembers]
+    });
+  }
+
+  ngOnInit() {
+    if (this.teamData && this.mode === 'edit') {
+      this.teamForm.patchValue({
+        teamName: this.teamData.teamName,
+        lockTeam: this.teamData.lockTeam,
+        teamMembers: this.teamData.teamMembers
+      });
+      this.teamMembers = [...this.teamData.teamMembers];
+    }
+  }
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value && this.teamMembers.indexOf(value) === -1) {
+      this.teamMembers.push(value);
+    }
+    event.chipInput!.clear();
+    this.teamForm.controls['teamMembers'].setValue(this.teamMembers);
+  }
+
+  remove(member: string): void {
+    const index = this.teamMembers.indexOf(member);
+    if (index >= 0) {
+      this.teamMembers.splice(index, 1);
+      this.teamForm.controls['teamMembers'].setValue(this.teamMembers);
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    if (this.teamMembers.indexOf(event.option.viewValue) === -1) {
+      this.teamMembers.push(event.option.viewValue);
+      this.teamForm.controls['teamMembers'].setValue(this.teamMembers);
+    }
+  }
+
+  submit() {
+    if (this.teamForm.valid) {
+      console.log('Team Data:', this.teamForm.value);
+      // Add logic to handle form submission
+    }
+  }
+
+  filterMembers(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.allMembers.filter(member => member.toLowerCase().includes(filterValue));
+  }
+}
+
+
+
+<form [formGroup]="teamForm" (ngSubmit)="submit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Team Name</mat-label>
+    <input matInput formControlName="teamName" placeholder="Enter team name">
+    <mat-error *ngIf="teamForm.controls['teamName'].hasError('required')">
+      Team Name is required
+    </mat-error>
+  </mat-form-field>
+
+  <mat-slide-toggle formControlName="lockTeam">Locked</mat-slide-toggle>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Team Members</mat-label>
+    <mat-chip-list #chipList aria-label="Team Members">
+      <mat-chip *ngFor="let member of teamMembers" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(member)">
+        {{member}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Add member"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="true"
+        (matChipInputTokenEnd)="add($event)"
+        [matAutocomplete]="auto">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+      <mat-option *ngFor="let member of filteredMembers" [value]="member">
+        {{member}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
+
+
+
+
+<!-- Manage Team Section -->
+<app-codeathon-teams-manage
+  *ngIf="mode !== 'create' || selectedTeamData"
+  [teamData]="selectedTeamData"
+  [mode]="mode">
+</app-codeathon-teams-manage>
