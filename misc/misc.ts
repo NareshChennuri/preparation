@@ -1835,5 +1835,74 @@ export class DeleteConfirmationDialog {
   <button mat-button (click)="next()">Next</button>
 </div>
 
+==========
 
+.locked {
+  background-color: #f0f0f0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" class="mat-table">
+
+    <!-- Team Name Column -->
+    <ng-container matColumnDef="teamName">
+      <th mat-header-cell *matHeaderCellDef> Team Name </th>
+      <td mat-cell *matCellDef="let element" [class.locked]="element.lockTeam">
+        {{element.teamName}}
+      </td>
+    </ng-container>
+
+    <!-- Team Size Column -->
+    <ng-container matColumnDef="teamSize">
+      <th mat-header-cell *matHeaderCellDef> Team Size </th>
+      <td mat-cell *matCellDef="let element" [class.locked]="element.lockTeam">
+        {{element.teamSize}}
+      </td>
+    </ng-container>
+
+    <!-- Members Enrolled Column -->
+    <ng-container matColumnDef="membersEnrolled">
+      <th mat-header-cell *matHeaderCellDef> Members Enrolled </th>
+      <td mat-cell *matCellDef="let element" [class.locked]="element.lockTeam">
+        {{element.membersEnrolled}}
+      </td>
+    </ng-container>
+
+    <!-- Team Members Column -->
+    <ng-container matColumnDef="teamMembers">
+      <th mat-header-cell *matHeaderCellDef> Team Members </th>
+      <td mat-cell *matCellDef="let element" [class.locked]="element.lockTeam">
+        {{element.teamMembers}}
+      </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element" [class.locked]="element.lockTeam">
+        <button mat-button (click)="joinTeam(element)" [disabled]="element.lockTeam">Join</button>
+        <button mat-button (click)="editTeam(element)" [disabled]="element.lockTeam">Edit</button>
+        <button mat-button (click)="deleteTeam(element)" [disabled]="element.lockTeam">Delete</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.locked]="row.lockTeam"></tr>
+  </table>
+</div>
+
+<div class="buttons">
+  <button mat-button (click)="back()">Back</button>
+  <button mat-button (click)="next()">Next</button>
+</div>
+
+
+teamData = [
+  { teamName: 'Team A', teamSize: 10, membersEnrolled: 8, teamMembers: 'John, Jane, ...', lockTeam: false },
+  { teamName: 'Team B', teamSize: 15, membersEnrolled: 12, teamMembers: 'Alice, Bob, ...', lockTeam: true },
+  // More data here
+];
 
