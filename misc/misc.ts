@@ -1693,3 +1693,147 @@ const teamMemberDetails = {
 };
 
 console.log(teamMemberDetails);
+
+
+############################################
+
+export class ParentComponent {
+  teamData = [
+    { teamName: 'Team A', teamSize: 10, membersEnrolled: 8, teamMembers: 'John, Jane, ...' },
+    { teamName: 'Team B', teamSize: 15, membersEnrolled: 12, teamMembers: 'Alice, Bob, ...' },
+    // More data here
+  ];
+
+  goBack() {
+    console.log('Back button clicked');
+  }
+
+  goNext() {
+    console.log('Next button clicked');
+  }
+}
+
+<app-codeathon-teams [teams]="teamData" (backAction)="goBack()" (nextAction)="goNext()"></app-codeathon-teams>
+
+
+
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+
+@Component({
+  selector: 'app-codeathon-teams',
+  templateUrl: './codeathon-teams.component.html',
+  styleUrls: ['./codeathon-teams.component.css']
+})
+export class CodeathonTeamsComponent {
+  @Input() teams: any[] = [];
+  @Output() backAction = new EventEmitter<void>();
+  @Output() nextAction = new EventEmitter<void>();
+
+  displayedColumns: string[] = ['teamName', 'teamSize', 'membersEnrolled', 'teamMembers', 'action'];
+  dataSource = new MatTableDataSource(this.teams);
+
+  constructor(public dialog: MatDialog) {}
+
+  joinTeam(team: any) {
+    console.log('Joining team:', team);
+  }
+
+  editTeam(team: any) {
+    console.log('Editing team:', team);
+  }
+
+  deleteTeam(team: any) {
+    const dialogRef = this.dialog.open(DeleteConfirmationDialog);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'ok') {
+        this.teams = this.teams.filter(t => t !== team);
+        this.dataSource.data = this.teams;
+      }
+    });
+  }
+
+  back() {
+    this.backAction.emit();
+  }
+
+  next() {
+    this.nextAction.emit();
+  }
+}
+
+@Component({
+  selector: 'delete-confirmation-dialog',
+  template: `
+    <h1 mat-dialog-title>Confirm Delete</h1>
+    <div mat-dialog-content>Are you sure you want to delete this team?</div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-button (click)="onOk()">Ok</button>
+    </div>
+  `,
+})
+export class DeleteConfirmationDialog {
+  constructor(private dialogRef: MatDialog) {}
+
+  onCancel() {
+    this.dialogRef.close('cancel');
+  }
+
+  onOk() {
+    this.dialogRef.close('ok');
+  }
+}
+
+
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" class="mat-table">
+
+    <!-- Team Name Column -->
+    <ng-container matColumnDef="teamName">
+      <th mat-header-cell *matHeaderCellDef> Team Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.teamName}} </td>
+    </ng-container>
+
+    <!-- Team Size Column -->
+    <ng-container matColumnDef="teamSize">
+      <th mat-header-cell *matHeaderCellDef> Team Size </th>
+      <td mat-cell *matCellDef="let element"> {{element.teamSize}} </td>
+    </ng-container>
+
+    <!-- Members Enrolled Column -->
+    <ng-container matColumnDef="membersEnrolled">
+      <th mat-header-cell *matHeaderCellDef> Members Enrolled </th>
+      <td mat-cell *matCellDef="let element"> {{element.membersEnrolled}} </td>
+    </ng-container>
+
+    <!-- Team Members Column -->
+    <ng-container matColumnDef="teamMembers">
+      <th mat-header-cell *matHeaderCellDef> Team Members </th>
+      <td mat-cell *matCellDef="let element"> {{element.teamMembers}} </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button (click)="joinTeam(element)">Join</button>
+        <button mat-button (click)="editTeam(element)">Edit</button>
+        <button mat-button (click)="deleteTeam(element)">Delete</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
+<div class="buttons">
+  <button mat-button (click)="back()">Back</button>
+  <button mat-button (click)="next()">Next</button>
+</div>
+
+
+
