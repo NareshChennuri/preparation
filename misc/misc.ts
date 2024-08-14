@@ -1979,3 +1979,24 @@ export class DeleteConfirmationDialog {
     this.dialogRef.close('ok');
   }
 }
+
+
+//////////////////////
+
+(keyup)="onNumberTypeKeyUp($event)"
+
+onNumberTypeKeyUp(event: KeyboardEvent): void {
+  const inputElement = event.target as HTMLInputElement;
+  const charCode = event.which || event.keyCode;
+
+  // Allow only digits (0-9), backspace, delete, left arrow, and right arrow
+  if ((charCode < 48 || charCode > 57) && charCode !== 8 && charCode !== 46 && charCode !== 37 && charCode !== 39) {
+    // Remove the last character if it's not a valid digit
+    this.inputValue = inputElement.value.slice(0, -1);
+  } else {
+    this.inputValue = inputElement.value;
+  }
+
+  // Update the input field with the cleaned value
+  inputElement.value = this.inputValue;
+}
