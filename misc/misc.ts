@@ -2274,3 +2274,89 @@ export class CodeathonTeamsManageComponent implements OnInit {
     }
   }
 }
+
+
+==============
+
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from 'ag-grid-angular';
+import { ICellRendererParams } from 'ag-grid-community';
+
+@Component({
+  selector: 'app-icon-cell-renderer',
+  template: `
+    <div class="icon-cell">
+      <i class="material-icons" (click)="onIconClick()">edit</i>
+    </div>
+  `,
+  styles: [`
+    .icon-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    i.material-icons {
+      cursor: pointer;
+      color: #1976d2; /* Change color as needed */
+    }
+  `]
+})
+export class IconCellRendererComponent implements ICellRendererAngularComp {
+  params: any;
+
+  agInit(params: ICellRendererParams): void {
+    this.params = params;
+  }
+
+  refresh(params: ICellRendererParams): boolean {
+    return false;
+  }
+
+  onIconClick(): void {
+    if (this.params.onClick) {
+      this.params.onClick(this.params.data);
+    }
+  }
+}
+
+
+
+@Component({
+  selector: 'app-my-grid',
+  template: `
+    <ag-grid-angular
+      style="width: 100%; height: 500px;"
+      class="ag-theme-alpine"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [frameworkComponents]="frameworkComponents">
+    </ag-grid-angular>
+  `
+})
+export class MyGridComponent {
+  rowData = [
+    { id: 1, name: 'John Doe' },
+    { id: 2, name: 'Jane Smith' }
+  ];
+
+  columnDefs: ColDef[] = [
+    { field: 'id' },
+    { field: 'name' },
+    {
+      headerName: 'Actions',
+      cellRenderer: 'iconCellRenderer',
+      cellRendererParams: {
+        onClick: this.onEditButtonClick.bind(this)
+      }
+    }
+  ];
+
+  frameworkComponents = {
+    iconCellRenderer: IconCellRendererComponent
+  };
+
+  onEditButtonClick(data: any): void {
+    console.log('Edit button clicked for:', data);
+    // Add your logic here
+  }
+}
