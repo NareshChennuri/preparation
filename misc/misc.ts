@@ -2131,3 +2131,139 @@ export class CodeathonTeamsManageComponent implements OnInit {
   [teamData]="selectedTeamData"
   [mode]="mode">
 </app-codeathon-teams-manage>
+
+
+
+=====
+
+
+<form (ngSubmit)="submit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Team Name</mat-label>
+    <input matInput [formControl]="teamName" placeholder="Enter team name">
+    <mat-error *ngIf="teamName.hasError('required')">
+      Team Name is required
+    </mat-error>
+  </mat-form-field>
+
+  <mat-slide-toggle [formControl]="lockTeam">Locked</mat-slide-toggle>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Team Members</mat-label>
+    <mat-chip-list #chipList aria-label="Team Members">
+      <mat-chip *ngFor="let member of teamMembers" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(member)">
+        {{member.name}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Select member"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="false"
+        [matAutocomplete]="auto"
+        (input)="updateFilteredMembers()">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+      <mat-option *ngFor="let member of filteredMembers | async" [value]="member.name">
+        {{member.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
+
+
+import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface TeamMember {
+  id: number;
+  name: string;
+}
+
+@Component({
+  selector: 'app-codeathon-teams-manage',
+  templateUrl: './codeathon-teams-manage.component.html',
+  styleUrls: ['./codeathon-teams-manage.component.css']
+})
+export class CodeathonTeamsManageComponent implements OnInit {
+  @Input() teamData: any;
+  @Input() mode: 'create' | 'edit' = 'create';
+
+  teamName = new FormControl('');
+  lockTeam = new FormControl(false);
+  teamMembers: TeamMember[] = [];
+  allMembers: TeamMember[] = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Jane' },
+    { id: 3, name: 'Alice' },
+    { id: 4, name: 'Bob' },
+    { id: 5, name: 'Charlie' }
+  ];
+
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  selectable = true;
+  removable = true;
+  filteredMembers: Observable<TeamMember[]>;
+
+  constructor() {}
+
+  ngOnInit() {
+    if (this.teamData && this.mode === 'edit') {
+      this.teamName.setValue(this.teamData.teamName);
+      this.lockTeam.setValue(this.teamData.lockTeam);
+      this.teamMembers = [...this.teamData.teamMembers];
+    }
+
+    this.updateFilteredMembers();
+  }
+
+  updateFilteredMembers(): void {
+    this.filteredMembers = this.teamName.valueChanges.pipe(
+      startWith(''),
+      map(value => this.filter(value || ''))
+    );
+  }
+
+  private filter(value: string): TeamMember[] {
+    const filterValue = value.toLowerCase();
+    return this.allMembers.filter(member =>
+      member.name.toLowerCase().includes(filterValue) &&
+      !this.teamMembers.find(m => m.id === member.id)
+    );
+  }
+
+  remove(member: TeamMember): void {
+    const index = this.teamMembers.indexOf(member);
+    if (index >= 0) {
+      this.teamMembers.splice(index, 1);
+      this.updateFilteredMembers();
+    }
+  }
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const selectedMember = this.allMembers.find(member => member.name === event.option.viewValue);
+    if (selectedMember && !this.teamMembers.find(m => m.id === selectedMember.id)) {
+      this.teamMembers.push(selectedMember);
+      this.updateFilteredMembers();
+    }
+  }
+
+  submit() {
+    if (this.teamName.valid) {
+      const teamData = {
+        teamName: this.teamName.value,
+        lockTeam: this.lockTeam.value,
+        teamMembers: this.teamMembers
+      };
+      console.log('Team Data:', teamData);
+      // Add logic to handle form submission
+    }
+  }
+}
