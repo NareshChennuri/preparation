@@ -2137,44 +2137,6 @@ export class CodeathonTeamsManageComponent implements OnInit {
 =====
 
 
-<form (ngSubmit)="submit()">
-  <mat-form-field appearance="fill">
-    <mat-label>Team Name</mat-label>
-    <input matInput [formControl]="teamName" placeholder="Enter team name">
-    <mat-error *ngIf="teamName.hasError('required')">
-      Team Name is required
-    </mat-error>
-  </mat-form-field>
-
-  <mat-slide-toggle [formControl]="lockTeam">Locked</mat-slide-toggle>
-
-  <mat-form-field appearance="fill">
-    <mat-label>Team Members</mat-label>
-    <mat-chip-list #chipList aria-label="Team Members">
-      <mat-chip *ngFor="let member of teamMembers" [selectable]="selectable" [removable]="removable"
-                (removed)="remove(member)">
-        {{member.name}}
-        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-      </mat-chip>
-      <input
-        placeholder="Select member"
-        [matChipInputFor]="chipList"
-        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-        [matChipInputAddOnBlur]="false"
-        [matAutocomplete]="auto"
-        (input)="updateFilteredMembers()">
-    </mat-chip-list>
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-      <mat-option *ngFor="let member of filteredMembers | async" [value]="member.name">
-        {{member.name}}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-
-  <button mat-raised-button color="primary" type="submit">Submit</button>
-</form>
-
-
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -2198,6 +2160,7 @@ export class CodeathonTeamsManageComponent implements OnInit {
 
   teamName = new FormControl('');
   lockTeam = new FormControl(false);
+  teamMemberInput = new FormControl('');  // New FormControl for the autocomplete input
   teamMembers: TeamMember[] = [];
   allMembers: TeamMember[] = [
     { id: 1, name: 'John' },
@@ -2225,7 +2188,7 @@ export class CodeathonTeamsManageComponent implements OnInit {
   }
 
   updateFilteredMembers(): void {
-    this.filteredMembers = this.teamName.valueChanges.pipe(
+    this.filteredMembers = this.teamMemberInput.valueChanges.pipe(
       startWith(''),
       map(value => this.filter(value || ''))
     );
@@ -2251,6 +2214,7 @@ export class CodeathonTeamsManageComponent implements OnInit {
     const selectedMember = this.allMembers.find(member => member.name === event.option.viewValue);
     if (selectedMember && !this.teamMembers.find(m => m.id === selectedMember.id)) {
       this.teamMembers.push(selectedMember);
+      this.teamMemberInput.setValue('');  // Clear the input after selection
       this.updateFilteredMembers();
     }
   }
@@ -2267,3 +2231,42 @@ export class CodeathonTeamsManageComponent implements OnInit {
     }
   }
 }
+
+
+<form (ngSubmit)="submit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Team Name</mat-label>
+    <input matInput [formControl]="teamName" placeholder="Enter team name">
+    <mat-error *ngIf="teamName.hasError('required')">
+      Team Name is required
+    </mat-error>
+  </mat-form-field>
+
+  <mat-slide-toggle [formControl]="lockTeam">Locked</mat-slide-toggle>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Team Members</mat-label>
+    <mat-chip-list #chipList aria-label="Team Members">
+      <mat-chip *ngFor="let member of teamMembers" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(member)">
+        {{member.name}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input
+        placeholder="Select member"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        [matChipInputAddOnBlur]="false"
+        [formControl]="teamMemberInput"
+        [matAutocomplete]="auto">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+      <mat-option *ngFor="let member of filteredMembers | async" [value]="member.name">
+        {{member.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
+
