@@ -2538,74 +2538,89 @@ mat-table {
   padding: 20px;
 }
 
+.dashboard-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .dashboard-header {
-  margin-bottom: 20px;
-  text-align: center;
+  flex: 1;
+  text-align: left;
 }
 
 .dashboard-content {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
+  justify-content: flex-start;
+  flex: 3;
 }
 
 .dashboard-box {
-  flex: 1 1 200px;
-  min-width: 200px;
+  flex: 1 1 150px;
+  min-width: 150px;
   text-align: center;
   padding: 10px;
 }
 
 
+
 <mat-card class="dashboard-card">
   <mat-card-content>
-    <div class="dashboard-header">
-      <h2>Welcome user, Dave!</h2>
-    </div>
-    <div class="dashboard-content">
-      <!-- Next Event Box -->
-      <mat-card class="dashboard-box">
-        <mat-card-title>Next Event</mat-card-title>
-        <mat-card-content>
-          <div>{{nextEvent?.name}}</div>
-          <div>{{nextEvent?.date | date: 'MMMM d, y'}}</div>
-        </mat-card-content>
-      </mat-card>
+    <div class="dashboard-container">
+      <!-- Welcome Message -->
+      <div class="dashboard-header">
+        <h2>Welcome user, Dave!</h2>
+      </div>
 
-      <!-- Upcoming Events (Next 30 Days) Box -->
-      <mat-card class="dashboard-box">
-        <mat-card-title>Upcoming Events (Next 30 Days)</mat-card-title>
-        <mat-card-content>
-          <div>{{upcomingEvents30Days}}</div>
-        </mat-card-content>
-      </mat-card>
+      <!-- Event Information Boxes -->
+      <div class="dashboard-content">
+        <!-- Next Event Box -->
+        <mat-card class="dashboard-box">
+          <mat-card-title>Next Event</mat-card-title>
+          <mat-card-content>
+            <div>{{nextEvent?.name}}</div>
+            <div>{{nextEvent?.date | date: 'MMMM d, y'}}</div>
+          </mat-card-content>
+        </mat-card>
 
-      <!-- Upcoming Events (Next 90 Days) Box -->
-      <mat-card class="dashboard-box">
-        <mat-card-title>Upcoming Events (Next 90 Days)</mat-card-title>
-        <mat-card-content>
-          <div>{{upcomingEvents90Days}}</div>
-        </mat-card-content>
-      </mat-card>
+        <!-- Upcoming Events (Next 30 Days) Box -->
+        <mat-card class="dashboard-box">
+          <mat-card-title>Upcoming Events (Next 30 Days)</mat-card-title>
+          <mat-card-content>
+            <div>{{upcomingEvents30Days}}</div>
+          </mat-card-content>
+        </mat-card>
 
-      <!-- Completed Events (Since 2023) Box -->
-      <mat-card class="dashboard-box">
-        <mat-card-title>Completed Events (Since 2023)</mat-card-title>
-        <mat-card-content>
-          <div>{{completedEventsSince2023}}</div>
-        </mat-card-content>
-      </mat-card>
+        <!-- Upcoming Events (Next 90 Days) Box -->
+        <mat-card class="dashboard-box">
+          <mat-card-title>Upcoming Events (Next 90 Days)</mat-card-title>
+          <mat-card-content>
+            <div>{{upcomingEvents90Days}}</div>
+          </mat-card-content>
+        </mat-card>
 
-      <!-- Available Events (Next 90 Days) Box -->
-      <mat-card class="dashboard-box">
-        <mat-card-title>Available Events (Next 90 Days)</mat-card-title>
-        <mat-card-content>
-          <div>{{availableEvents90Days}}</div>
-        </mat-card-content>
-      </mat-card>
+        <!-- Completed Events (Since 2023) Box -->
+        <mat-card class="dashboard-box">
+          <mat-card-title>Completed Events (Since 2023)</mat-card-title>
+          <mat-card-content>
+            <div>{{completedEventsSince2023}}</div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Available Events (Next 90 Days) Box -->
+        <mat-card class="dashboard-box">
+          <mat-card-title>Available Events (Next 90 Days)</mat-card-title>
+          <mat-card-content>
+            <div>{{availableEvents90Days}}</div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>
+
 
 
