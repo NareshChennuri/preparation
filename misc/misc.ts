@@ -2531,3 +2531,81 @@ mat-table {
   }
 }
 
+================
+
+.dashboard-card {
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.dashboard-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.dashboard-box {
+  flex: 1 1 200px;
+  min-width: 200px;
+  text-align: center;
+  padding: 10px;
+}
+
+
+<mat-card class="dashboard-card">
+  <mat-card-content>
+    <div class="dashboard-header">
+      <h2>Welcome user, Dave!</h2>
+    </div>
+    <div class="dashboard-content">
+      <!-- Next Event Box -->
+      <mat-card class="dashboard-box">
+        <mat-card-title>Next Event</mat-card-title>
+        <mat-card-content>
+          <div>{{nextEvent?.name}}</div>
+          <div>{{nextEvent?.date | date: 'MMMM d, y'}}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Upcoming Events (Next 30 Days) Box -->
+      <mat-card class="dashboard-box">
+        <mat-card-title>Upcoming Events (Next 30 Days)</mat-card-title>
+        <mat-card-content>
+          <div>{{upcomingEvents30Days}}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Upcoming Events (Next 90 Days) Box -->
+      <mat-card class="dashboard-box">
+        <mat-card-title>Upcoming Events (Next 90 Days)</mat-card-title>
+        <mat-card-content>
+          <div>{{upcomingEvents90Days}}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Completed Events (Since 2023) Box -->
+      <mat-card class="dashboard-box">
+        <mat-card-title>Completed Events (Since 2023)</mat-card-title>
+        <mat-card-content>
+          <div>{{completedEventsSince2023}}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Available Events (Next 90 Days) Box -->
+      <mat-card class="dashboard-box">
+        <mat-card-title>Available Events (Next 90 Days)</mat-card-title>
+        <mat-card-content>
+          <div>{{availableEvents90Days}}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+
