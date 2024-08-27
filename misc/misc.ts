@@ -2360,3 +2360,174 @@ export class MyGridComponent {
     // Add your logic here
   }
 }
+
+
+====================
+
+<mat-accordion>
+
+  <!-- Dashboard Section -->
+  <mat-accordion>
+
+  <!-- Dashboard Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Dashboard </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="dashboard-grid">
+      <!-- Row 1: Labels -->
+      <div class="grid-item label">Next Event</div>
+      <div class="grid-item label">Upcoming Events (Next 30 Days)</div>
+      <div class="grid-item label">Upcoming Events (Next 90 Days)</div>
+      <div class="grid-item label">Completed Events (Since 2023)</div>
+      <div class="grid-item label">Available Events (Next 90 Days)</div>
+      
+      <!-- Row 2: Data -->
+      <div class="grid-item">{{nextEvent?.name}}</div>
+      <div class="grid-item">{{upcomingEvents30Days}}</div>
+      <div class="grid-item">{{upcomingEvents90Days}}</div>
+      <div class="grid-item">{{completedEventsSince2023}}</div>
+      <div class="grid-item">{{availableEvents90Days}}</div>
+
+      <!-- Row 3: Date/Info -->
+      <div class="grid-item">{{nextEvent?.date | date: 'MMMM d'}}</div>
+      <div class="grid-item">Next 30 Days</div>
+      <div class="grid-item">Next 90 Days</div>
+      <div class="grid-item">Since 2023</div>
+      <div class="grid-item">Next 90 Days</div>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Other sections remain the same -->
+</mat-accordion>
+
+
+  <!-- Events Table Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Events Table </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="events-table-section">
+      <table mat-table [dataSource]="eventData" class="mat-elevation-z8">
+        <ng-container matColumnDef="eventName">
+          <th mat-header-cell *matHeaderCellDef> Event Name </th>
+          <td mat-cell *matCellDef="let event"> {{event.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="eventType">
+          <th mat-header-cell *matHeaderCellDef> Event Type </th>
+          <td mat-cell *matCellDef="let event"> {{event.type}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="eventDateTime">
+          <th mat-header-cell *matHeaderCellDef> Event Date-Time </th>
+          <td mat-cell *matCellDef="let event"> {{event.dateTime | date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="registered">
+          <th mat-header-cell *matHeaderCellDef> Registered </th>
+          <td mat-cell *matCellDef="let event"> {{event.registered}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="availableSpaces">
+          <th mat-header-cell *matHeaderCellDef> Available Spaces </th>
+          <td mat-cell *matCellDef="let event"> {{event.availableSpaces}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Action </th>
+          <td mat-cell *matCellDef="let event">
+            <button mat-button color="primary">Register</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Charts Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Charts </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="charts-section">
+      <!-- Insert your chart component here -->
+      <app-event-chart [data]="eventData"></app-event-chart>
+    </div>
+  </mat-expansion-panel>
+
+</mat-accordion>
+
+
+
+import { Component, OnInit } from '@angular/core';
+
+interface EventData {
+  name: string;
+  type: string;
+  dateTime: Date;
+  registered: number;
+  availableSpaces: number;
+}
+
+@Component({
+  selector: 'app-user-dashboard',
+  templateUrl: './user-dashboard.component.html',
+  styleUrls: ['./user-dashboard.component.scss']
+})
+export class UserDashboardComponent implements OnInit {
+  userName = 'John Doe';
+  nextEvent?: EventData;
+  upcomingEvents30Days = 5;
+  upcomingEvents90Days = 12;
+  completedEventsSince2023 = 15;
+  availableEvents90Days = 7;
+
+  eventData: EventData[] = [
+    { name: 'Event 1', type: 'Conference', dateTime: new Date(), registered: 10, availableSpaces: 5 },
+    { name: 'Event 2', type: 'Workshop', dateTime: new Date(), registered: 8, availableSpaces: 10 }
+  ];
+
+  displayedColumns: string[] = ['eventName', 'eventType', 'eventDateTime', 'registered', 'availableSpaces', 'action'];
+
+  ngOnInit() {
+    this.nextEvent = this.eventData[0];
+  }
+}
+
+
+.dashboard-section,
+.events-table-section,
+.charts-section {
+  margin: 10px 0;
+}
+
+mat-expansion-panel {
+  margin-bottom: 10px;
+}
+
+mat-table {
+  width: 100%;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  text-align: center;
+  padding: 10px;
+
+  .grid-item {
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .label {
+    font-weight: bold;
+    background: transparent;
+  }
+}
+
