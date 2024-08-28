@@ -2624,3 +2624,66 @@ mat-table {
 
 
 
+
+
+=============
+
+
+function getEventDetails(eventList) {
+  const currentDate = new Date();
+  const startDate = new Date('2023-01-01');
+  
+  // Calculate the dates for the next 30 and 90 days
+  const next30DaysDate = new Date(currentDate);
+  next30DaysDate.setDate(currentDate.getDate() + 30);
+  
+  const next90DaysDate = new Date(currentDate);
+  next90DaysDate.setDate(currentDate.getDate() + 90);
+  
+  // Filter events for the next 30 and 90 days
+  const upcomingEvents30Days = eventList.filter(event => {
+    const eventDate = new Date(event.eventStartDate);
+    return eventDate >= currentDate && eventDate <= next30DaysDate;
+  });
+
+  const upcomingEvents90Days = eventList.filter(event => {
+    const eventDate = new Date(event.eventStartDate);
+    return eventDate >= currentDate && eventDate <= next90DaysDate;
+  });
+
+  // Find the next upcoming event
+  const nextUpcomingEvent = eventList
+    .filter(event => new Date(event.eventStartDate) >= currentDate)
+    .sort((a, b) => new Date(a.eventStartDate) - new Date(b.eventStartDate))[0];
+
+  // Filter completed events since 2023-01-01
+  const completedEvents = eventList.filter(event => {
+    const eventDate = new Date(event.eventStartDate);
+    return eventDate >= startDate && eventDate < currentDate;
+  });
+
+  return {
+    upcomingEvents30Days,
+    upcomingEvents90Days,
+    nextUpcomingEvent,
+    completedEvents
+  };
+}
+
+// Example usage
+const eventList = [
+  { eventName: "Event 1", eventStartDate: "2024-09-10" },
+  { eventName: "Event 2", eventStartDate: "2024-10-05" },
+  { eventName: "Event 3", eventStartDate: "2024-11-20" },
+  { eventName: "Event 4", eventStartDate: "2024-08-29" },
+  { eventName: "Event 5", eventStartDate: "2023-02-15" },
+  { eventName: "Event 6", eventStartDate: "2023-12-31" }
+];
+
+const eventDetails = getEventDetails(eventList);
+
+console.log("Upcoming Events in Next 30 Days:", eventDetails.upcomingEvents30Days);
+console.log("Upcoming Events in Next 90 Days:", eventDetails.upcomingEvents90Days);
+console.log("Next Upcoming Event:", eventDetails.nextUpcomingEvent);
+console.log("Completed Events since 2023-01-01:", eventDetails.completedEvents);
+
