@@ -2687,3 +2687,187 @@ console.log("Upcoming Events in Next 90 Days:", eventDetails.upcomingEvents90Day
 console.log("Next Upcoming Event:", eventDetails.nextUpcomingEvent);
 console.log("Completed Events since 2023-01-01:", eventDetails.completedEvents);
 
+/********************************************************** */
+
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-leads-dashboard',
+  templateUrl: './leads-dashboard.component.html',
+  styleUrls: ['./leads-dashboard.component.scss']
+})
+export class LeadsDashboardComponent implements OnInit {
+  region: string = 'all'; // Default region selection
+
+  metrics = {
+    all: {
+      eventMetrics: [
+        { label: 'Visits Yesterday', count: 300, isIncrease: true, percentageChange: 10 },
+        { label: 'Visits MTD', count: 1200, isIncrease: false, percentageChange: -5 },
+        { label: 'Visits Last Month', count: 2500, isIncrease: true, percentageChange: 15 },
+        { label: 'Events MTD', count: 50, isIncrease: true, percentageChange: 8 },
+        { label: 'Events Last Month', count: 45, isIncrease: false, percentageChange: -3 },
+        { label: 'Return % Last Month', count: 70, isIncrease: true, percentageChange: 12 }
+      ],
+      registrationMetrics: [
+        { label: 'Registrations Yesterday', count: 150, isIncrease: true, percentageChange: 12 },
+        { label: 'Registrations MTD', count: 800, isIncrease: true, percentageChange: 6 },
+        { label: 'Registrations Last Month', count: 700, isIncrease: false, percentageChange: -4 }
+      ]
+    },
+    east: {
+      eventMetrics: [
+        { label: 'Visits Yesterday', count: 100, isIncrease: false, percentageChange: -5 },
+        { label: 'Visits MTD', count: 500, isIncrease: true, percentageChange: 7 },
+        { label: 'Visits Last Month', count: 1800, isIncrease: true, percentageChange: 20 },
+        { label: 'Events MTD', count: 30, isIncrease: false, percentageChange: -2 },
+        { label: 'Events Last Month', count: 25, isIncrease: true, percentageChange: 5 },
+        { label: 'Return % Last Month', count: 65, isIncrease: false, percentageChange: -3 }
+      ],
+      registrationMetrics: [
+        { label: 'Registrations Yesterday', count: 100, isIncrease: false, percentageChange: -3 },
+        { label: 'Registrations MTD', count: 400, isIncrease: true, percentageChange: 4 },
+        { label: 'Registrations Last Month', count: 380, isIncrease: false, percentageChange: -2 }
+      ]
+    },
+    west: {
+      eventMetrics: [
+        { label: 'Visits Yesterday', count: 200, isIncrease: true, percentageChange: 5 },
+        { label: 'Visits MTD', count: 900, isIncrease: false, percentageChange: -3 },
+        { label: 'Visits Last Month', count: 2200, isIncrease: false, percentageChange: -10 },
+        { label: 'Events MTD', count: 20, isIncrease: true, percentageChange: 12 },
+        { label: 'Events Last Month', count: 15, isIncrease: false, percentageChange: -8 },
+        { label: 'Return % Last Month', count: 72, isIncrease: true, percentageChange: 15 }
+      ],
+      registrationMetrics: [
+        { label: 'Registrations Yesterday', count: 120, isIncrease: true, percentageChange: 8 },
+        { label: 'Registrations MTD', count: 400, isIncrease: false, percentageChange: -6 },
+        { label: 'Registrations Last Month', count: 320, isIncrease: false, percentageChange: -5 }
+      ]
+    }
+  };
+
+  // Table data
+  tableData = [
+    { region: 'East', chapter: 'Chapter A', eventType: 'Conference' },
+    { region: 'West', chapter: 'Chapter B', eventType: 'Workshop' }
+  ];
+
+  displayedColumns: string[] = ['region', 'chapter', 'eventType'];
+
+  chartData = {}; // Data to be used in the chart
+
+  filteredMetrics: any = this.metrics.all; // Default filtered metrics
+
+  constructor() {}
+
+  ngOnInit(): void {}
+
+  onRegionChange(region: string) {
+    this.region = region;
+    this.filteredMetrics = this.metrics[region];
+  }
+
+  // Handle click events for registration metrics
+  onRegistrationMetricClick(metric: any) {
+    // Display the data table and graph based on the selected registration metric
+    console.log(`Displaying table and chart for ${metric.label}`);
+  }
+}
+
+
+
+<div>
+  <!-- Region Selection -->
+  <mat-radio-group [(ngModel)]="region" (change)="onRegionChange(region)">
+    <mat-radio-button value="all">All</mat-radio-button>
+    <mat-radio-button value="east">East</mat-radio-button>
+    <mat-radio-button value="west">West</mat-radio-button>
+  </mat-radio-group>
+
+  <!-- Dashboard Section -->
+  <div fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="16px">
+    <h2>Welcome back, John!</h2>
+    <div fxLayout="row" fxLayoutGap="16px" fxFlex="100%">
+      <!-- Event Metrics -->
+      <mat-card *ngFor="let metric of filteredMetrics.eventMetrics" fxFlex="24%">
+        <h3>{{ metric.label }}</h3>
+        <div>
+          <span>{{ metric.count }}%</span>
+          <span [ngClass]="{'up': metric.isIncrease, 'down': !metric.isIncrease}">
+            <mat-icon>{{ metric.isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ metric.percentageChange }}%
+          </span>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Registration Metrics -->
+  <div fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="16px" fxFlex="100%">
+    <div fxLayout="row" fxLayoutGap="16px" fxFlex="100%">
+      <mat-card *ngFor="let metric of filteredMetrics.registrationMetrics" fxFlex="24%">
+        <h3>{{ metric.label }}</h3>
+        <div>
+          <span>{{ metric.count }}</span>
+          <span [ngClass]="{'up': metric.isIncrease, 'down': !metric.isIncrease}">
+            <mat-icon>{{ metric.isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ metric.percentageChange }}%
+          </span>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Accordion for Table -->
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Event Table</mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card>
+      <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+      <ng-container matColumnDef="region">
+        <th mat-header-cell *matHeaderCellDef> Region </th>
+        <td mat-cell *matCellDef="let element"> {{element.region}} </td>
+      </ng-container>
+      <!-- Other columns for Chapter, EventType -->
+      <ng-container matColumnDef="chapter">
+        <th mat-header-cell *matHeaderCellDef> Chapter </th>
+        <td mat-cell *matCellDef="let element"> {{element.chapter}} </td>
+      </ng-container>
+      <ng-container matColumnDef="eventType">
+        <th mat-header-cell *matHeaderCellDef> Event Type </th>
+        <td mat-cell *matCellDef="let element"> {{element.eventType}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+      </mat-card>
+    </mat-expansion-panel>
+
+    // <mat-expansion-panel>
+    //   <mat-expansion-panel-header>
+    //     <mat-panel-title>Event Chart</mat-panel-title>
+    //   </mat-expansion-panel-header>
+    //   <mat-card>
+    //   </mat-card>
+    // </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+
+
+.up {
+  color: green;
+}
+
+.down {
+  color: red;
+}
+
+mat-card {
+  padding: 16px;
+  text-align: center;
+}
