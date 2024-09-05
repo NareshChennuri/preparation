@@ -2985,3 +2985,131 @@ mat-card {
     </mat-card>
   </mat-expansion-panel>
 </mat-accordion>
+
+
+
+=========
+
+
+<div>
+  <!-- Region Selection -->
+  <mat-radio-group [(ngModel)]="region" (change)="onRegionChange(region)">
+    <mat-radio-button value="all">All</mat-radio-button>
+    <mat-radio-button value="east">East</mat-radio-button>
+    <mat-radio-button value="west">West</mat-radio-button>
+  </mat-radio-group>
+
+  <!-- Container: Divides into two parts -->
+  <div fxLayout="row" fxLayoutGap="16px">
+    <!-- 1st Part: Event Metrics (2x2 Grid) -->
+    <div fxFlex="50%">
+      <div fxLayout="row" fxLayoutGap="16px">
+        <!-- Row 1 -->
+        <mat-card fxFlex="50%">
+          <h3>Most Registered Event Type (last 90 days)</h3>
+          <span>{{ mostRegisteredEventTypeLast90Days.title }}</span>
+        </mat-card>
+        <mat-card fxFlex="50%">
+          <h3>Most Visits (last 90 days)</h3>
+          <span>{{ mostVisitsLast90Days.numberOfVisits }}</span>
+        </mat-card>
+      </div>
+      <div fxLayout="row" fxLayoutGap="16px">
+        <!-- Row 2 -->
+        <mat-card fxFlex="50%">
+          <h3>Most Attended Event Type (last 90 days)</h3>
+          <span>{{ mostAttendedEventTypeLast90Days.title }}</span>
+        </mat-card>
+        <mat-card fxFlex="50%">
+          <h3>Most Registrations (last 90 days)</h3>
+          <span>{{ mostRegistrationsLast90Days.numberOfRegistrations }}</span>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- 2nd Part: Visit and Registration Metrics (2x5 Grid) -->
+    <div fxFlex="50%">
+      <div fxLayout="row" fxLayoutGap="16px">
+        <!-- Row 1 -->
+        <mat-card fxFlex="20%">
+          <h3>Visits Yesterday</h3>
+          <span>{{ filteredMetrics.eventMetrics[0].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[0].isIncrease, 'down': !filteredMetrics.eventMetrics[0].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[0].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[0].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Visits MTD</h3>
+          <span>{{ filteredMetrics.eventMetrics[1].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[1].isIncrease, 'down': !filteredMetrics.eventMetrics[1].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[1].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[1].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Visits Last Month</h3>
+          <span>{{ filteredMetrics.eventMetrics[2].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[2].isIncrease, 'down': !filteredMetrics.eventMetrics[2].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[2].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[2].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Return % Last Month</h3>
+          <span>{{ filteredMetrics.eventMetrics[5].count }}%</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[5].isIncrease, 'down': !filteredMetrics.eventMetrics[5].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[5].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[5].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <!-- Empty Card for Alignment -->
+        </mat-card>
+      </div>
+      <div fxLayout="row" fxLayoutGap="16px">
+        <!-- Row 2 -->
+        <mat-card fxFlex="20%">
+          <h3>Registrations Yesterday</h3>
+          <span>{{ filteredMetrics.registrationMetrics[0].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.registrationMetrics[0].isIncrease, 'down': !filteredMetrics.registrationMetrics[0].isIncrease}">
+            <mat-icon>{{ filteredMetrics.registrationMetrics[0].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.registrationMetrics[0].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Registrations MTD</h3>
+          <span>{{ filteredMetrics.registrationMetrics[1].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.registrationMetrics[1].isIncrease, 'down': !filteredMetrics.registrationMetrics[1].isIncrease}">
+            <mat-icon>{{ filteredMetrics.registrationMetrics[1].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.registrationMetrics[1].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Registrations Last Month</h3>
+          <span>{{ filteredMetrics.registrationMetrics[2].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.registrationMetrics[2].isIncrease, 'down': !filteredMetrics.registrationMetrics[2].isIncrease}">
+            <mat-icon>{{ filteredMetrics.registrationMetrics[2].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.registrationMetrics[2].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Events MTD</h3>
+          <span>{{ filteredMetrics.eventMetrics[3].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[3].isIncrease, 'down': !filteredMetrics.eventMetrics[3].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[3].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[3].percentageChange }}%
+          </span>
+        </mat-card>
+        <mat-card fxFlex="20%">
+          <h3>Events Last Month</h3>
+          <span>{{ filteredMetrics.eventMetrics[4].count }}</span>
+          <span [ngClass]="{'up': filteredMetrics.eventMetrics[4].isIncrease, 'down': !filteredMetrics.eventMetrics[4].isIncrease}">
+            <mat-icon>{{ filteredMetrics.eventMetrics[4].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            {{ filteredMetrics.eventMetrics[4].percentageChange }}%
+          </span>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
