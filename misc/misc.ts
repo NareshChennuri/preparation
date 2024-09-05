@@ -2701,6 +2701,10 @@ export class LeadsDashboardComponent implements OnInit {
 
   metrics = {
     all: {
+      mostRegisteredEventType: { eventId: 1, title: 'Conference' },
+      mostVisits: { date: '2023-08-15', numberOfVisits: 200 },
+      mostAttendedEventType: { eventId: 2, title: 'Workshop' },
+      mostRegistrations: { date: '2023-08-10', numberOfRegistrations: 150 },
       eventMetrics: [
         { label: 'Visits Yesterday', count: 300, isIncrease: true, percentageChange: 10 },
         { label: 'Visits MTD', count: 1200, isIncrease: false, percentageChange: -5 },
@@ -2716,6 +2720,10 @@ export class LeadsDashboardComponent implements OnInit {
       ]
     },
     east: {
+      mostRegisteredEventType: { eventId: 3, title: 'Seminar' },
+      mostVisits: { date: '2023-08-20', numberOfVisits: 150 },
+      mostAttendedEventType: { eventId: 4, title: 'Training' },
+      mostRegistrations: { date: '2023-08-18', numberOfRegistrations: 100 },
       eventMetrics: [
         { label: 'Visits Yesterday', count: 100, isIncrease: false, percentageChange: -5 },
         { label: 'Visits MTD', count: 500, isIncrease: true, percentageChange: 7 },
@@ -2731,6 +2739,10 @@ export class LeadsDashboardComponent implements OnInit {
       ]
     },
     west: {
+      mostRegisteredEventType: { eventId: 5, title: 'Webinar' },
+      mostVisits: { date: '2023-08-10', numberOfVisits: 250 },
+      mostAttendedEventType: { eventId: 6, title: 'Panel Discussion' },
+      mostRegistrations: { date: '2023-08-05', numberOfRegistrations: 130 },
       eventMetrics: [
         { label: 'Visits Yesterday', count: 200, isIncrease: true, percentageChange: 5 },
         { label: 'Visits MTD', count: 900, isIncrease: false, percentageChange: -3 },
