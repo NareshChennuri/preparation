@@ -2871,3 +2871,105 @@ mat-card {
   padding: 16px;
   text-align: center;
 }
+
+
+
+<mat-accordion>
+  <!-- Region Selection Radio Buttons -->
+  <mat-card>
+    <mat-radio-group [(ngModel)]="region" (change)="onRegionChange($event)">
+      <mat-radio-button value="all">All</mat-radio-button>
+      <mat-radio-button value="east">East</mat-radio-button>
+      <mat-radio-button value="west">West</mat-radio-button>
+    </mat-radio-group>
+  </mat-card>
+
+  <!-- Dashboard Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Dashboard</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <!-- Section 1: Event Metrics -->
+      <h2>Welcome back, John!</h2>
+      <div fxLayout="row" fxLayoutGap="16px">
+        <mat-card>
+          <h3>Most Registered Event Type (last 90 days)</h3>
+          <p>{{ filteredMetrics.mostRegisteredEventType.title }}</p>
+        </mat-card>
+        <mat-card>
+          <h3>Most Visits (last 90 days)</h3>
+          <p>{{ filteredMetrics.mostVisits.numberOfVisits }}</p>
+        </mat-card>
+      </div>
+      <div fxLayout="row" fxLayoutGap="16px">
+        <mat-card>
+          <h3>Most Attended Event Type (last 90 days)</h3>
+          <p>{{ filteredMetrics.mostAttendedEventType.title }}</p>
+        </mat-card>
+        <mat-card>
+          <h3>Most Registrations (last 90 days)</h3>
+          <p>{{ filteredMetrics.mostRegistrations.numberOfRegistrations }}</p>
+        </mat-card>
+      </div>
+
+      <!-- Section 2: Visit & Registration Metrics -->
+      <div fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="16px">
+        <mat-card *ngFor="let metric of filteredMetrics.visitMetrics">
+          <h3>{{ metric.label }}</h3>
+          <div>
+            <span>{{ metric.count }}</span>
+            <span [ngClass]="{'up': metric.isIncrease, 'down': !metric.isIncrease}">
+              <mat-icon>{{ metric.isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+              {{ metric.percentageChange }}%
+            </span>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Registration Metrics -->
+    <div fxLayout="row" fxLayoutWrap="wrap" fxLayoutGap="16px" fxFlex="100%">
+      <div fxLayout="row" fxLayoutGap="16px" fxFlex="100%">
+        <mat-card *ngFor="let metric of filteredMetrics.registrationMetrics" fxFlex="24%">
+          <h3>{{ metric.label }}</h3>
+          <div>
+            <span>{{ metric.count }}</span>
+            <span [ngClass]="{'up': metric.isIncrease, 'down': !metric.isIncrease}">
+              <mat-icon>{{ metric.isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+              {{ metric.percentageChange }}%
+            </span>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+    </mat-card>
+  </mat-expansion-panel>
+
+  <!-- Table Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Event Data Table</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+        <ng-container matColumnDef="region">
+          <th mat-header-cell *matHeaderCellDef> Region </th>
+          <td mat-cell *matCellDef="let element"> {{element.region}} </td>
+        </ng-container>
+        <!-- Other columns -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card>
+  </mat-expansion-panel>
+
+  <!-- Chart Section -->
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Charts</mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card>
+      <app-chart [data]="chartData"></app-chart> <!-- Custom chart component -->
+    </mat-card>
+  </mat-expansion-panel>
+</mat-accordion>
