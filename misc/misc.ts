@@ -3113,3 +3113,163 @@ mat-card {
     </div>
   </div>
 </div>
+/******************************************************* */
+
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.event-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.visit-registration-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.metric-card {
+  padding: 16px;
+  text-align: center;
+}
+
+.empty-card {
+  visibility: hidden;
+}
+
+.up {
+  color: green;
+}
+
+.down {
+  color: red;
+}
+
+
+
+
+
+
+
+
+
+
+
+<div>
+  <!-- Region Selection -->
+  <mat-radio-group [(ngModel)]="region" (change)="onRegionChange(region)">
+    <mat-radio-button value="all">All</mat-radio-button>
+    <mat-radio-button value="east">East</mat-radio-button>
+    <mat-radio-button value="west">West</mat-radio-button>
+  </mat-radio-group>
+
+  <!-- Container: Split into two sections -->
+  <div class="dashboard-container">
+    <!-- 1st Part: Event Metrics (2x2 Grid) -->
+    <div class="event-metrics">
+      <mat-card class="metric-card">
+        <h3>Most Registered Event Type (last 90 days)</h3>
+        <span>{{ mostRegisteredEventTypeLast90Days.title }}</span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Most Visits (last 90 days)</h3>
+        <span>{{ mostVisitsLast90Days.numberOfVisits }}</span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Most Attended Event Type (last 90 days)</h3>
+        <span>{{ mostAttendedEventTypeLast90Days.title }}</span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Most Registrations (last 90 days)</h3>
+        <span>{{ mostRegistrationsLast90Days.numberOfRegistrations }}</span>
+      </mat-card>
+    </div>
+
+    <!-- 2nd Part: Visit and Registration Metrics (2x5 Grid) -->
+    <div class="visit-registration-metrics">
+      <mat-card class="metric-card">
+        <h3>Visits Yesterday</h3>
+        <span>{{ filteredMetrics.eventMetrics[0].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[0].isIncrease, 'down': !filteredMetrics.eventMetrics[0].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[0].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[0].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Visits MTD</h3>
+        <span>{{ filteredMetrics.eventMetrics[1].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[1].isIncrease, 'down': !filteredMetrics.eventMetrics[1].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[1].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[1].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Visits Last Month</h3>
+        <span>{{ filteredMetrics.eventMetrics[2].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[2].isIncrease, 'down': !filteredMetrics.eventMetrics[2].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[2].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[2].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Return % Last Month</h3>
+        <span>{{ filteredMetrics.eventMetrics[5].count }}%</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[5].isIncrease, 'down': !filteredMetrics.eventMetrics[5].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[5].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[5].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card empty-card">
+        <!-- Empty Card for Alignment -->
+      </mat-card>
+
+      <!-- 2nd row (Registration metrics) -->
+      <mat-card class="metric-card">
+        <h3>Registrations Yesterday</h3>
+        <span>{{ filteredMetrics.registrationMetrics[0].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.registrationMetrics[0].isIncrease, 'down': !filteredMetrics.registrationMetrics[0].isIncrease}">
+          <mat-icon>{{ filteredMetrics.registrationMetrics[0].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.registrationMetrics[0].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Registrations MTD</h3>
+        <span>{{ filteredMetrics.registrationMetrics[1].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.registrationMetrics[1].isIncrease, 'down': !filteredMetrics.registrationMetrics[1].isIncrease}">
+          <mat-icon>{{ filteredMetrics.registrationMetrics[1].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.registrationMetrics[1].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Registrations Last Month</h3>
+        <span>{{ filteredMetrics.registrationMetrics[2].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.registrationMetrics[2].isIncrease, 'down': !filteredMetrics.registrationMetrics[2].isIncrease}">
+          <mat-icon>{{ filteredMetrics.registrationMetrics[2].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.registrationMetrics[2].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Events MTD</h3>
+        <span>{{ filteredMetrics.eventMetrics[3].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[3].isIncrease, 'down': !filteredMetrics.eventMetrics[3].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[3].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[3].percentageChange }}%
+        </span>
+      </mat-card>
+      <mat-card class="metric-card">
+        <h3>Events Last Month</h3>
+        <span>{{ filteredMetrics.eventMetrics[4].count }}</span>
+        <span [ngClass]="{'up': filteredMetrics.eventMetrics[4].isIncrease, 'down': !filteredMetrics.eventMetrics[4].isIncrease}">
+          <mat-icon>{{ filteredMetrics.eventMetrics[4].isIncrease ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          {{ filteredMetrics.eventMetrics[4].percentageChange }}%
+        </span>
+      </mat-card>
+    </div>
+  </div>
+</div>
