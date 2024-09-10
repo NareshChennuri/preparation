@@ -3273,3 +3273,120 @@ mat-card {
     </div>
   </div>
 </div>
+
+
+
+===================================================
+
+function getMostRegisteredEvent(eventsList) {
+  const today = new Date();
+  const past90Days = new Date(today);
+  past90Days.setDate(today.getDate() - 90);
+
+  let mostRegisteredEvent = null;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate >= past90Days && eventDate <= today) {
+          if (!mostRegisteredEvent || event.registrationCount > mostRegisteredEvent.registrationCount) {
+              mostRegisteredEvent = event;
+          }
+      }
+  });
+
+  return mostRegisteredEvent;
+}
+
+function getMostRegistrationsCount(eventsList) {
+  const mostRegisteredEvent = getMostRegisteredEvent(eventsList);
+  return mostRegisteredEvent ? mostRegisteredEvent.registrationCount : 0;
+}
+
+function getRegistrationsYesterday(eventsList) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  let registrationsYesterday = 0;
+  let registrationsDayBeforeYesterday = 0;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate.toDateString() === yesterday.toDateString()) {
+          registrationsYesterday += event.registrationCount;
+      } else if (eventDate.toDateString() === (new Date(yesterday.setDate(yesterday.getDate() - 1))).toDateString()) {
+          registrationsDayBeforeYesterday += event.registrationCount;
+      }
+  });
+
+  const percentageChange = registrationsDayBeforeYesterday 
+      ? ((registrationsYesterday - registrationsDayBeforeYesterday) / registrationsDayBeforeYesterday) * 100 
+      : 0;
+
+  return { registrationsYesterday, percentageChange };
+}
+
+function getRegistrationsMTD(eventsList) {
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  let registrationsMTD = 0;
+  let registrationsLastMonth = 0;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate >= startOfMonth && eventDate <= today) {
+          registrationsMTD += event.registrationCount;
+      } else if (eventDate >= new Date(today.getFullYear(), today.getMonth() - 1, 1) && eventDate < startOfMonth) {
+          registrationsLastMonth += event.registrationCount;
+      }
+  });
+
+  const percentageChange = registrationsLastMonth 
+      ? ((registrationsMTD - registrationsLastMonth) / registrationsLastMonth) * 100 
+      : 0;
+
+  return { registrationsMTD, percentageChange };
+}
+
+function getRegistrationsLastMonth(eventsList) {
+  const today = new Date();
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+  let registrationsLastMonth = 0;
+  let registrationsMonthBeforeLast = 0;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate >= startOfLastMonth && eventDate <= endOfLastMonth) {
+          registrationsLastMonth += event.registrationCount;
+      } else if (eventDate >= new Date(today.getFullYear(), today.getMonth() - 2, 1) && eventDate < startOfLastMonth) {
+          registrationsMonthBeforeLast += event.registrationCount;
+      }
+  });
+
+  const percentageChange = registrationsMonthBeforeLast 
+      ? ((registrationsLastMonth - registrationsMonthBeforeLast) / registrationsMonthBeforeLast) * 100 
+      : 0;
+
+  return { registrationsLastMonth, percentageChange };
+}
+
+const eventsList = [
+  { executionStartDate: '2024-09-09T00:00:00Z', registrationCount: 3, eventId: 101, title: 'some event' },
+  // Add more events here...
+];
+
+const mostRegisteredEvent = getMostRegisteredEvent(eventsList);
+const mostRegistrationsCount = getMostRegistrationsCount(eventsList);
+const registrationsYesterday = getRegistrationsYesterday(eventsList);
+const registrationsMTD = getRegistrationsMTD(eventsList);
+const registrationsLastMonth = getRegistrationsLastMonth(eventsList);
+
+console.log("Most Registered Event:", mostRegisteredEvent);
+console.log("Most Registrations Count in Last 90 Days:", mostRegistrationsCount);
+console.log("Registrations Yesterday:", registrationsYesterday);
+console.log("Registrations MTD:", registrationsMTD);
+console.log("Registrations Last Month:", registrationsLastMonth);
+
