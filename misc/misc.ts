@@ -3390,3 +3390,54 @@ console.log("Registrations Yesterday:", registrationsYesterday);
 console.log("Registrations MTD:", registrationsMTD);
 console.log("Registrations Last Month:", registrationsLastMonth);
 
+
+==============
+
+
+function getEventsCountMTD(eventsList) {
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  let eventsMTD = 0;
+  let eventsLastMonth = 0;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate >= startOfMonth && eventDate <= today) {
+          eventsMTD++;
+      } else if (eventDate >= new Date(today.getFullYear(), today.getMonth() - 1, 1) && eventDate < startOfMonth) {
+          eventsLastMonth++;
+      }
+  });
+
+  const percentageChange = eventsLastMonth 
+      ? ((eventsMTD - eventsLastMonth) / eventsLastMonth) * 100 
+      : 0;
+
+  return { eventsMTD, percentageChange };
+}
+function getEventsCountLastMonth(eventsList) {
+  const today = new Date();
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+  let eventsLastMonth = 0;
+  let eventsMonthBeforeLast = 0;
+
+  eventsList.forEach(event => {
+      const eventDate = new Date(event.executionStartDate);
+      if (eventDate >= startOfLastMonth && eventDate <= endOfLastMonth) {
+          eventsLastMonth++;
+      } else if (eventDate >= new Date(today.getFullYear(), today.getMonth() - 2, 1) && eventDate < startOfLastMonth) {
+          eventsMonthBeforeLast++;
+      }
+  });
+
+  const percentageChange = eventsMonthBeforeLast 
+      ? ((eventsLastMonth - eventsMonthBeforeLast) / eventsMonthBeforeLast) * 100 
+      : 0;
+
+  return { eventsLastMonth, percentageChange };
+}
+
+
