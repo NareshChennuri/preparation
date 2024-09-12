@@ -3600,3 +3600,84 @@ const visitsList = [
 ];
 
 console.log(getMostVisitsMTD(visitsList));
+
+
+==============
+
+function calculateReturnRate(visitsList) {
+  const today = new Date();
+  
+  // Get the start and end dates of the last month and the month before last
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+  const startOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+  const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+
+  // Count visits for last month and month before last
+  let lastMonthVisits = 0;
+  let monthBeforeLastVisits = 0;
+  
+  const lastMonthUsers = {};
+  const monthBeforeLastUsers = {};
+  
+  // Process visits list
+  visitsList.forEach(visit => {
+    const visitDate = new Date(visit.createdDate);
+    const standardId = visit.standardId;
+
+    // Last month visits
+    if (visitDate >= startOfLastMonth && visitDate <= endOfLastMonth) {
+      lastMonthVisits++;
+      if (!lastMonthUsers[standardId]) {
+        lastMonthUsers[standardId] = 1;
+      } else {
+        lastMonthUsers[standardId]++;
+      }
+    }
+
+    // Month before last visits
+    if (visitDate >= startOfMonthBeforeLast && visitDate <= endOfMonthBeforeLast) {
+      monthBeforeLastVisits++;
+      if (!monthBeforeLastUsers[standardId]) {
+        monthBeforeLastUsers[standardId] = 1;
+      } else {
+        monthBeforeLastUsers[standardId]++;
+      }
+    }
+  });
+
+  // Calculate the number of returning users (users with multiple entries)
+  const returningUsersLastMonth = Object.values(lastMonthUsers).filter(count => count > 1).length;
+  const returningUsersMonthBeforeLast = Object.values(monthBeforeLastUsers).filter(count => count > 1).length;
+
+  // Calculate return percentages
+  const returnPercentageLastMonth = lastMonthVisits > 0 ? (returningUsersLastMonth / lastMonthVisits) * 100 : 0;
+  const returnPercentageMonthBeforeLast = monthBeforeLastVisits > 0 ? (returningUsersMonthBeforeLast / monthBeforeLastVisits) * 100 : 0;
+
+  // Determine if return rate increased
+  const isIncrease = returnPercentageLastMonth > returnPercentageMonthBeforeLast;
+
+  // Return results
+  return {
+    returnPercentageLastMonth: returnPercentageLastMonth.toFixed(2) + "%",
+    isIncrease: isIncrease
+  };
+}
+
+// Example usage with your visitsList array
+const visitsList = [
+  {
+    "id": 1,
+    "createdBy": "ZKJA2IN",
+    "createdDate": "2024-09-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ZKJA2IN",
+    "fullName": "Roopa,Seeri",
+    "emailAddress": "roopa.seeri@bofa.com",
+    "pageName": "TFGSignup"
+  }
+  // Add more visits objects here...
+];
+
+console.log(calculateReturnRate(visitsList));
