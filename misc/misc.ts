@@ -3440,4 +3440,67 @@ function getEventsCountLastMonth(eventsList) {
   return { eventsLastMonth, percentageChange };
 }
 
+/////////////////////////
+function getVisitCounts(visitsList) {
+  // Helper functions
+  const isSameDay = (date1, date2) => date1.toISOString().slice(0, 10) === date2.toISOString().slice(0, 10);
+  const isYesterday = (date) => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return isSameDay(date, yesterday);
+  };
+  const isCurrentMonth = (date) => {
+    const now = new Date();
+    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  };
+  const isLastMonth = (date) => {
+    const now = new Date();
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
+    return date.getFullYear() === lastMonth.getFullYear() && date.getMonth() === lastMonth.getMonth();
+  };
+
+  // Initialize counters
+  let yesterdayCount = 0;
+  let mtdCount = 0;
+  let lastMonthCount = 0;
+
+  // Iterate over the visits list
+  visitsList.forEach(visit => {
+    const createdDate = new Date(visit.createdDate);
+
+    if (isYesterday(createdDate)) {
+      yesterdayCount++;
+    }
+
+    if (isCurrentMonth(createdDate)) {
+      mtdCount++;
+    }
+
+    if (isLastMonth(createdDate)) {
+      lastMonthCount++;
+    }
+  });
+
+  return {
+    yesterdayCount,
+    mtdCount,
+    lastMonthCount
+  };
+}
+
+// Example usage
+const visitsList = [{
+  "id": 1,
+  "createdBy": "ZKJA2IN",
+  "createdDate": "2024-09-12T00:11:59Z",
+  "modifiedBy": null,
+  "modifiedDate": null,
+  "standardId": "ZKJA2IN",
+  "fullName": "Roopa,Seeri",
+  "emailAddress": "roopa.seeri@bofa.com",
+  "pageName": "TFGSignup"
+}];
+
+const visitCounts = getVisitCounts(visitsList);
+console.log(visitCounts);
 
