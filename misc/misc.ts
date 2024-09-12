@@ -3544,3 +3544,59 @@ const visitsList = [
 console.log(calculateVisitsMetrics(visitsList));
 
 
+=================
+
+
+function getMostVisitsMTD(visitsList) {
+  const today = new Date();
+  const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  
+  // Initialize a map to count visits per day
+  const visitCountPerDay = {};
+
+  // Filter and count visits for MTD
+  visitsList.forEach(visit => {
+    const visitDate = new Date(visit.createdDate);
+    if (visitDate >= startOfThisMonth && visitDate <= today) {
+      const visitDay = visitDate.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+      if (!visitCountPerDay[visitDay]) {
+        visitCountPerDay[visitDay] = 1;
+      } else {
+        visitCountPerDay[visitDay]++;
+      }
+    }
+  });
+
+  // Find the day with the most visits
+  let maxVisits = 0;
+  let dateWithMostVisits = null;
+  for (let date in visitCountPerDay) {
+    if (visitCountPerDay[date] > maxVisits) {
+      maxVisits = visitCountPerDay[date];
+      dateWithMostVisits = date;
+    }
+  }
+
+  return {
+    date: dateWithMostVisits,
+    visits: maxVisits
+  };
+}
+
+// Example usage with your visitsList array
+const visitsList = [
+  {
+    "id": 1,
+    "createdBy": "ZKJA2IN",
+    "createdDate": "2024-09-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ZKJA2IN",
+    "fullName": "Roopa,Seeri",
+    "emailAddress": "roopa.seeri@bofa.com",
+    "pageName": "TFGSignup"
+  }
+  // Add more visits objects here...
+];
+
+console.log(getMostVisitsMTD(visitsList));
