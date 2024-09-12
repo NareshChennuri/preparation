@@ -3441,66 +3441,106 @@ function getEventsCountLastMonth(eventsList) {
 }
 
 /////////////////////////
-function getVisitCounts(visitsList) {
-  // Helper functions
-  const isSameDay = (date1, date2) => date1.toISOString().slice(0, 10) === date2.toISOString().slice(0, 10);
-  const isYesterday = (date) => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return isSameDay(date, yesterday);
-  };
-  const isCurrentMonth = (date) => {
-    const now = new Date();
-    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
-  };
-  const isLastMonth = (date) => {
-    const now = new Date();
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1);
-    return date.getFullYear() === lastMonth.getFullYear() && date.getMonth() === lastMonth.getMonth();
-  };
+function calculateVisitsMetrics(visitsList) {
+  const today = new Date();
+  
+  // Helper functions to get start of specific time periods
+  const startOfYesterday = new Date(today);
+  startOfYesterday.setDate(today.getDate() - 1);
+  startOfYesterday.setHours(0, 0, 0, 0);
+
+  const endOfYesterday = new Date(today);
+  endOfYesterday.setDate(today.getDate() - 1);
+  endOfYesterday.setHours(23, 59, 59, 999);
+
+  const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
 
   // Initialize counters
-  let yesterdayCount = 0;
-  let mtdCount = 0;
-  let lastMonthCount = 0;
+  let yesterdayCount = 0, dayBeforeYesterdayCount = 0;
+  let mtdCount = 0, prevMTDCount = 0;
+  let lastMonthCount = 0, prevMonthCount = 0;
 
-  // Iterate over the visits list
   visitsList.forEach(visit => {
-    const createdDate = new Date(visit.createdDate);
+    const visitDate = new Date(visit.createdDate);
 
-    if (isYesterday(createdDate)) {
+    // Calculate Yesterday Visits
+    if (visitDate >= startOfYesterday && visitDate <= endOfYesterday) {
       yesterdayCount++;
     }
 
-    if (isCurrentMonth(createdDate)) {
+    // Calculate Day Before Yesterday Visits
+    const dayBeforeYesterday = new Date(today);
+    dayBeforeYesterday.setDate(today.getDate() - 2);
+    if (visitDate >= dayBeforeYesterday && visitDate < startOfYesterday) {
+      dayBeforeYesterdayCount++;
+    }
+
+    // Calculate MTD Visits
+    if (visitDate >= startOfThisMonth && visitDate <= today) {
       mtdCount++;
     }
 
-    if (isLastMonth(createdDate)) {
+    // Calculate Previous MTD (same period last month)
+    if (visitDate >= startOfLastMonth && visitDate < startOfThisMonth) {
+      const visitDay = visitDate.getDate();
+      if (visitDay <= today.getDate()) {
+        prevMTDCount++;
+      }
+    }
+
+    // Calculate Last Month Visits
+    if (visitDate >= startOfLastMonth && visitDate <= endOfLastMonth) {
       lastMonthCount++;
+    }
+
+    // Calculate Previous Month Visits (Month before last month)
+    const startOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+    const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+    if (visitDate >= startOfMonthBeforeLast && visitDate <= endOfMonthBeforeLast) {
+      prevMonthCount++;
     }
   });
 
+  // Calculate percentage changes
+  const percentageChangeYesterday = ((yesterdayCount - dayBeforeYesterdayCount) / (dayBeforeYesterdayCount || 1)) * 100;
+  const percentageChangeMTD = ((mtdCount - prevMTDCount) / (prevMTDCount || 1)) * 100;
+  const percentageChangeLastMonth = ((lastMonthCount - prevMonthCount) / (prevMonthCount || 1)) * 100;
+
+  // Return results
   return {
-    yesterdayCount,
-    mtdCount,
-    lastMonthCount
+    yesterday: {
+      count: yesterdayCount,
+      percentageChange: percentageChangeYesterday.toFixed(2)
+    },
+    MTD: {
+      count: mtdCount,
+      percentageChange: percentageChangeMTD.toFixed(2)
+    },
+    lastMonth: {
+      count: lastMonthCount,
+      percentageChange: percentageChangeLastMonth.toFixed(2)
+    }
   };
 }
 
-// Example usage
-const visitsList = [{
-  "id": 1,
-  "createdBy": "ZKJA2IN",
-  "createdDate": "2024-09-12T00:11:59Z",
-  "modifiedBy": null,
-  "modifiedDate": null,
-  "standardId": "ZKJA2IN",
-  "fullName": "Roopa,Seeri",
-  "emailAddress": "roopa.seeri@bofa.com",
-  "pageName": "TFGSignup"
-}];
+// Example usage with your visitsList array
+const visitsList = [
+  {
+    "id": 1,
+    "createdBy": "ZKJA2IN",
+    "createdDate": "2024-09-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ZKJA2IN",
+    "fullName": "Roopa,Seeri",
+    "emailAddress": "roopa.seeri@bofa.com",
+    "pageName": "TFGSignup"
+  }
+  // Add more visits objects here...
+];
 
-const visitCounts = getVisitCounts(visitsList);
-console.log(visitCounts);
+console.log(calculateVisitsMetrics(visitsList));
+
 
