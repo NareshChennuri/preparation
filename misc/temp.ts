@@ -1,44 +1,25 @@
-function eventsGroupByRegion(eventsList) {
-    const groupedEvents = eventsList.reduce((acc, event) => {
-        const { region, environment, programOfferings } = event;
+function groupAndSortEvents(eventsList) {
+    const groupedEvents = {};
 
-        // Check if the region is already in the accumulator
-        const existingRegion = acc.find(e => e.region === region);
-
-        if (existingRegion) {
-            // If the environment is already present, increment the count
-            const envIndex = existingRegion.environment.findIndex(env => env.name === environment);
-            if (envIndex > -1) {
-                existingRegion.environment[envIndex].count += 1;
-            } else {
-                existingRegion.environment.push({ name: environment, count: 1 });
-            }
-
-            // Check if the program offering is already present
-            const progIndex = existingRegion.programOfferings.findIndex(prog => prog.name === programOfferings);
-            if (progIndex > -1) {
-                existingRegion.programOfferings[progIndex].count += 1;
-            } else {
-                existingRegion.programOfferings.push({ name: programOfferings, count: 1 });
-            }
+    // Group events by region and programOfferings
+    eventsList.forEach(event => {
+        const key = `${event.region}-${event.environment}-${event.programOfferings}`;
+        if (!groupedEvents[key]) {
+            groupedEvents[key] = {
+                region: event.region,
+                environment: event.environment,
+                programOfferings: `${event.programOfferings} (1)`
+            };
         } else {
-            // If the region is not present, create a new object for it
-            acc.push({
-                region: region,
-                environment: [{ name: environment, count: 1 }],
-                programOfferings: [{ name: programOfferings, count: 1 }]
-            });
+            // Increment the count in programOfferings
+            const count = parseInt(groupedEvents[key].programOfferings.match(/\d+/)[0]) + 1;
+            groupedEvents[key].programOfferings = `${event.programOfferings} (${count})`;
         }
+    });
 
-        return acc;
-    }, []);
-
-    // Format the output to the desired structure
-    const result = groupedEvents.map(eventGroup => ({
-        region: eventGroup.region,
-        environment: eventGroup.environment.map(env => `${env.name}(${env.count})`).join(', '),
-        programOfferings: eventGroup.programOfferings.map(prog => `${prog.name}(${prog.count})`).join(', ')
-    }));
+    // Convert the object into an array and sort by region
+    const result = Object.values(groupedEvents);
+    result.sort((a, b) => a.region.localeCompare(b.region));
 
     return result;
 }
