@@ -3,25 +3,27 @@ function groupAndSortEvents(eventsList) {
 
     // Group events by region, environment, and programOfferings
     eventsList.forEach(event => {
-        const key = `${event.region}-${event.environment}-${event.programOfferings}`;
+        const { region, environment, programOfferings } = event;
+        const key = `${region}-${environment}-${programOfferings}`;  // Unique key for each region + environment + programOfferings
+
         if (!groupedEvents[key]) {
             groupedEvents[key] = {
-                region: event.region,
-                environment: event.environment,
-                programOfferings: `${event.programOfferings} (1)`
+                region,
+                environment,
+                programOfferings: `${programOfferings} (1)`  // Start with 1 event
             };
         } else {
-            // Increment the count in programOfferings
+            // Increment the event count for this grouping
             const count = parseInt(groupedEvents[key].programOfferings.match(/\d+/)[0]) + 1;
-            groupedEvents[key].programOfferings = `${event.programOfferings} (${count})`;
+            groupedEvents[key].programOfferings = `${programOfferings} (${count})`;
         }
     });
 
-    // Convert the object into an array
+    // Convert the grouped events object into an array
     const result = Object.values(groupedEvents);
 
-    // Sort by region, keeping each region separate
-    result.sort((a, b) => a.region.localeCompare(b.region));
+    // Sort the result array by region
+    result.sort((a, b) => a['region'].localeCompare(b['region']));
 
     return result;
 }
