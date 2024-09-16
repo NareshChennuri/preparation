@@ -1,7 +1,7 @@
 function groupAndSortEvents(eventsList) {
     const groupedEvents = {};
 
-    // Group events by region and programOfferings
+    // Group events by region, environment, and programOfferings
     eventsList.forEach(event => {
         const key = `${event.region}-${event.environment}-${event.programOfferings}`;
         if (!groupedEvents[key]) {
@@ -17,8 +17,10 @@ function groupAndSortEvents(eventsList) {
         }
     });
 
-    // Convert the object into an array and sort by region
+    // Convert the object into an array
     const result = Object.values(groupedEvents);
+
+    // Sort by region, keeping each region separate
     result.sort((a, b) => a.region.localeCompare(b.region));
 
     return result;
