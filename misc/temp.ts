@@ -1,40 +1,222 @@
-selectedPageVisits: string = 'tfgsignup';
-
-onPageVisitsSelection(event: any): void {
-  this.updateChart();
-}
-
-// Update the chart based on the selected data
-updateChart(): void {
-  if (this.selectedPageVisits === 'TFGSignup') {
-    this.barChartLabels = this.visitsData.map(item => new Date(item.createdDate).getDate().toString());
-    this.barChartData = [
-      { data: this.visitsData.map(item => item.visitsCount), label: 'Visits Count' }
-    ];
-  } else if (this.selectedData === 'TFGCalendar') {
-    this.barChartLabels = this.eventsData.map(item => new Date(item.eventStartDate).getDate().toString());
-    this.barChartData = [
-      { data: this.eventsData.map(item => item.eventsCount), label: 'Events Count' }
-    ];
+[
+  {
+    "id": 1,
+    "createdBy": "ABC23DF",
+    "createdDate": "2024-08-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ABC23DF",
+    "fullName": "Dakota, Johnson",
+    "emailAddress": "dakota4@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 2,
+    "createdBy": "XYZ42TH",
+    "createdDate": "2024-08-15T12:30:21Z",
+    "modifiedBy": "LMN56YU",
+    "modifiedDate": "2024-08-18T08:15:43Z",
+    "standardId": "XYZ42TH",
+    "fullName": "Emily, Blunt",
+    "emailAddress": "emilyb99@yahoo.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 3,
+    "createdBy": "LMN56YU",
+    "createdDate": "2024-08-20T14:45:03Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "LMN56YU",
+    "fullName": "Chris, Hemsworth",
+    "emailAddress": "chris.h@outlook.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 4,
+    "createdBy": "JKL78OP",
+    "createdDate": "2024-08-22T10:05:11Z",
+    "modifiedBy": "ABC23DF",
+    "modifiedDate": "2024-09-01T17:22:59Z",
+    "standardId": "JKL78OP",
+    "fullName": "Scarlett, Johansson",
+    "emailAddress": "scarlett.j@gmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 5,
+    "createdBy": "UVW34ZX",
+    "createdDate": "2024-08-25T09:12:34Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "UVW34ZX",
+    "fullName": "Tom, Hardy",
+    "emailAddress": "tomhardy@icloud.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 6,
+    "createdBy": "ABC89JK",
+    "createdDate": "2024-09-01T07:43:12Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ABC89JK",
+    "fullName": "Margot, Robbie",
+    "emailAddress": "margot.r@yahoo.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 7,
+    "createdBy": "QWE34RT",
+    "createdDate": "2024-08-30T15:22:51Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "QWE34RT",
+    "fullName": "Ryan, Gosling",
+    "emailAddress": "ryan.g@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 8,
+    "createdBy": "YUI23ZX",
+    "createdDate": "2024-08-18T17:55:45Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "YUI23ZX",
+    "fullName": "Zoe, Kravitz",
+    "emailAddress": "zoe.k@gmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 9,
+    "createdBy": "OPQ56GH",
+    "createdDate": "2024-09-05T10:22:35Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "OPQ56GH",
+    "fullName": "Chris, Evans",
+    "emailAddress": "chris.evans@hotmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 10,
+    "createdBy": "VBN56JK",
+    "createdDate": "2024-09-10T08:14:22Z",
+    "modifiedBy": "QAZ23WS",
+    "modifiedDate": "2024-09-11T09:00:11Z",
+    "standardId": "VBN56JK",
+    "fullName": "Robert, Downey",
+    "emailAddress": "robert.d@gmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 11,
+    "createdBy": "MLP23DF",
+    "createdDate": "2024-08-29T12:01:14Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "MLP23DF",
+    "fullName": "Gal, Gadot",
+    "emailAddress": "gal.g@hotmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 12,
+    "createdBy": "XYZ99PO",
+    "createdDate": "2024-08-31T06:33:48Z",
+    "modifiedBy": "LMN56YU",
+    "modifiedDate": "2024-09-02T07:15:09Z",
+    "standardId": "XYZ99PO",
+    "fullName": "Jennifer, Lawrence",
+    "emailAddress": "jlaw@gmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 13,
+    "createdBy": "ASD45FG",
+    "createdDate": "2024-08-11T19:12:23Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ASD45FG",
+    "fullName": "Leonardo, DiCaprio",
+    "emailAddress": "leo.d@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 14,
+    "createdBy": "QWE89OP",
+    "createdDate": "2024-08-16T20:08:10Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "QWE89OP",
+    "fullName": "Emma, Watson",
+    "emailAddress": "emma.w@hotmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 15,
+    "createdBy": "JKL12ZX",
+    "createdDate": "2024-08-23T11:50:05Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "JKL12ZX",
+    "fullName": "Henry, Cavill",
+    "emailAddress": "henry.c@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 16,
+    "createdBy": "PQR67BN",
+    "createdDate": "2024-08-10T05:42:32Z",
+    "modifiedBy": "ABC23DF",
+    "modifiedDate": "2024-08-20T16:44:25Z",
+    "standardId": "PQR67BN",
+    "fullName": "Zendaya, Coleman",
+    "emailAddress": "zendaya.c@gmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 17,
+    "createdBy": "UVW90TY",
+    "createdDate": "2024-09-02T13:33:29Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "UVW90TY",
+    "fullName": "Will, Smith",
+    "emailAddress": "will.s@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 18,
+    "createdBy": "IJK12LM",
+    "createdDate": "2024-08-09T22:14:00Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "IJK12LM",
+    "fullName": "Angelina, Jolie",
+    "emailAddress": "angelina.j@hotmail.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 19,
+    "createdBy": "NOP56KL",
+    "createdDate": "2024-08-25T07:55:49Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "NOP56KL",
+    "fullName": "Brad, Pitt",
+    "emailAddress": "brad.p@gmail.com",
+    "pageName": "TFGCalendar"
+  },
+  {
+    "id": 20,
+    "createdBy": "STU34DF",
+    "createdDate": "2024-09-04T18:02:43Z",
+    "modifiedBy": "JKL78OP",
+    "modifiedDate": "2024-09-06T12:44:18Z",
+    "standardId": "STU34DF",
+    "fullName": "Jake, Gyllenhaal",
+    "emailAddress": "jake.g@gmail.com",
+    "pageName": "TFGSignup"
   }
-}
-
-
-<div class="chart-container">
-  <mat-form-field appearance="fill">
-    <mat-select [(value)]="selectedPageVisits" (selectionChange)="onPageVisitsSelection($event)">
-      <mat-option value="tfgsignup">Visits Data</mat-option>
-      <mat-option value="tfgcalendar">Events Data</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <div *ngIf="chartData">
-    <canvas baseChart
-      [datasets]="barChartData"
-      [labels]="barChartLabels"
-      [options]="barChartOptions"
-      [legend]="barChartLegend"
-      [chartType]="barChartType">
-    </canvas>
-  </div>
-</div>
+]
