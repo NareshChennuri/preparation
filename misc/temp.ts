@@ -1,4 +1,143 @@
-[
+function calculateUniqueVisitsMetrics(visitsList) {
+  const today = new Date();
+
+  // Helper function to format the date (YYYY-MM-DD)
+  function formatDate(date) {
+    return date.toISOString().split('T')[0];
+  }
+
+  // Helper functions to get the start of the current and previous periods
+  const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+
+  // Initialize counters
+  let uniqueMTDCount = 0, uniquePrevMTDCount = 0;
+  let uniqueLastMonthCount = 0, uniquePrevMonthCount = 0;
+
+  // Track MTD and Last Month unique visits by page and day
+  let uniqueMTDVisitsByPage = {};
+  let uniqueLastMonthVisitsByPage = {};
+
+  // Track unique visits to prevent double counting (based on standardId)
+  let uniqueMTDVisitors = new Set();
+  let uniquePrevMTDVisitors = new Set();
+  let uniqueLastMonthVisitors = new Set();
+  let uniquePrevMonthVisitors = new Set();
+
+  visitsList.forEach(visit => {
+    const visitDate = new Date(visit.createdDate);
+    const visitDateString = formatDate(visitDate);
+
+    // MTD Unique Visits
+    if (visitDate >= startOfThisMonth && visitDate <= today) {
+      if (!uniqueMTDVisitors.has(visit.standardId)) {
+        uniqueMTDVisitors.add(visit.standardId);
+        uniqueMTDCount++;
+
+        if (!uniqueMTDVisitsByPage[visit.pageName]) {
+          uniqueMTDVisitsByPage[visit.pageName] = {};
+        }
+        if (!uniqueMTDVisitsByPage[visit.pageName][visitDateString]) {
+          uniqueMTDVisitsByPage[visit.pageName][visitDateString] = 0;
+        }
+        uniqueMTDVisitsByPage[visit.pageName][visitDateString]++;
+      }
+    }
+
+    // Previous MTD Unique Visits (same period last month)
+    if (visitDate >= startOfLastMonth && visitDate < startOfThisMonth) {
+      const visitDay = visitDate.getDate();
+      if (visitDay <= today.getDate()) {
+        if (!uniquePrevMTDVisitors.has(visit.standardId)) {
+          uniquePrevMTDVisitors.add(visit.standardId);
+          uniquePrevMTDCount++;
+        }
+      }
+    }
+
+    // Last Month Unique Visits
+    if (visitDate >= startOfLastMonth && visitDate <= endOfLastMonth) {
+      if (!uniqueLastMonthVisitors.has(visit.standardId)) {
+        uniqueLastMonthVisitors.add(visit.standardId);
+        uniqueLastMonthCount++;
+
+        if (!uniqueLastMonthVisitsByPage[visit.pageName]) {
+          uniqueLastMonthVisitsByPage[visit.pageName] = {};
+        }
+        if (!uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]) {
+          uniqueLastMonthVisitsByPage[visit.pageName][visitDateString] = 0;
+        }
+        uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]++;
+      }
+    }
+
+    // Previous Month Unique Visits (Month before last month)
+    const startOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+    const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+    if (visitDate >= startOfMonthBeforeLast && visitDate <= endOfMonthBeforeLast) {
+      if (!uniquePrevMonthVisitors.has(visit.standardId)) {
+        uniquePrevMonthVisitors.add(visit.standardId);
+        uniquePrevMonthCount++;
+      }
+    }
+  });
+
+  // Convert MTD and Last Month visits by page to sorted lists
+  function convertToSortedList(visitsByPage) {
+    const result = {};
+    for (const page in visitsByPage) {
+      result[page] = Object.keys(visitsByPage[page])
+        .sort()
+        .map(date => ({
+          createdDate: date,
+          visitsCount: visitsByPage[page][date]
+        }));
+    }
+    return result;
+  }
+
+  const sortedMTDVisits = convertToSortedList(uniqueMTDVisitsByPage);
+  const sortedLastMonthVisits = convertToSortedList(uniqueLastMonthVisitsByPage);
+
+  // Calculate percentage changes
+  const percentageChangeMTD = ((uniqueMTDCount - uniquePrevMTDCount) / (uniquePrevMTDCount || 1)) * 100;
+  const percentageChangeLastMonth = ((uniqueLastMonthCount - uniquePrevMonthCount) / (uniquePrevMonthCount || 1)) * 100;
+
+  // Determine if there's an increase or not
+  const isIncreaseMTD = uniqueMTDCount > uniquePrevMTDCount;
+  const isIncreaseLastMonth = uniqueLastMonthCount > uniquePrevMonthCount;
+
+  // Return results
+  return {
+    MTD: {
+      uniqueVisitsCount: uniqueMTDCount,
+      percentageChange: percentageChangeMTD.toFixed(2),
+      isIncrease: isIncreaseMTD,
+      uniqueVisitsPerDayByPage: sortedMTDVisits
+    },
+    lastMonth: {
+      uniqueVisitsCount: uniqueLastMonthCount,
+      percentageChange: percentageChangeLastMonth.toFixed(2),
+      isIncrease: isIncreaseLastMonth,
+      uniqueVisitsPerDayByPage: sortedLastMonthVisits
+    }
+  };
+}
+
+// Example usage with your visitsList array
+const visitsList = [
+  {
+    "id": 1,
+    "createdBy": "ZKJA2IN",
+    "createdDate": "2024-09-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ZKJA2IN",
+    "fullName": "Roopa,Seeri",
+    "emailAddress": "roopa.seeri@bofa.com",
+    "pageName": "TFGSignup"
+  },
   {
     "id": 1,
     "createdBy": "ABC23DF",
@@ -7,216 +146,10 @@
     "modifiedDate": null,
     "standardId": "ABC23DF",
     "fullName": "Dakota, Johnson",
-    "emailAddress": "dakota4@gmail.com",
+    "emailAddress": "dokota4@gmail.com",
     "pageName": "TFGCalendar"
-  },
-  {
-    "id": 2,
-    "createdBy": "XYZ42TH",
-    "createdDate": "2024-08-15T12:30:21Z",
-    "modifiedBy": "LMN56YU",
-    "modifiedDate": "2024-08-18T08:15:43Z",
-    "standardId": "XYZ42TH",
-    "fullName": "Emily, Blunt",
-    "emailAddress": "emilyb99@yahoo.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 3,
-    "createdBy": "LMN56YU",
-    "createdDate": "2024-08-20T14:45:03Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "LMN56YU",
-    "fullName": "Chris, Hemsworth",
-    "emailAddress": "chris.h@outlook.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 4,
-    "createdBy": "JKL78OP",
-    "createdDate": "2024-08-22T10:05:11Z",
-    "modifiedBy": "ABC23DF",
-    "modifiedDate": "2024-09-01T17:22:59Z",
-    "standardId": "JKL78OP",
-    "fullName": "Scarlett, Johansson",
-    "emailAddress": "scarlett.j@gmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 5,
-    "createdBy": "UVW34ZX",
-    "createdDate": "2024-08-25T09:12:34Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "UVW34ZX",
-    "fullName": "Tom, Hardy",
-    "emailAddress": "tomhardy@icloud.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 6,
-    "createdBy": "ABC89JK",
-    "createdDate": "2024-09-01T07:43:12Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "ABC89JK",
-    "fullName": "Margot, Robbie",
-    "emailAddress": "margot.r@yahoo.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 7,
-    "createdBy": "QWE34RT",
-    "createdDate": "2024-08-30T15:22:51Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "QWE34RT",
-    "fullName": "Ryan, Gosling",
-    "emailAddress": "ryan.g@gmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 8,
-    "createdBy": "YUI23ZX",
-    "createdDate": "2024-08-18T17:55:45Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "YUI23ZX",
-    "fullName": "Zoe, Kravitz",
-    "emailAddress": "zoe.k@gmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 9,
-    "createdBy": "OPQ56GH",
-    "createdDate": "2024-09-05T10:22:35Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "OPQ56GH",
-    "fullName": "Chris, Evans",
-    "emailAddress": "chris.evans@hotmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 10,
-    "createdBy": "VBN56JK",
-    "createdDate": "2024-09-10T08:14:22Z",
-    "modifiedBy": "QAZ23WS",
-    "modifiedDate": "2024-09-11T09:00:11Z",
-    "standardId": "VBN56JK",
-    "fullName": "Robert, Downey",
-    "emailAddress": "robert.d@gmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 11,
-    "createdBy": "MLP23DF",
-    "createdDate": "2024-08-29T12:01:14Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "MLP23DF",
-    "fullName": "Gal, Gadot",
-    "emailAddress": "gal.g@hotmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 12,
-    "createdBy": "XYZ99PO",
-    "createdDate": "2024-08-31T06:33:48Z",
-    "modifiedBy": "LMN56YU",
-    "modifiedDate": "2024-09-02T07:15:09Z",
-    "standardId": "XYZ99PO",
-    "fullName": "Jennifer, Lawrence",
-    "emailAddress": "jlaw@gmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 13,
-    "createdBy": "ASD45FG",
-    "createdDate": "2024-08-11T19:12:23Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "ASD45FG",
-    "fullName": "Leonardo, DiCaprio",
-    "emailAddress": "leo.d@gmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 14,
-    "createdBy": "QWE89OP",
-    "createdDate": "2024-08-16T20:08:10Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "QWE89OP",
-    "fullName": "Emma, Watson",
-    "emailAddress": "emma.w@hotmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 15,
-    "createdBy": "JKL12ZX",
-    "createdDate": "2024-08-23T11:50:05Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "JKL12ZX",
-    "fullName": "Henry, Cavill",
-    "emailAddress": "henry.c@gmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 16,
-    "createdBy": "PQR67BN",
-    "createdDate": "2024-08-10T05:42:32Z",
-    "modifiedBy": "ABC23DF",
-    "modifiedDate": "2024-08-20T16:44:25Z",
-    "standardId": "PQR67BN",
-    "fullName": "Zendaya, Coleman",
-    "emailAddress": "zendaya.c@gmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 17,
-    "createdBy": "UVW90TY",
-    "createdDate": "2024-09-02T13:33:29Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "UVW90TY",
-    "fullName": "Will, Smith",
-    "emailAddress": "will.s@gmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 18,
-    "createdBy": "IJK12LM",
-    "createdDate": "2024-08-09T22:14:00Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "IJK12LM",
-    "fullName": "Angelina, Jolie",
-    "emailAddress": "angelina.j@hotmail.com",
-    "pageName": "TFGSignup"
-  },
-  {
-    "id": 19,
-    "createdBy": "NOP56KL",
-    "createdDate": "2024-08-25T07:55:49Z",
-    "modifiedBy": null,
-    "modifiedDate": null,
-    "standardId": "NOP56KL",
-    "fullName": "Brad, Pitt",
-    "emailAddress": "brad.p@gmail.com",
-    "pageName": "TFGCalendar"
-  },
-  {
-    "id": 20,
-    "createdBy": "STU34DF",
-    "createdDate": "2024-09-04T18:02:43Z",
-    "modifiedBy": "JKL78OP",
-    "modifiedDate": "2024-09-06T12:44:18Z",
-    "standardId": "STU34DF",
-    "fullName": "Jake, Gyllenhaal",
-    "emailAddress": "jake.g@gmail.com",
-    "pageName": "TFGSignup"
   }
-]
+  // Add more visits objects here...
+];
+
+console.log(calculateUniqueVisitsMetrics(visitsList));
