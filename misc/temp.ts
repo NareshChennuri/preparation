@@ -1,26 +1,20 @@
-function formatDate(dateString) {
-  const date = new Date(dateString);
+getLastMonthDateRange(): string {
+  const today = new Date();
+
+  // Calculate the last month and year
+  const lastMonth = today.getMonth() === 0 ? 11 : today.getMonth() - 1;
+  const lastMonthYear = today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear();
+
+  // Get the start and end of last month
+  const startOfLastMonth = new Date(lastMonthYear, lastMonth, 1);
+  const endOfLastMonth = new Date(lastMonthYear, lastMonth + 1, 0); // 0 gives the last day of the previous month
+
+  // Define the options with correct type
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   
-  // Array of month names
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  // Format the date as "Month DD, YYYY"
+  const formattedStart = startOfLastMonth.toLocaleDateString('en-US', options);
+  const formattedEnd = endOfLastMonth.toLocaleDateString('en-US', options);
   
-  const day = date.getDate();
-  const month = monthNames[date.getMonth()]; // Get month name
-  const daySuffix = getDaySuffix(day); // Get proper day suffix (st, nd, rd, th)
-
-  return `${month} ${day}${daySuffix}`;
+  return `${formattedStart} - ${formattedEnd}`;
 }
-
-// Helper function to get the day suffix
-function getDaySuffix(day) {
-  if (day > 3 && day < 21) return 'th'; // Handles 11th to 19th
-  switch (day % 10) {
-      case 1:  return "st";
-      case 2:  return "nd";
-      case 3:  return "rd";
-      default: return "th";
-  }
-}
-
-const formattedDate = formatDate("2024-09-16");
-console.log(formattedDate);  // Output: "Sept 16th"
