@@ -1,20 +1,17 @@
-getLastMonthDateRange(): string {
-  const today = new Date();
+function splitDateSuffix(dateStr) {
+  // Use a regular expression to match the number and its suffix
+  let match = dateStr.match(/^(\D*\s\d+)(st|nd|rd|th)$/);
 
-  // Calculate the last month and year
-  const lastMonth = today.getMonth() === 0 ? 11 : today.getMonth() - 1;
-  const lastMonthYear = today.getMonth() === 0 ? today.getFullYear() - 1 : today.getFullYear();
-
-  // Get the start and end of last month
-  const startOfLastMonth = new Date(lastMonthYear, lastMonth, 1);
-  const endOfLastMonth = new Date(lastMonthYear, lastMonth + 1, 0); // 0 gives the last day of the previous month
-
-  // Define the options with correct type
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-  
-  // Format the date as "Month DD, YYYY"
-  const formattedStart = startOfLastMonth.toLocaleDateString('en-US', options);
-  const formattedEnd = endOfLastMonth.toLocaleDateString('en-US', options);
-  
-  return `${formattedStart} - ${formattedEnd}`;
+  // If a match is found, return an array with the date and suffix
+  if (match) {
+      return [match[1], match[2]];
+  } else {
+      // If no match, return the original string (handle invalid input)
+      return [dateStr, ''];
+  }
 }
+
+// Example usage
+let input = 'Sept 16th';
+let result = splitDateSuffix(input);
+console.log(result); // ['Sept 16', 'th']
