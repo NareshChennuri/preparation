@@ -5,11 +5,11 @@
 </mat-tab-group>
 
 <!-- Mat Table -->
-<mat-table [dataSource]="tableData">
+<mat-table [dataSource]="dataSource" matSort>
 
   <!-- Dynamic Columns -->
   <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column.key">
-    <th mat-header-cell *matHeaderCellDef> {{column.label}} </th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column.label}} </th>
     <td mat-cell *matCellDef="let element"> {{element[column.key]}} </td>
   </ng-container>
 
@@ -19,8 +19,14 @@
 
 </mat-table>
 
+<!-- Paginator -->
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 
-import { Component, OnInit } from '@angular/core';
+
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-main',
@@ -45,9 +51,18 @@ export class MainComponent implements OnInit {
   tableData: any[] = [];
   tableColumns: { key: string, label: string }[] = [];
   displayedColumns: string[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit() {
     this.groupByRegion(); // Default to "Region" view on load
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   onTabChange(index: number) {
@@ -101,6 +116,7 @@ export class MainComponent implements OnInit {
     ];
 
     this.displayedColumns = this.tableColumns.map(col => col.key);
+    this.updateTableData();
   }
 
   groupByChapter() {
@@ -140,6 +156,7 @@ export class MainComponent implements OnInit {
     ];
 
     this.displayedColumns = this.tableColumns.map(col => col.key);
+    this.updateTableData();
   }
 
   groupByEventType() {
@@ -179,5 +196,10 @@ export class MainComponent implements OnInit {
     ];
 
     this.displayedColumns = this.tableColumns.map(col => col.key);
+    this.updateTableData();
+  }
+
+  updateTableData() {
+    this.dataSource.data = this.tableData;
   }
 }
