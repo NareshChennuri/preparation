@@ -46,16 +46,17 @@ function calculateVisitsMetrics(visitsList) {
     const visitDateString = formatDate(visitLocalDate);
 
     // 1) Yesterday's visits count
-    if (visitLocalDate.toDateString() === yesterday.toDateString()) {
+    if (visitLocalDate >= yesterday && visitLocalDate < today) {
       visitsYesterday++;
     }
 
     // Compare with same day last month (for percentage change)
-    const visitDay = visitLocalDate.getDate();
     const lastMonthSameDay = new Date(startOfLastMonth);
-    lastMonthSameDay.setDate(visitDay);
-    if (lastMonthSameDay.toDateString() === yesterday.toDateString()) {
-      prevVisitsYesterday++;
+    lastMonthSameDay.setDate(visitLocalDate.getDate());
+    if (visitLocalDate >= startOfLastMonth && visitLocalDate <= endOfLastMonth) {
+      if (lastMonthSameDay >= startOfLastMonth && lastMonthSameDay <= endOfLastMonth) {
+        prevVisitsYesterday++;
+      }
     }
 
     // 2) MTD visits count
@@ -74,8 +75,10 @@ function calculateVisitsMetrics(visitsList) {
     }
 
     // Previous month same MTD period
+    const lastMonth = new Date(startOfLastMonth);
+    lastMonth.setDate(visitLocalDate.getDate());
     if (visitLocalDate >= startOfLastMonth && visitLocalDate < startOfThisMonth) {
-      if (visitDay <= today.getDate()) {
+      if (lastMonth >= startOfLastMonth && lastMonth < startOfThisMonth) {
         totalPrevVisitsMTD++;
         if (!uniquePrevVisitsMTD.has(visit.standardId)) {
           uniquePrevVisitsMTD.add(visit.standardId);
@@ -99,12 +102,15 @@ function calculateVisitsMetrics(visitsList) {
     }
 
     // Compare with the month before last month
-    const monthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
-    const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
-    if (visitLocalDate >= monthBeforeLast && visitLocalDate <= endOfMonthBeforeLast) {
-      totalPrevVisitsLastMonth++;
-      if (!uniquePrevVisitsLastMonth.has(visit.standardId)) {
-        uniquePrevVisitsLastMonth.add(visit.standardId);
+    const monthBeforeLast = new Date(startOfLastMonth);
+    monthBeforeLast.setMonth(monthBeforeLast.getMonth() - 1);
+    monthBeforeLast.setDate(visitLocalDate.getDate());
+    if (visitLocalDate >= monthBeforeLast && visitLocalDate <= endOfLastMonth) {
+      if (monthBeforeLast >= startOfLastMonth && monthBeforeLast <= endOfLastMonth) {
+        totalPrevVisitsLastMonth++;
+        if (!uniquePrevVisitsLastMonth.has(visit.standardId)) {
+          uniquePrevVisitsLastMonth.add(visit.standardId);
+        }
       }
     }
   });
@@ -162,32 +168,36 @@ function calculateVisitsMetrics(visitsList) {
     return { date: mostVisitsDate ? getLocalDateISOString(new Date(mostVisitsDate)) : null, count: mostVisitsCount };
   }
 
-  // Return the results
+  // Return the calculated metrics
   return {
     yesterday: {
       visitsCount: visitsYesterday,
       percentageChange: percentageChangeYesterday.toFixed(2),
       isIncreased: isIncreasedYesterday
     },
-    MTD: {
+    mtd: {
       visitsCount: totalVisitsMTD,
       percentageChange: percentageChangeMTD.toFixed(2),
       isIncreased: isIncreasedMTD,
-      visitsByPage: sortedMTDVisitsByPage,
-      uniqueVisitsCount: uniqueVisitsMTD.size,
-      percentageChangeUnique: percentageChangeMTDUnique.toFixed(2),
-      isIncreasedUnique: isIncreasedMTDUnique,
-      uniqueVisitsByPage: sortedUniqueMTDVisitsByPage
+      visitsByPage: sortedMTDVisitsByPage
     },
     lastMonth: {
       visitsCount: totalVisitsLastMonth,
       percentageChange: percentageChangeLastMonth.toFixed(2),
       isIncreased: isIncreasedLastMonth,
-      visitsByPage: sortedLastMonthVisitsByPage,
-      uniqueVisitsCount: uniqueVisitsLastMonth.size,
-      percentageChangeUnique: percentageChangeLastMonthUnique.toFixed(2),
-      isIncreasedUnique: isIncreasedLastMonthUnique,
-      uniqueVisitsByPage: sortedUniqueLastMonthVisitsByPage
+      visitsByPage: sortedLastMonthVisitsByPage
+    },
+    mtdUnique: {
+      visitsCount: uniqueVisitsMTD.size,
+      percentageChange: percentageChangeMTDUnique.toFixed(2),
+      isIncreased: isIncreasedMTDUnique,
+      visitsByPage: sortedUniqueMTDVisitsByPage
+    },
+    lastMonthUnique: {
+      visitsCount: uniqueVisitsLastMonth.size,
+      percentageChange: percentageChangeLastMonthUnique.toFixed(2),
+      isIncreased: isIncreasedLastMonthUnique,
+      visitsByPage: sortedUniqueLastMonthVisitsByPage
     },
     mostVisitsMTD: getMostVisitsMTD()
   };
