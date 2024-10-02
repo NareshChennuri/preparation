@@ -1,205 +1,190 @@
-<mat-tab-group (selectedTabChange)="onTabChange($event.index)">
-  <mat-tab label="Region"></mat-tab>
-  <mat-tab label="Chapter"></mat-tab>
-  <mat-tab label="Event Type"></mat-tab>
-</mat-tab-group>
+function calculateVisitsMetrics(visitsList) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
 
-<!-- Mat Table -->
-<mat-table [dataSource]="dataSource" matSort>
+  const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
 
-  <!-- Dynamic Columns -->
-  <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column.key">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column.label}} </th>
-    <td mat-cell *matCellDef="let element"> {{element[column.key]}} </td>
-  </ng-container>
-
-  <!-- Header and Row Declarations -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-</mat-table>
-
-<!-- Paginator -->
-<mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-
-
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-
-@Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-})
-export class MainComponent implements OnInit {
-  data = [
-    {
-      "id": 43704,
-      "eventId": 1510,
-      "metricType": "REG_COUNT",
-      "executionStartDate": "2024-09-11T00:00:00Z",
-      "eventTitle": "fsgdbsdfg",
-      "programOfferings": "COHORTS",
-      "region": "APAC-IST",
-      "language": "Java",
-      "standardId": "ZK1M4MS"
-    },
-    // Other data
-  ];
-
-  tableData: any[] = [];
-  tableColumns: { key: string, label: string }[] = [];
-  displayedColumns: string[] = [];
-  dataSource = new MatTableDataSource<any>([]);
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
-  ngOnInit() {
-    this.groupByRegion(); // Default to "Region" view on load
+  // Helper to format the date (YYYY-MM-DD)
+  function formatDate(date) {
+    return date.toISOString().split('T')[0];
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  // Helper to get local date from UTC string
+  function getLocalDate(utcDateString) {
+    const utcDate = new Date(utcDateString);
+    return new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
   }
 
-  onTabChange(index: number) {
-    switch (index) {
-      case 0:
-        this.groupByRegion();
-        break;
-      case 1:
-        this.groupByChapter();
-        break;
-      case 2:
-        this.groupByEventType();
-        break;
+  let visitsYesterday = 0, prevVisitsYesterday = 0;
+  let totalVisitsMTD = 0, totalPrevVisitsMTD = 0;
+  let totalVisitsLastMonth = 0, totalPrevVisitsLastMonth = 0;
+
+  let uniqueVisitsMTD = new Set(), uniquePrevVisitsMTD = new Set();
+  let uniqueVisitsLastMonth = new Set(), uniquePrevVisitsLastMonth = new Set();
+
+  let visitsMTDByPage = {}, uniqueMTDVisitsByPage = {};
+  let visitsLastMonthByPage = {}, uniqueLastMonthVisitsByPage = {};
+
+  visitsList.forEach(visit => {
+    const visitLocalDate = getLocalDate(visit.createdDate);
+    const visitDateString = formatDate(visitLocalDate);
+
+    // 1) Yesterday's visits count
+    if (visitLocalDate.toDateString() === yesterday.toDateString()) {
+      visitsYesterday++;
     }
-  }
 
-  groupByRegion() {
-    const regionMap = new Map();
+    // Compare with same day last month (for percentage change)
+    const visitDay = visitLocalDate.getDate();
+    const lastMonthSameDay = new Date(startOfLastMonth);
+    lastMonthSameDay.setDate(visitDay);
+    if (lastMonthSameDay.toDateString() === yesterday.toDateString()) {
+      prevVisitsYesterday++;
+    }
 
-    this.data.forEach(event => {
-      const key = event.region;
-      if (!regionMap.has(key)) {
-        regionMap.set(key, {
-          region: event.region,
-          eventType: event.programOfferings,
-          eventCount: 0,
-          distinctParticipants: new Set(),
-          registrations: new Set()
-        });
+    // 2) MTD visits count
+    if (visitLocalDate >= startOfThisMonth && visitLocalDate <= today) {
+      totalVisitsMTD++;
+      if (!visitsMTDByPage[visit.pageName]) visitsMTDByPage[visit.pageName] = {};
+      if (!visitsMTDByPage[visit.pageName][visitDateString]) visitsMTDByPage[visit.pageName][visitDateString] = 0;
+      visitsMTDByPage[visit.pageName][visitDateString]++;
+
+      if (!uniqueVisitsMTD.has(visit.standardId)) {
+        uniqueVisitsMTD.add(visit.standardId);
+        if (!uniqueMTDVisitsByPage[visit.pageName]) uniqueMTDVisitsByPage[visit.pageName] = {};
+        if (!uniqueMTDVisitsByPage[visit.pageName][visitDateString]) uniqueMTDVisitsByPage[visit.pageName][visitDateString] = 0;
+        uniqueMTDVisitsByPage[visit.pageName][visitDateString]++;
       }
-      const regionData = regionMap.get(key);
-      regionData.eventCount++;
-      regionData.distinctParticipants.add(event.standardId);
-      regionData.registrations.add(event.eventId);
-    });
+    }
 
-    this.tableData = Array.from(regionMap.values()).map(item => ({
-      region: item.region,
-      eventType: item.eventType,
-      eventCount: item.eventCount,
-      distinctParticipants: item.distinctParticipants.size,
-      registrations: item.registrations.size
-    }));
-
-    this.tableColumns = [
-      { key: 'region', label: 'Region' },
-      { key: 'eventType', label: 'Event Type' },
-      { key: 'eventCount', label: 'Count' },
-      { key: 'distinctParticipants', label: 'Distinct Participants' },
-      { key: 'registrations', label: 'Registrations' },
-    ];
-
-    this.displayedColumns = this.tableColumns.map(col => col.key);
-    this.updateTableData();
-  }
-
-  groupByChapter() {
-    const chapterMap = new Map();
-
-    this.data.forEach(event => {
-      const key = event.language;
-      if (!chapterMap.has(key)) {
-        chapterMap.set(key, {
-          chapter: event.language,
-          eventType: event.programOfferings,
-          eventCount: 0,
-          distinctParticipants: new Set(),
-          registrations: new Set()
-        });
+    // Previous month same MTD period
+    if (visitLocalDate >= startOfLastMonth && visitLocalDate < startOfThisMonth) {
+      if (visitDay <= today.getDate()) {
+        totalPrevVisitsMTD++;
+        if (!uniquePrevVisitsMTD.has(visit.standardId)) {
+          uniquePrevVisitsMTD.add(visit.standardId);
+        }
       }
-      const chapterData = chapterMap.get(key);
-      chapterData.eventCount++;
-      chapterData.distinctParticipants.add(event.standardId);
-      chapterData.registrations.add(event.eventId);
-    });
+    }
 
-    this.tableData = Array.from(chapterMap.values()).map(item => ({
-      chapter: item.chapter,
-      eventType: item.eventType,
-      eventCount: item.eventCount,
-      distinctParticipants: item.distinctParticipants.size,
-      registrations: item.registrations.size
-    }));
+    // 3) Last Month visits count
+    if (visitLocalDate >= startOfLastMonth && visitLocalDate <= endOfLastMonth) {
+      totalVisitsLastMonth++;
+      if (!visitsLastMonthByPage[visit.pageName]) visitsLastMonthByPage[visit.pageName] = {};
+      if (!visitsLastMonthByPage[visit.pageName][visitDateString]) visitsLastMonthByPage[visit.pageName][visitDateString] = 0;
+      visitsLastMonthByPage[visit.pageName][visitDateString]++;
 
-    this.tableColumns = [
-      { key: 'chapter', label: 'Chapter' },
-      { key: 'eventType', label: 'Event Type' },
-      { key: 'eventCount', label: 'Count' },
-      { key: 'distinctParticipants', label: 'Distinct Participants' },
-      { key: 'registrations', label: 'Registrations' },
-    ];
-
-    this.displayedColumns = this.tableColumns.map(col => col.key);
-    this.updateTableData();
-  }
-
-  groupByEventType() {
-    const eventTypeMap = new Map();
-
-    this.data.forEach(event => {
-      const key = event.programOfferings;
-      if (!eventTypeMap.has(key)) {
-        eventTypeMap.set(key, {
-          eventType: event.programOfferings,
-          chapter: event.language,
-          eventCount: 0,
-          distinctParticipants: new Set(),
-          registrations: new Set()
-        });
+      if (!uniqueVisitsLastMonth.has(visit.standardId)) {
+        uniqueVisitsLastMonth.add(visit.standardId);
+        if (!uniqueLastMonthVisitsByPage[visit.pageName]) uniqueLastMonthVisitsByPage[visit.pageName] = {};
+        if (!uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]) uniqueLastMonthVisitsByPage[visit.pageName][visitDateString] = 0;
+        uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]++;
       }
-      const eventTypeData = eventTypeMap.get(key);
-      eventTypeData.eventCount++;
-      eventTypeData.distinctParticipants.add(event.standardId);
-      eventTypeData.registrations.add(event.eventId);
-    });
+    }
 
-    this.tableData = Array.from(eventTypeMap.values()).map(item => ({
-      eventType: item.eventType,
-      chapter: item.chapter,
-      eventCount: item.eventCount,
-      distinctParticipants: item.distinctParticipants.size,
-      registrations: item.registrations.size
-    }));
+    // Compare with the month before last month
+    const monthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+    const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+    if (visitLocalDate >= monthBeforeLast && visitLocalDate <= endOfMonthBeforeLast) {
+      totalPrevVisitsLastMonth++;
+      if (!uniquePrevVisitsLastMonth.has(visit.standardId)) {
+        uniquePrevVisitsLastMonth.add(visit.standardId);
+      }
+    }
+  });
 
-    this.tableColumns = [
-      { key: 'eventType', label: 'Event Type' },
-      { key: 'chapter', label: 'Chapter' },
-      { key: 'eventCount', label: 'Count' },
-      { key: 'distinctParticipants', label: 'Distinct Participants' },
-      { key: 'registrations', label: 'Registrations' },
-    ];
-
-    this.displayedColumns = this.tableColumns.map(col => col.key);
-    this.updateTableData();
+  // Helper function to convert visits by page to sorted array format
+  function convertToSortedList(visitsByPage) {
+    const result = {};
+    for (const page in visitsByPage) {
+      result[page] = Object.keys(visitsByPage[page])
+        .sort()
+        .map(date => ({
+          createdDate: date,
+          visitsCount: visitsByPage[page][date]
+        }));
+    }
+    return result;
   }
 
-  updateTableData() {
-    this.dataSource.data = this.tableData;
-  }
+  const sortedMTDVisitsByPage = convertToSortedList(visitsMTDByPage);
+  const sortedLastMonthVisitsByPage = convertToSortedList(visitsLastMonthByPage);
+  const sortedUniqueMTDVisitsByPage = convertToSortedList(uniqueMTDVisitsByPage);
+  const sortedUniqueLastMonthVisitsByPage = convertToSortedList(uniqueLastMonthVisitsByPage);
+
+  // Calculate percentage changes
+  const percentageChangeYesterday = ((visitsYesterday - prevVisitsYesterday) / (prevVisitsYesterday || 1)) * 100;
+  const percentageChangeMTD = ((totalVisitsMTD - totalPrevVisitsMTD) / (totalPrevVisitsMTD || 1)) * 100;
+  const percentageChangeLastMonth = ((totalVisitsLastMonth - totalPrevVisitsLastMonth) / (totalPrevVisitsLastMonth || 1)) * 100;
+
+  const percentageChangeMTDUnique = ((uniqueVisitsMTD.size - uniquePrevVisitsMTD.size) / (uniquePrevVisitsMTD.size || 1)) * 100;
+  const percentageChangeLastMonthUnique = ((uniqueVisitsLastMonth.size - uniquePrevVisitsLastMonth.size) / (uniquePrevVisitsLastMonth.size || 1)) * 100;
+
+  // Determine if there's an increase
+  const isIncreasedYesterday = visitsYesterday > prevVisitsYesterday;
+  const isIncreasedMTD = totalVisitsMTD > totalPrevVisitsMTD;
+  const isIncreasedLastMonth = totalVisitsLastMonth > totalPrevVisitsLastMonth;
+
+  const isIncreasedMTDUnique = uniqueVisitsMTD.size > uniquePrevVisitsMTD.size;
+  const isIncreasedLastMonthUnique = uniqueVisitsLastMonth.size > uniquePrevVisitsLastMonth.size;
+
+  // Return the results
+  return {
+    yesterday: {
+      visitsCount: visitsYesterday,
+      percentageChange: percentageChangeYesterday.toFixed(2),
+      isIncreased: isIncreasedYesterday
+    },
+    MTD: {
+      visitsCount: totalVisitsMTD,
+      percentageChange: percentageChangeMTD.toFixed(2),
+      isIncreased: isIncreasedMTD,
+      visitsPerDayByPage: sortedMTDVisitsByPage,
+      uniqueVisitsCount: uniqueVisitsMTD.size,
+      percentageChangeUnique: percentageChangeMTDUnique.toFixed(2),
+      isIncreasedUnique: isIncreasedMTDUnique,
+      uniqueVisitsPerDayByPage: sortedUniqueMTDVisitsByPage
+    },
+    lastMonth: {
+      visitsCount: totalVisitsLastMonth,
+      percentageChange: percentageChangeLastMonth.toFixed(2),
+      isIncreased: isIncreasedLastMonth,
+      visitsPerDayByPage: sortedLastMonthVisitsByPage,
+      uniqueVisitsCount: uniqueVisitsLastMonth.size,
+      percentageChangeUnique: percentageChangeLastMonthUnique.toFixed(2),
+      isIncreasedUnique: isIncreasedLastMonthUnique,
+      uniqueVisitsPerDayByPage: sortedUniqueLastMonthVisitsByPage
+    }
+  };
 }
+
+// Example usage
+const visitsList = [
+  {
+    "id": 1,
+    "createdBy": "ZKJA2IN",
+    "createdDate": "2024-09-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ZKJA2IN",
+    "fullName": "Roopa,Seeri",
+    "emailAddress": "roopa.seeri@bofa.com",
+    "pageName": "TFGSignup"
+  },
+  {
+    "id": 1,
+    "createdBy": "ABC23DF",
+    "createdDate": "2024-08-12T00:11:59Z",
+    "modifiedBy": null,
+    "modifiedDate": null,
+    "standardId": "ABC23DF",
+    "fullName": "Dakota, Johnson",
+    "emailAddress": "dokota4@gmail.com",
+    "pageName": "TFGCalendar"
+  }
+];
+
+console.log(calculateVisitsMetrics(visitsList));
