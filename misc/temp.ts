@@ -102,3 +102,60 @@ const chapterArray = Object.keys(groupByLanguage).map(chapter => {
     registrationsCount: groupByLanguage[chapter].registrations.size
   };
 });
+
+++++++++
+
+
+
+
+
+
+
+
+const regionArray = Object.keys(groupByRegion).map(region => {
+  const eventTypes = Object.entries(groupByRegion[region].programOfferings)
+    .map(([eventType, count]) => `${eventType} (${count})`)
+    .join(', ');
+
+  return {
+    region,
+    eventType: eventTypes,
+    distinctParticipantsCount: groupByRegion[region].uniqueParticipants.size,
+    registrationsCount: groupByRegion[region].registrations.size
+  };
+});
+
+
+
+
+
+const chapterArray = Object.keys(groupByLanguage).map(chapter => {
+  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
+    .map(([eventType, count]) => `${eventType} (${count})`)
+    .join(', ');
+
+  return {
+    chapter,
+    eventType: eventTypes,
+    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
+    registrationsCount: groupByLanguage[chapter].registrations.size
+  };
+});
+
+
+
+
+
+
+const eventTypeArray = Object.keys(groupByEventType).map(eventType => {
+  const chapters = Object.entries(groupByEventType[eventType].chapters)
+    .map(([chapter, count]) => `${chapter} (${count})`)
+    .join(', ');
+
+  return {
+    eventType,
+    chapter: chapters,
+    distinctParticipantsCount: groupByEventType[eventType].uniqueParticipants.size,
+    registrationsCount: groupByEventType[eventType].registrations.size
+  };
+});
