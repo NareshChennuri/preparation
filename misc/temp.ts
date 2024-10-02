@@ -26,6 +26,20 @@ const groupByRegion = data.reduce((acc, curr) => {
   return acc;
 }, {});
 
+const regionArray = Object.keys(groupByRegion).map(region => {
+  const eventTypes = Object.entries(groupByRegion[region].programOfferings)
+    .map(([eventType, count]) => `${eventType} (${count})`)
+    .join(', ');
+
+  return {
+    region,
+    eventType: eventTypes,
+    distinctParticipantsCount: groupByRegion[region].uniqueParticipants.size,
+    registrationsCount: groupByRegion[region].registrations.size
+  };
+});
+
+
 // Group by Language (Chapter)
 const groupByLanguage = data.reduce((acc, curr) => {
   const chapter = curr.language;
@@ -44,6 +58,20 @@ const groupByLanguage = data.reduce((acc, curr) => {
   return acc;
 }, {});
 
+const chapterArray = Object.keys(groupByLanguage).map(chapter => {
+  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
+    .map(([eventType, count]) => `${eventType} (${count})`)
+    .join(', ');
+
+  return {
+    chapter,
+    eventType: eventTypes,
+    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
+    registrationsCount: groupByLanguage[chapter].registrations.size
+  };
+});
+
+
 // Group by Event Type (programOfferings)
 const groupByEventType = data.reduce((acc, curr) => {
   const eventType = curr.programOfferings;
@@ -61,3 +89,16 @@ const groupByEventType = data.reduce((acc, curr) => {
 
   return acc;
 }, {});
+
+const chapterArray = Object.keys(groupByLanguage).map(chapter => {
+  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
+    .map(([eventType, count]) => `${eventType} (${count})`)
+    .join(', ');
+
+  return {
+    chapter,
+    eventType: eventTypes,
+    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
+    registrationsCount: groupByLanguage[chapter].registrations.size
+  };
+});
