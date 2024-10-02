@@ -27,6 +27,9 @@ function calculateVisitsMetrics(visitsList) {
 
   let visitsMTDByPage = {}, uniqueMTDVisitsByPage = {};
   let visitsLastMonthByPage = {}, uniqueLastMonthVisitsByPage = {};
+  let mostVisitsMTDDate = null, mostVisitsMTDCount = 0;
+
+  const mtdVisitsPerDay = {}, uniqueMtdVisitsPerDay = {};
 
   visitsList.forEach(visit => {
     const visitLocalDate = getLocalDate(visit.createdDate);
@@ -48,16 +51,21 @@ function calculateVisitsMetrics(visitsList) {
     // 2) MTD visits count
     if (visitLocalDate >= startOfThisMonth && visitLocalDate <= today) {
       totalVisitsMTD++;
+
       if (!visitsMTDByPage[visit.pageName]) visitsMTDByPage[visit.pageName] = {};
       if (!visitsMTDByPage[visit.pageName][visitDateString]) visitsMTDByPage[visit.pageName][visitDateString] = 0;
       visitsMTDByPage[visit.pageName][visitDateString]++;
 
       if (!uniqueVisitsMTD.has(visit.standardId)) {
         uniqueVisitsMTD.add(visit.standardId);
+
         if (!uniqueMTDVisitsByPage[visit.pageName]) uniqueMTDVisitsByPage[visit.pageName] = {};
         if (!uniqueMTDVisitsByPage[visit.pageName][visitDateString]) uniqueMTDVisitsByPage[visit.pageName][visitDateString] = 0;
         uniqueMTDVisitsByPage[visit.pageName][visitDateString]++;
       }
+
+      if (!mtdVisitsPerDay[visitDateString]) mtdVisitsPerDay[visitDateString] = 0;
+      mtdVisitsPerDay[visitDateString]++;
     }
 
     // Previous month same MTD period
@@ -73,12 +81,14 @@ function calculateVisitsMetrics(visitsList) {
     // 3) Last Month visits count
     if (visitLocalDate >= startOfLastMonth && visitLocalDate <= endOfLastMonth) {
       totalVisitsLastMonth++;
+
       if (!visitsLastMonthByPage[visit.pageName]) visitsLastMonthByPage[visit.pageName] = {};
       if (!visitsLastMonthByPage[visit.pageName][visitDateString]) visitsLastMonthByPage[visit.pageName][visitDateString] = 0;
       visitsLastMonthByPage[visit.pageName][visitDateString]++;
 
       if (!uniqueVisitsLastMonth.has(visit.standardId)) {
         uniqueVisitsLastMonth.add(visit.standardId);
+
         if (!uniqueLastMonthVisitsByPage[visit.pageName]) uniqueLastMonthVisitsByPage[visit.pageName] = {};
         if (!uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]) uniqueLastMonthVisitsByPage[visit.pageName][visitDateString] = 0;
         uniqueLastMonthVisitsByPage[visit.pageName][visitDateString]++;
@@ -131,6 +141,17 @@ function calculateVisitsMetrics(visitsList) {
   const isIncreasedMTDUnique = uniqueVisitsMTD.size > uniquePrevVisitsMTD.size;
   const isIncreasedLastMonthUnique = uniqueVisitsLastMonth.size > uniquePrevVisitsLastMonth.size;
 
+  // Find date with the most unique visits MTD
+  let mostUniqueVisitsMTDDate = null;
+  let mostUniqueVisitsMTDCount = 0;
+
+  for (const date in mtdVisitsPerDay) {
+    if (mtdVisitsPerDay[date] > mostUniqueVisitsMTDCount) {
+      mostUniqueVisitsMTDCount = mtdVisitsPerDay[date];
+      mostUniqueVisitsMTDDate = date;
+    }
+  }
+
   // Return the results
   return {
     yesterday: {
@@ -157,6 +178,10 @@ function calculateVisitsMetrics(visitsList) {
       percentageChangeUnique: percentageChangeLastMonthUnique.toFixed(2),
       isIncreasedUnique: isIncreasedLastMonthUnique,
       uniqueVisitsPerDayByPage: sortedUniqueLastMonthVisitsByPage
+    },
+    getMostVisitsMTD: {
+      date: mostUniqueVisitsMTDDate,
+      visitsCount: mostUniqueVisitsMTDCount
     }
   };
 }
@@ -170,7 +195,7 @@ const visitsList = [
     "modifiedBy": null,
     "modifiedDate": null,
     "standardId": "ZKJA2IN",
-    "fullName": "Roopa,Seeri",
+    "fullName": "Roopa, Seeri",
     "emailAddress": "roopa.seeri@bofa.com",
     "pageName": "TFGSignup"
   },
