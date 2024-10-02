@@ -1,7 +1,11 @@
 function calculateVisitsMetrics(visitsList) {
   const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
+  const yesterdayStart = new Date(today);
+  yesterdayStart.setDate(today.getDate() - 1);
+  yesterdayStart.setHours(0, 0, 0, 0);
+  const yesterdayEnd = new Date(today);
+  yesterdayEnd.setDate(today.getDate() - 1);
+  yesterdayEnd.setHours(23, 59, 59, 999);
 
   const startOfThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
@@ -46,17 +50,15 @@ function calculateVisitsMetrics(visitsList) {
     const visitDateString = formatDate(visitLocalDate);
 
     // 1) Yesterday's visits count
-    if (visitLocalDate >= yesterday && visitLocalDate < today) {
+    if (visitLocalDate >= yesterdayStart && visitLocalDate <= yesterdayEnd) {
       visitsYesterday++;
     }
 
     // Compare with same day last month (for percentage change)
     const lastMonthSameDay = new Date(startOfLastMonth);
     lastMonthSameDay.setDate(visitLocalDate.getDate());
-    if (visitLocalDate >= startOfLastMonth && visitLocalDate <= endOfLastMonth) {
-      if (lastMonthSameDay >= startOfLastMonth && lastMonthSameDay <= endOfLastMonth) {
-        prevVisitsYesterday++;
-      }
+    if (visitLocalDate >= yesterdayStart && visitLocalDate <= yesterdayEnd) {
+      prevVisitsYesterday++;
     }
 
     // 2) MTD visits count
@@ -75,10 +77,8 @@ function calculateVisitsMetrics(visitsList) {
     }
 
     // Previous month same MTD period
-    const lastMonth = new Date(startOfLastMonth);
-    lastMonth.setDate(visitLocalDate.getDate());
     if (visitLocalDate >= startOfLastMonth && visitLocalDate < startOfThisMonth) {
-      if (lastMonth >= startOfLastMonth && lastMonth < startOfThisMonth) {
+      if (visitLocalDate.getDate() <= today.getDate()) {
         totalPrevVisitsMTD++;
         if (!uniquePrevVisitsMTD.has(visit.standardId)) {
           uniquePrevVisitsMTD.add(visit.standardId);
@@ -102,11 +102,10 @@ function calculateVisitsMetrics(visitsList) {
     }
 
     // Compare with the month before last month
-    const monthBeforeLast = new Date(startOfLastMonth);
-    monthBeforeLast.setMonth(monthBeforeLast.getMonth() - 1);
-    monthBeforeLast.setDate(visitLocalDate.getDate());
-    if (visitLocalDate >= monthBeforeLast && visitLocalDate <= endOfLastMonth) {
-      if (monthBeforeLast >= startOfLastMonth && monthBeforeLast <= endOfLastMonth) {
+    const monthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+    const endOfMonthBeforeLast = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+    if (visitLocalDate >= monthBeforeLast && visitLocalDate <= endOfMonthBeforeLast) {
+      if (visitLocalDate.getDate() <= today.getDate()) {
         totalPrevVisitsLastMonth++;
         if (!uniquePrevVisitsLastMonth.has(visit.standardId)) {
           uniquePrevVisitsLastMonth.add(visit.standardId);
@@ -152,23 +151,27 @@ function calculateVisitsMetrics(visitsList) {
   const isIncreasedMTDUnique = uniqueVisitsMTD.size > uniquePrevVisitsMTD.size;
   const isIncreasedLastMonthUnique = uniqueVisitsLastMonth.size > uniquePrevVisitsLastMonth.size;
 
-  // Helper function to find the date with most unique visits in MTD
-  function getMostVisitsMTD() {
+  // Helper function to find the date with most unique visits in last 90 days
+  function getMostVisitsLast90Days() {
+    const ninetyDaysAgo = new Date(today);
+    ninetyDaysAgo.setDate(today.getDate() - 90);
+
     let mostVisitsDate = null;
     let mostVisitsCount = 0;
-    for (const page in uniqueMTDVisitsByPage) {
-      for (const date in uniqueMTDVisitsByPage[page]) {
-        const visitsCount = uniqueMTDVisitsByPage[page][date];
-        if (visitsCount > mostVisitsCount) {
-          mostVisitsCount = visitsCount;
-          mostVisitsDate = date;
+
+    visitsList.forEach(visit => {
+      const visitLocalDate = getLocalDate(visit.createdDate);
+      if (visitLocalDate >= ninetyDaysAgo && visitLocalDate <= today) {
+        if (!mostVisitsDate || uniqueVisitsMTD.size > mostVisitsCount) {
+          mostVisitsCount = uniqueVisitsMTD.size;
+          mostVisitsDate = visitLocalDate;
         }
       }
-    }
-    return { date: mostVisitsDate ? getLocalDateISOString(new Date(mostVisitsDate)) : null, count: mostVisitsCount };
+    });
+
+    return { date: mostVisitsDate ? getLocalDateISOString(mostVisitsDate) : null, count: mostVisitsCount };
   }
 
-  // Return the calculated metrics
   return {
     yesterday: {
       visitsCount: visitsYesterday,
@@ -199,7 +202,7 @@ function calculateVisitsMetrics(visitsList) {
       isIncreased: isIncreasedLastMonthUnique,
       visitsByPage: sortedUniqueLastMonthVisitsByPage
     },
-    mostVisitsMTD: getMostVisitsMTD()
+    mostVisitsLast90Days: getMostVisitsLast90Days()
   };
 }
 
