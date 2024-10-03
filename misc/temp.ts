@@ -1,161 +1,73 @@
-// Sample Data
-const data = [
-  // (Include the JSON data here)
-];
+import { Component } from '@angular/core';
 
-// Group by Region
-const groupByRegion = data.reduce((acc, curr) => {
-  const region = curr.region;
-  const eventType = curr.programOfferings;
-  const eventId = curr.eventId;
-  const standardId = curr.standardId;
+@Component({
+  selector: 'app-calendar',
+  templateUrl: './calendar.component.html',
+  styleUrls: ['./calendar.component.css'],
+})
+export class CalendarComponent {
+  calendarOptions: any = {
+    initialView: 'dayGridMonth',
+    events: [
+      {
+        id: '1',
+        title: 'Event 1',
+        start: '2024-10-10',
+        url: 'https://example.com/event/1',
+      },
+      {
+        id: '2',
+        title: 'Event 2',
+        start: '2024-10-15',
+        url: 'https://example.com/event/2',
+      },
+    ],
+    eventContent: this.renderEventContent.bind(this), // Custom event rendering
+  };
 
-  if (!acc[region]) {
-    acc[region] = { programOfferings: {}, uniqueParticipants: new Set(), registrations: new Set() };
+  renderEventContent(arg: any) {
+    // Create two separate divs, one for the title and one for the link icon
+
+    // Create the event title div
+    const titleDiv = document.createElement('div');
+    titleDiv.innerText = arg.event.title;
+    titleDiv.style.cursor = 'pointer';
+    titleDiv.onclick = () => {
+      alert(`Event Title Clicked: ${arg.event.title}`);
+    };
+
+    // Create the link icon div
+    const iconDiv = document.createElement('div');
+    const icon = document.createElement('i');
+    icon.classList.add('fa', 'fa-link'); // FontAwesome link icon
+    iconDiv.appendChild(icon);
+    iconDiv.style.cursor = 'pointer';
+    iconDiv.style.marginLeft = '10px'; // Add some spacing
+    iconDiv.onclick = () => {
+      this.copyToClipboard(arg.event.url);
+    };
+
+    // Create a container div to hold both elements
+    const container = document.createElement('div');
+    container.style.display = 'flex'; // To display title and icon in a row
+    container.appendChild(titleDiv);
+    container.appendChild(iconDiv);
+
+    // Return the custom HTML
+    return { domNodes: [container] };
   }
 
-  // Count program offerings
-  acc[region].programOfferings[eventType] = (acc[region].programOfferings[eventType] || 0) + 1;
+  // Method to copy link to clipboard
+  copyToClipboard(link: string) {
+    // Create a temporary textarea element to copy the text
+    const textarea = document.createElement('textarea');
+    textarea.value = link;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
 
-  // Count distinct participants
-  acc[region].uniqueParticipants.add(standardId);
-
-  // Count distinct events by eventId
-  acc[region].registrations.add(eventId);
-
-  return acc;
-}, {});
-
-const regionArray = Object.keys(groupByRegion).map(region => {
-  const eventTypes = Object.entries(groupByRegion[region].programOfferings)
-    .map(([eventType, count]) => `${eventType} (${count})`)
-    .join(', ');
-
-  return {
-    region,
-    eventType: eventTypes,
-    distinctParticipantsCount: groupByRegion[region].uniqueParticipants.size,
-    registrationsCount: groupByRegion[region].registrations.size
-  };
-});
-
-
-// Group by Language (Chapter)
-const groupByLanguage = data.reduce((acc, curr) => {
-  const chapter = curr.language;
-  const eventType = curr.programOfferings;
-  const eventId = curr.eventId;
-  const standardId = curr.standardId;
-
-  if (!acc[chapter]) {
-    acc[chapter] = { programOfferings: {}, uniqueParticipants: new Set(), registrations: new Set() };
+    // Show an alert that the link has been copied
+    alert('Link copied to clipboard: ' + link);
   }
-
-  acc[chapter].programOfferings[eventType] = (acc[chapter].programOfferings[eventType] || 0) + 1;
-  acc[chapter].uniqueParticipants.add(standardId);
-  acc[chapter].registrations.add(eventId);
-
-  return acc;
-}, {});
-
-const chapterArray = Object.keys(groupByLanguage).map(chapter => {
-  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
-    .map(([eventType, count]) => `${eventType} (${count})`)
-    .join(', ');
-
-  return {
-    chapter,
-    eventType: eventTypes,
-    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
-    registrationsCount: groupByLanguage[chapter].registrations.size
-  };
-});
-
-
-// Group by Event Type (programOfferings)
-const groupByEventType = data.reduce((acc, curr) => {
-  const eventType = curr.programOfferings;
-  const chapter = curr.language;
-  const eventId = curr.eventId;
-  const standardId = curr.standardId;
-
-  if (!acc[eventType]) {
-    acc[eventType] = { chapters: {}, uniqueParticipants: new Set(), registrations: new Set() };
-  }
-
-  acc[eventType].chapters[chapter] = (acc[eventType].chapters[chapter] || 0) + 1;
-  acc[eventType].uniqueParticipants.add(standardId);
-  acc[eventType].registrations.add(eventId);
-
-  return acc;
-}, {});
-
-const chapterArray = Object.keys(groupByLanguage).map(chapter => {
-  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
-    .map(([eventType, count]) => `${eventType} (${count})`)
-    .join(', ');
-
-  return {
-    chapter,
-    eventType: eventTypes,
-    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
-    registrationsCount: groupByLanguage[chapter].registrations.size
-  };
-});
-
-++++++++
-
-
-
-
-
-
-
-
-const regionArray = Object.keys(groupByRegion).map(region => {
-  const eventTypes = Object.entries(groupByRegion[region].programOfferings)
-    .map(([eventType, count]) => `${eventType} (${count})`)
-    .join(', ');
-
-  return {
-    region,
-    eventType: eventTypes,
-    distinctParticipantsCount: groupByRegion[region].uniqueParticipants.size,
-    registrationsCount: groupByRegion[region].registrations.size
-  };
-});
-
-
-
-
-
-const chapterArray = Object.keys(groupByLanguage).map(chapter => {
-  const eventTypes = Object.entries(groupByLanguage[chapter].programOfferings)
-    .map(([eventType, count]) => `${eventType} (${count})`)
-    .join(', ');
-
-  return {
-    chapter,
-    eventType: eventTypes,
-    distinctParticipantsCount: groupByLanguage[chapter].uniqueParticipants.size,
-    registrationsCount: groupByLanguage[chapter].registrations.size
-  };
-});
-
-
-
-
-
-
-const eventTypeArray = Object.keys(groupByEventType).map(eventType => {
-  const chapters = Object.entries(groupByEventType[eventType].chapters)
-    .map(([chapter, count]) => `${chapter} (${count})`)
-    .join(', ');
-
-  return {
-    eventType,
-    chapter: chapters,
-    distinctParticipantsCount: groupByEventType[eventType].uniqueParticipants.size,
-    registrationsCount: groupByEventType[eventType].registrations.size
-  };
-});
+}
