@@ -1,86 +1,82 @@
-function getTotalVisitsPerDay(visitsList) {
-  // Flatten the nested array if needed
-  const flatVisits = visitsList.flat();
-
-  // Helper function to format a date as 'YYYY-MM-DD'
+getVisitsByPage(visitsList, period) {
+  // Helper function to format the date as 'YYYY-MM-DD'
   function formatDate(date) {
-      return date.toISOString().split('T')[0];
+    return date.toISOString().split('T')[0];
   }
 
-  // Helper function to generate all dates between two dates
-  function generateDateRange(startDate, endDate) {
-      const dates = [];
-      let currentDate = new Date(startDate);
+  // Get the current date
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
 
-      while (currentDate <= endDate) {
-          dates.push(formatDate(new Date(currentDate)));
-          currentDate.setDate(currentDate.getDate() + 1);
+  // Calculate the start and end dates based on the period
+  let startDate, endDate;
+  if (period === 'MTD') {
+    startDate = new Date(currentYear, currentMonth, 1);
+    endDate = now;
+  } else if (period === 'Last Month') {
+    startDate = new Date(currentYear, currentMonth - 1, 1);
+    endDate = new Date(currentYear, currentMonth, 0); // Last day of the previous month
+  }
+
+  // Convert visitsList to a structure with total visits per day by pageName
+  const visitsByPage = {};
+  visitsList.forEach((visit) => {
+    const visitDate = new Date(visit.createdDate);
+    const formattedDate = formatDate(visitDate);
+
+    // Filter visits based on the period
+    if (period && (visitDate < startDate || visitDate > endDate)) {
+      return;
+    }
+
+    const pageName = visit.pageName;
+
+    // Initialize the page if not already present
+    if (!visitsByPage[pageName]) {
+      visitsByPage[pageName] = {};
+    }
+
+    // Initialize the visit count for the date if not already present
+    if (!visitsByPage[pageName][formattedDate]) {
+      visitsByPage[pageName][formattedDate] = 0;
+    }
+
+    // Increment the visit count for the date
+    visitsByPage[pageName][formattedDate]++;
+  });
+
+  // Convert the visitsByPage structure to the desired format
+  const result = Object.keys(visitsByPage).map((pageName) => {
+    // Get an array of date and count objects, sorted by date
+    const visitsArray = Object.keys(visitsByPage[pageName])
+      .map((date) => ({
+        createdDate: date,
+        visitsCount: visitsByPage[pageName][date],
+      }))
+      .sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
+
+    // Fill in missing dates with 0 visits
+    let currentDate = startDate;
+    while (currentDate <= endDate) {
+      const formattedDate = formatDate(currentDate);
+      if (!visitsByPage[pageName][formattedDate]) {
+        visitsArray.push({
+          createdDate: formattedDate,
+          visitsCount: 0,
+        });
       }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
 
-      return dates;
-  }
+    // Sort the array again after adding 0-count dates
+    visitsArray.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
 
-  // Group visits by pageName
-  const visitsByPageName = flatVisits.reduce((acc, visit) => {
-      const { pageName, createdDate } = visit;
-      const formattedDate = formatDate(new Date(createdDate));
-
-      if (!acc[pageName]) {
-          acc[pageName] = {};
-      }
-
-      // Count visits per date for each pageName
-      acc[pageName][formattedDate] = (acc[pageName][formattedDate] || 0) + 1;
-
-      return acc;
-  }, {});
-
-  // Get the earliest and latest dates in the visits list
-  const allDates = flatVisits.map(visit => new Date(visit.createdDate));
-  const minDate = new Date(Math.min(...allDates));
-  const maxDate = new Date(Math.max(...allDates));
-
-  // Generate the full range of dates
-  const dateRange = generateDateRange(minDate, maxDate);
-
-  // Format the output
-  const result = {};
-  for (const [pageName, visits] of Object.entries(visitsByPageName)) {
-      result[pageName] = dateRange.map(date => {
-          return {
-              createdDate: date,
-              visitsCount: visits[date] || 0
-          };
-      });
-  }
+    return {
+      pageName,
+      visits: visitsArray,
+    };
+  });
 
   return result;
 }
-
-// Example usage
-const visitsList = [[
-  {
-      "id": 2135,
-      "createdBy": "ABC123F",
-      "createdDate": "2024-10-09T11:13:08Z",
-      "emailAddress": "asdfasdf@xyz.com",
-      "fullName": "Kora, Kamiti",
-      "modifiedBy": null,
-      "modifiedDate": "2024-10-09T11:13:08Z",
-      "pageName": "TFFCalendar",
-      "standardId": "ABC123F"
-  },
-  {
-      "id": 2135,
-      "createdBy": "ABD123F",
-      "createdDate": "2024-10-09T11:13:08Z",
-      "emailAddress": "asdfasdf3@xyz.com",
-      "fullName": "Kora, Kamiti",
-      "modifiedBy": null,
-      "modifiedDate": "2024-10-09T11:13:08Z",
-      "pageName": "TFFSignup",
-      "standardId": "ABD123F"
-  }
-]];
-
-console.log(getTotalVisitsPerDay(visitsList));
