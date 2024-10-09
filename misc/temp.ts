@@ -1,73 +1,86 @@
-import { Component } from '@angular/core';
+function getTotalVisitsPerDay(visitsList) {
+  // Flatten the nested array if needed
+  const flatVisits = visitsList.flat();
 
-@Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.css'],
-})
-export class CalendarComponent {
-  calendarOptions: any = {
-    initialView: 'dayGridMonth',
-    events: [
-      {
-        id: '1',
-        title: 'Event 1',
-        start: '2024-10-10',
-        url: 'https://example.com/event/1',
-      },
-      {
-        id: '2',
-        title: 'Event 2',
-        start: '2024-10-15',
-        url: 'https://example.com/event/2',
-      },
-    ],
-    eventContent: this.renderEventContent.bind(this), // Custom event rendering
-  };
-
-  renderEventContent(arg: any) {
-    // Create two separate divs, one for the title and one for the link icon
-
-    // Create the event title div
-    const titleDiv = document.createElement('div');
-    titleDiv.innerText = arg.event.title;
-    titleDiv.style.cursor = 'pointer';
-    titleDiv.onclick = () => {
-      alert(`Event Title Clicked: ${arg.event.title}`);
-    };
-
-    // Create the link icon div
-    const iconDiv = document.createElement('div');
-    const icon = document.createElement('i');
-    icon.classList.add('fa', 'fa-link'); // FontAwesome link icon
-    iconDiv.appendChild(icon);
-    iconDiv.style.cursor = 'pointer';
-    iconDiv.style.marginLeft = '10px'; // Add some spacing
-    iconDiv.onclick = () => {
-      this.copyToClipboard(arg.event.url);
-    };
-
-    // Create a container div to hold both elements
-    const container = document.createElement('div');
-    container.style.display = 'flex'; // To display title and icon in a row
-    container.appendChild(titleDiv);
-    container.appendChild(iconDiv);
-
-    // Return the custom HTML
-    return { domNodes: [container] };
+  // Helper function to format a date as 'YYYY-MM-DD'
+  function formatDate(date) {
+      return date.toISOString().split('T')[0];
   }
 
-  // Method to copy link to clipboard
-  copyToClipboard(link: string) {
-    // Create a temporary textarea element to copy the text
-    const textarea = document.createElement('textarea');
-    textarea.value = link;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
+  // Helper function to generate all dates between two dates
+  function generateDateRange(startDate, endDate) {
+      const dates = [];
+      let currentDate = new Date(startDate);
 
-    // Show an alert that the link has been copied
-    alert('Link copied to clipboard: ' + link);
+      while (currentDate <= endDate) {
+          dates.push(formatDate(new Date(currentDate)));
+          currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      return dates;
   }
+
+  // Group visits by pageName
+  const visitsByPageName = flatVisits.reduce((acc, visit) => {
+      const { pageName, createdDate } = visit;
+      const formattedDate = formatDate(new Date(createdDate));
+
+      if (!acc[pageName]) {
+          acc[pageName] = {};
+      }
+
+      // Count visits per date for each pageName
+      acc[pageName][formattedDate] = (acc[pageName][formattedDate] || 0) + 1;
+
+      return acc;
+  }, {});
+
+  // Get the earliest and latest dates in the visits list
+  const allDates = flatVisits.map(visit => new Date(visit.createdDate));
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+
+  // Generate the full range of dates
+  const dateRange = generateDateRange(minDate, maxDate);
+
+  // Format the output
+  const result = {};
+  for (const [pageName, visits] of Object.entries(visitsByPageName)) {
+      result[pageName] = dateRange.map(date => {
+          return {
+              createdDate: date,
+              visitsCount: visits[date] || 0
+          };
+      });
+  }
+
+  return result;
 }
+
+// Example usage
+const visitsList = [[
+  {
+      "id": 2135,
+      "createdBy": "ABC123F",
+      "createdDate": "2024-10-09T11:13:08Z",
+      "emailAddress": "asdfasdf@xyz.com",
+      "fullName": "Kora, Kamiti",
+      "modifiedBy": null,
+      "modifiedDate": "2024-10-09T11:13:08Z",
+      "pageName": "TFFCalendar",
+      "standardId": "ABC123F"
+  },
+  {
+      "id": 2135,
+      "createdBy": "ABD123F",
+      "createdDate": "2024-10-09T11:13:08Z",
+      "emailAddress": "asdfasdf3@xyz.com",
+      "fullName": "Kora, Kamiti",
+      "modifiedBy": null,
+      "modifiedDate": "2024-10-09T11:13:08Z",
+      "pageName": "TFFSignup",
+      "standardId": "ABD123F"
+  }
+]];
+
+console.log(getTotalVisitsPerDay(visitsList));
