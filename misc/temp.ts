@@ -1,82 +1,66 @@
-getVisitsByPage(visitsList, period) {
-  // Helper function to format the date as 'YYYY-MM-DD'
-  function formatDate(date) {
-    return date.toISOString().split('T')[0];
-  }
-
-  // Get the current date
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
-
-  // Calculate the start and end dates based on the period
-  let startDate, endDate;
-  if (period === 'MTD') {
-    startDate = new Date(currentYear, currentMonth, 1);
-    endDate = now;
-  } else if (period === 'Last Month') {
-    startDate = new Date(currentYear, currentMonth - 1, 1);
-    endDate = new Date(currentYear, currentMonth, 0); // Last day of the previous month
-  }
-
-  // Convert visitsList to a structure with total visits per day by pageName
-  const visitsByPage = {};
-  visitsList.forEach((visit) => {
-    const visitDate = new Date(visit.createdDate);
-    const formattedDate = formatDate(visitDate);
-
-    // Filter visits based on the period
-    if (period && (visitDate < startDate || visitDate > endDate)) {
-      return;
+processVisits() {
+    // Helper function to format dates as 'YYYY-MM-DD'
+    function formatDate(date) {
+        return date.toISOString().split('T')[0];
     }
 
-    const pageName = visit.pageName;
+    // Helper function to get start and end dates based on the period
+    function getDateRange(period) {
+        const today = new Date();
+        let startDate, endDate;
 
-    // Initialize the page if not already present
-    if (!visitsByPage[pageName]) {
-      visitsByPage[pageName] = {};
+        if (period === 'MTD') {
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = today;
+        } else if (period === 'Last Month') {
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+        }
+
+        return { startDate, endDate };
     }
 
-    // Initialize the visit count for the date if not already present
-    if (!visitsByPage[pageName][formattedDate]) {
-      visitsByPage[pageName][formattedDate] = 0;
-    }
+    // Initialize the result object
+    const result = {};
 
-    // Increment the visit count for the date
-    visitsByPage[pageName][formattedDate]++;
-  });
+    // Group visits by pageName and createdDate
+    visitsList.forEach(visit => {
+        const pageName = visit.pageName;
+        const visitDate = new Date(visit.createdDate);
+        const visitDateStr = formatDate(visitDate);
 
-  // Convert the visitsByPage structure to the desired format
-  const result = Object.keys(visitsByPage).map((pageName) => {
-    // Get an array of date and count objects, sorted by date
-    const visitsArray = Object.keys(visitsByPage[pageName])
-      .map((date) => ({
-        createdDate: date,
-        visitsCount: visitsByPage[pageName][date],
-      }))
-      .sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
+        if (!result[pageName]) {
+            result[pageName] = {};
+        }
 
-    // Fill in missing dates with 0 visits
-    let currentDate = startDate;
-    while (currentDate <= endDate) {
-      const formattedDate = formatDate(currentDate);
-      if (!visitsByPage[pageName][formattedDate]) {
-        visitsArray.push({
-          createdDate: formattedDate,
-          visitsCount: 0,
-        });
-      }
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
+        if (!result[pageName][visitDateStr]) {
+            result[pageName][visitDateStr] = 0;
+        }
 
-    // Sort the array again after adding 0-count dates
-    visitsArray.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
+        result[pageName][visitDateStr]++;
+    });
 
-    return {
-      pageName,
-      visits: visitsArray,
-    };
-  });
+    // Get the date range for the given period
+    const { startDate, endDate } = getDateRange(period);
 
-  return result;
+    // Prepare the final result with sequential dates and visit counts
+    const finalResult = {};
+
+    Object.keys(result).forEach(pageName => {
+        const pageData = [];
+        let currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+            const dateStr = formatDate(currentDate);
+            pageData.push({
+                createdDate: dateStr,
+                visitsCount: result[pageName][dateStr] || 0
+            });
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        finalResult[pageName] = pageData;
+    });
+
+    return finalResult;
 }
