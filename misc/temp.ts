@@ -1,4 +1,4 @@
-function getDailyUniqueVisitors(visitsList, period) {
+function getDailyUniqueVisitorsByPage(visitsList, period) {
     // Helper function to format dates as 'YYYY-MM-DD'
     function formatDate(date) {
         return date.toISOString().split('T')[0];
@@ -29,34 +29,79 @@ function getDailyUniqueVisitors(visitsList, period) {
     // Initialize the result object
     const result = {};
 
-    // Group unique visitors by createdDate
+    // Group unique visitors by pageName and createdDate
     visitsList.forEach(visit => {
         const visitDate = convertToLocalDate(new Date(visit.createdDate));
         const visitDateStr = formatDate(visitDate);
         const standardId = visit.standardId;
+        const pageName = visit.pageName;
 
-        if (!result[visitDateStr]) {
-            result[visitDateStr] = new Set();
+        if (!result[pageName]) {
+            result[pageName] = {};
         }
 
-        result[visitDateStr].add(standardId);
+        if (!result[pageName][visitDateStr]) {
+            result[pageName][visitDateStr] = new Set();
+        }
+
+        result[pageName][visitDateStr].add(standardId);
     });
 
     // Get the date range for the given period
     const { startDate, endDate } = getDateRange(period);
 
-    // Prepare the final result with sequential dates and unique visitor counts
-    const finalResult = [];
-    let currentDate = new Date(startDate);
+    // Prepare the final result with sequential dates and unique visitor counts for each pageName
+    const finalResult = {};
 
-    while (currentDate <= endDate) {
-        const dateStr = formatDate(currentDate);
-        finalResult.push({
-            createdDate: dateStr,
-            uniqueVisitorsCount: result[dateStr] ? result[dateStr].size : 0
-        });
-        currentDate.setDate(currentDate.getDate() + 1);
+    for (const pageName in result) {
+        finalResult[pageName] = [];
+        let currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+            const dateStr = formatDate(currentDate);
+            finalResult[pageName].push({
+                createdDate: dateStr,
+                uniqueVisitorsCount: result[pageName][dateStr] ? result[pageName][dateStr].size : 0
+            });
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
     }
 
     return finalResult;
 }
+
+// Example usage
+const visitsList = [{
+    "id": 2135,
+    "createdBy": "ABC123F",
+    "createdDate": "2024-10-09T11:13:08Z",
+    "emailAddress": "asdfasdf@xyz.com",
+    "fullName": "Kora, Kamiti",
+    "modifiedBy": null,
+    "modifiedDate": "2024-10-09T11:13:08Z",
+    "pageName": "TFGCalendar",
+    "standardId": "ABC123F"
+}, {
+    "id": 2136,
+    "createdBy": "ABD123F",
+    "createdDate": "2024-10-09T11:13:08Z",
+    "emailAddress": "asdfasdf3@xyz.com",
+    "fullName": "Kora, Kamiti",
+    "modifiedBy": null,
+    "modifiedDate": "2024-10-09T11:13:08Z",
+    "pageName": "TFGSignup",
+    "standardId": "ABD123F"
+}, {
+    "id": 2137,
+    "createdBy": "ABC123F",
+    "createdDate": "2024-10-08T11:13:08Z",
+    "emailAddress": "example@xyz.com",
+    "fullName": "Smith, John",
+    "modifiedBy": null,
+    "modifiedDate": "2024-10-08T11:13:08Z",
+    "pageName": "TFGCalendar",
+    "standardId": "ABC123F"
+}];
+
+console.log(getDailyUniqueVisitorsByPage(visitsList, 'MTD'));
+console.log(getDailyUniqueVisitorsByPage(visitsList, 'Last Month'));
