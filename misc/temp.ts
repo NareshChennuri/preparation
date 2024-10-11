@@ -1,4 +1,4 @@
-function processVisits(visitsList, period) {
+function getDailyUniqueVisitors(visitsList, period) {
     // Helper function to format dates as 'YYYY-MM-DD'
     function formatDate(date) {
         return date.toISOString().split('T')[0];
@@ -29,44 +29,34 @@ function processVisits(visitsList, period) {
     // Initialize the result object
     const result = {};
 
-    // Group visits by pageName and createdDate
+    // Group unique visitors by createdDate
     visitsList.forEach(visit => {
-        const pageName = visit.pageName;
         const visitDate = convertToLocalDate(new Date(visit.createdDate));
         const visitDateStr = formatDate(visitDate);
+        const standardId = visit.standardId;
 
-        if (!result[pageName]) {
-            result[pageName] = {};
+        if (!result[visitDateStr]) {
+            result[visitDateStr] = new Set();
         }
 
-        if (!result[pageName][visitDateStr]) {
-            result[pageName][visitDateStr] = 0;
-        }
-
-        result[pageName][visitDateStr]++;
+        result[visitDateStr].add(standardId);
     });
 
     // Get the date range for the given period
     const { startDate, endDate } = getDateRange(period);
 
-    // Prepare the final result with sequential dates and visit counts
-    const finalResult = {};
+    // Prepare the final result with sequential dates and unique visitor counts
+    const finalResult = [];
+    let currentDate = new Date(startDate);
 
-    Object.keys(result).forEach(pageName => {
-        const pageData = [];
-        let currentDate = new Date(startDate);
-
-        while (currentDate <= endDate) {
-            const dateStr = formatDate(currentDate);
-            pageData.push({
-                createdDate: dateStr,
-                visitsCount: result[pageName][dateStr] || 0
-            });
-            currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        finalResult[pageName] = pageData;
-    });
+    while (currentDate <= endDate) {
+        const dateStr = formatDate(currentDate);
+        finalResult.push({
+            createdDate: dateStr,
+            uniqueVisitorsCount: result[dateStr] ? result[dateStr].size : 0
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
 
     return finalResult;
 }
