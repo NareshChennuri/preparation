@@ -1,7 +1,13 @@
-processVisits() {
+function processVisits(visitsList, period) {
     // Helper function to format dates as 'YYYY-MM-DD'
     function formatDate(date) {
         return date.toISOString().split('T')[0];
+    }
+
+    // Helper function to convert UTC date to local date
+    function convertToLocalDate(utcDate) {
+        const localDate = new Date(utcDate);
+        return new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
     }
 
     // Helper function to get start and end dates based on the period
@@ -26,7 +32,7 @@ processVisits() {
     // Group visits by pageName and createdDate
     visitsList.forEach(visit => {
         const pageName = visit.pageName;
-        const visitDate = new Date(visit.createdDate);
+        const visitDate = convertToLocalDate(new Date(visit.createdDate));
         const visitDateStr = formatDate(visitDate);
 
         if (!result[pageName]) {
