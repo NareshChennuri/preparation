@@ -1,53 +1,49 @@
-export function gtDateRange(period: 'MTD' | 'Last Month'): { startDate: string; endDate: string } {
-    const options: Intl.DateTimeFormatOptions = {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    };
-
-    const formatter: Intl.DateTimeFormat = new Intl.DateTimeFormat('en-US', options);
-    
+export function getDateRange(period: 'MTD' | 'Last Month'): { startDate: Date; endDate: Date } {
+    const now = new Date();
     let startDate: Date;
     let endDate: Date;
 
-    const now = new Date();
-    
     if (period === 'MTD') {
         // Start of the current month
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        // End of the current day
-        endDate = new Date(now.setHours(23, 59, 59, 999)); // End of today
+        // End of today
+        endDate = new Date(now);
     } else if (period === 'Last Month') {
         // Start of the last month
         startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         // End of the last month
-        endDate = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of the last month
+        endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+    } else {
+        throw new Error('Invalid period specified. Use "MTD" or "Last Month".');
     }
 
-    return {
-        startDate: formatter.format(startDate),
-        endDate: formatter.format(endDate)
-    };
+    // Convert both start and end dates to Eastern Time
+    const easternTimezoneOffset = -5 * 60; // EST is UTC-5; EDT is UTC-4 (Daylight Saving)
+    startDate.setMinutes(startDate.getMinutes() + easternTimezoneOffset);
+    endDate.setMinutes(endDate.getMinutes() + easternTimezoneOffset);
+
+    return { startDate, endDate };
 }
 
 // Example usage in a component
 import { Component } from '@angular/core';
-import { gtDateRange } from './gt-date-range';
+import { getDateRange } from './get-date-range';
 
 @Component({
     selector: 'app-date-range',
-    template: `<div>Start Date: {{ dateRange.startDate }}<br>End Date: {{ dateRange.endDate }}</div>`
+    template: `<div>
+                 <p>Start Date: {{ startDate | date }}</p>
+                 <p>End Date: {{ endDate | date }}</p>
+               </div>`
 })
 export class DateRangeComponent {
-    dateRange: { startDate: string; endDate: string };
+    startDate: Date;
+    endDate: Date;
 
     constructor() {
-        this.dateRange = gtDateRange('MTD'); // Example: get MTD date range
-        // this.dateRange = gtDateRange('Last Month'); // Uncomment to get the Last Month date range
+        const period = 'MTD'; // Change to 'Last Month' to test the other option
+        const dateRange = getDateRange(period);
+        this.startDate = dateRange.startDate;
+        this.endDate = dateRange.endDate;
     }
 }
