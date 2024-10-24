@@ -1,41 +1,30 @@
-function combineVisits(chartData) {
-    const combinedData = {};
+// Input array
+const inputArray = [
+    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z' },
+    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:12:59Z' },
+    { standardId: 'ABCE4IE', createdDate: '2024-09-13T00:11:59Z' }
+  ];
   
-    // Process TFGCalendar array
-    chartData.TFGCalendar.forEach(item => {
-      const date = item.createdDate;
-      combinedData[date] = (combinedData[date] || 0) + item.visitsCount;
-    });
+  // Function to transform and remove duplicates
+  const removeDuplicates = (arr) => {
+    const uniqueSet = new Set();
+    return arr.reduce((acc, item) => {
+      // Extract only the date part
+      const date = item.createdDate.split('T')[0];
+      // Create a unique key based on standardId and date
+      const uniqueKey = `${item.standardId}|${date}`;
   
-    // Process TFGSignup array
-    chartData.TFGSignup.forEach(item => {
-      const date = item.createdDate;
-      combinedData[date] = (combinedData[date] || 0) + item.visitsCount;
-    });
-  
-    // Convert combinedData object to an array of objects
-    const resultArray = Object.keys(combinedData).map(date => ({
-      createdDate: date,
-      visitsCount: combinedData[date]
-    }));
-  
-    return resultArray;
-  }
-  
-  // Example usage:
-  const chartData = {
-    TFGCalendar: [
-      { createdDate: '10/01/2024', visitsCount: 4 },
-      { createdDate: '10/02/2024', visitsCount: 0 },
-      // Add more entries
-    ],
-    TFGSignup: [
-      { createdDate: '10/01/2024', visitsCount: 40 },
-      { createdDate: '10/02/2024', visitsCount: 50 },
-      // Add more entries
-    ]
+      // Check if this combination is already in the Set
+      if (!uniqueSet.has(uniqueKey)) {
+        uniqueSet.add(uniqueKey);
+        acc.push({ standardId: item.standardId, date: date });
+      }
+      return acc;
+    }, []);
   };
   
-  const combinedResult = combineVisits(chartData);
-  console.log(combinedResult);
+  // Get the unique array
+  const uniqueArray = removeDuplicates(inputArray);
+  
+  console.log(uniqueArray);
   
