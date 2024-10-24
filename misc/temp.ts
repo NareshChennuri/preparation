@@ -1,30 +1,48 @@
 // Input array
 const inputArray = [
-    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z' },
-    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:12:59Z' },
-    { standardId: 'ABCE4IE', createdDate: '2024-09-13T00:11:59Z' }
+    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z', pageName: 'TFGSignup' },
+    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:12:59Z', pageName: 'TFGCalendar' },
+    { standardId: 'ABCE4IE', createdDate: '2024-09-13T00:11:59Z', pageName: 'TFGCalendar' },
+    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z', pageName: 'TFGSignup' }
   ];
   
-  // Function to transform and remove duplicates
-  const removeDuplicates = (arr) => {
-    const uniqueSet = new Set();
-    return arr.reduce((acc, item) => {
-      // Extract only the date part
-      const date = item.createdDate.split('T')[0];
-      // Create a unique key based on standardId and date
-      const uniqueKey = `${item.standardId}|${date}`;
+  // Function to group and count visits by date
+  const groupByPageNameAndDate = (arr) => {
+    const result = {};
   
-      // Check if this combination is already in the Set
-      if (!uniqueSet.has(uniqueKey)) {
-        uniqueSet.add(uniqueKey);
-        acc.push({ standardId: item.standardId, date: date });
+    arr.forEach(item => {
+      const date = item.createdDate.split('T')[0];
+      const pageName = item.pageName;
+  
+      // Initialize the pageName group if not already present
+      if (!result[pageName]) {
+        result[pageName] = {};
       }
-      return acc;
-    }, []);
+  
+      // Initialize the date counter within the pageName group if not already present
+      if (!result[pageName][date]) {
+        result[pageName][date] = 0;
+      }
+  
+      // Increment the count for this date under this pageName
+      result[pageName][date]++;
+    });
+  
+    // Transform the result into the desired format
+    return Object.keys(result).map(pageName => {
+      const dateEntries = Object.keys(result[pageName]).map(date => ({
+        date: date,
+        visitsCount: result[pageName][date]
+      }));
+  
+      return {
+        [pageName]: dateEntries
+      };
+    });
   };
   
-  // Get the unique array
-  const uniqueArray = removeDuplicates(inputArray);
+  // Get the aggregated output
+  const aggregatedOutput = groupByPageNameAndDate(inputArray);
   
-  console.log(uniqueArray);
+  console.log(aggregatedOutput);
   
