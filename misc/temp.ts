@@ -1,30 +1,41 @@
-export function formatDate(date: Date): string {
-    const month: string = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() returns 0-11
-    const day: string = date.getDate().toString().padStart(2, '0'); // getDate() returns 1-31
-    const year: string = date.getFullYear().toString(); // getFullYear() returns the 4-digit year
-    return `${month}/${day}/${year}`;
-}
-
-// Example usage
-import { Component } from '@angular/core';
-import { getDateRange } from './get-date-range';
-import { formatDate } from './format-date';
-
-@Component({
-    selector: 'app-date-range',
-    template: `<div>
-                 <p>Start Date: {{ formattedStartDate }}</p>
-                 <p>End Date: {{ formattedEndDate }}</p>
-               </div>`
-})
-export class DateRangeComponent {
-    formattedStartDate: string;
-    formattedEndDate: string;
-
-    constructor() {
-        const period = 'MTD'; // Change to 'Last Month' to test the other option
-        const dateRange = getDateRange(period);
-        this.formattedStartDate = formatDate(dateRange.startDate);
-        this.formattedEndDate = formatDate(dateRange.endDate);
-    }
-}
+function combineVisits(chartData) {
+    const combinedData = {};
+  
+    // Process TFGCalendar array
+    chartData.TFGCalendar.forEach(item => {
+      const date = item.createdDate;
+      combinedData[date] = (combinedData[date] || 0) + item.visitsCount;
+    });
+  
+    // Process TFGSignup array
+    chartData.TFGSignup.forEach(item => {
+      const date = item.createdDate;
+      combinedData[date] = (combinedData[date] || 0) + item.visitsCount;
+    });
+  
+    // Convert combinedData object to an array of objects
+    const resultArray = Object.keys(combinedData).map(date => ({
+      createdDate: date,
+      visitsCount: combinedData[date]
+    }));
+  
+    return resultArray;
+  }
+  
+  // Example usage:
+  const chartData = {
+    TFGCalendar: [
+      { createdDate: '10/01/2024', visitsCount: 4 },
+      { createdDate: '10/02/2024', visitsCount: 0 },
+      // Add more entries
+    ],
+    TFGSignup: [
+      { createdDate: '10/01/2024', visitsCount: 40 },
+      { createdDate: '10/02/2024', visitsCount: 50 },
+      // Add more entries
+    ]
+  };
+  
+  const combinedResult = combineVisits(chartData);
+  console.log(combinedResult);
+  
