@@ -1,48 +1,27 @@
-// Input array
-const inputArray = [
-    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z', pageName: 'TFGSignup' },
-    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:12:59Z', pageName: 'TFGCalendar' },
-    { standardId: 'ABCE4IE', createdDate: '2024-09-13T00:11:59Z', pageName: 'TFGCalendar' },
-    { standardId: 'ABCE4ID', createdDate: '2024-09-12T00:11:59Z', pageName: 'TFGSignup' }
-  ];
-  
-  // Function to group and count visits by date
-  const groupByPageNameAndDate = (arr) => {
-    const result = {};
-  
-    arr.forEach(item => {
-      const date = item.createdDate.split('T')[0];
-      const pageName = item.pageName;
-  
-      // Initialize the pageName group if not already present
-      if (!result[pageName]) {
-        result[pageName] = {};
-      }
-  
-      // Initialize the date counter within the pageName group if not already present
-      if (!result[pageName][date]) {
-        result[pageName][date] = 0;
-      }
-  
-      // Increment the count for this date under this pageName
-      result[pageName][date]++;
-    });
-  
-    // Transform the result into the desired format
-    return Object.keys(result).map(pageName => {
-      const dateEntries = Object.keys(result[pageName]).map(date => ({
-        date: date,
-        visitsCount: result[pageName][date]
-      }));
-  
-      return {
-        [pageName]: dateEntries
-      };
-    });
+function convertUTCtoET(utcString: string): string {
+  // Create a new Date object from the UTC string
+  const utcDate = new Date(utcString);
+
+  // Define options for formatting to ET (Eastern Time)
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'America/New_York' // Specify the target time zone as Eastern Time
   };
-  
-  // Get the aggregated output
-  const aggregatedOutput = groupByPageNameAndDate(inputArray);
-  
-  console.log(aggregatedOutput);
-  
+
+  // Format the UTC date to ET using toLocaleString
+  const formattedDate = utcDate.toLocaleString('en-US', options);
+
+  // Reformat the date string to match "MM/dd/yyyy hh:mm a" format
+  const [date, time] = formattedDate.split(', ');
+  const [month, day, year] = date.split('/');
+  return `${month}/${day}/${year} ${time}`;
+}
+
+// Usage example
+const result = convertUTCtoET('2024-10-03T20:50:10Z');
+console.log(result); // Outputs: "10/03/2024 04:50 PM"
