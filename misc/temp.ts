@@ -1,27 +1,31 @@
-function convertUTCtoET(utcString: string): string {
-  // Create a new Date object from the UTC string
-  const utcDate = new Date(utcString);
+function convertToISOFormat(data) {
+  // Helper function to pad single digits with leading zeros
+  const padZero = (num) => num.toString().padStart(2, '0');
 
-  // Define options for formatting to ET (Eastern Time)
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'America/New_York' // Specify the target time zone as Eastern Time
+  // Constructing the start date-time string
+  const startDate = `${data.executionStartDate.year}-${padZero(data.executionStartDate.month)}-${padZero(data.executionStartDate.day)}`;
+  const startTime = `${padZero(data.executionStartTime.hour)}:${padZero(data.executionStartTime.minute)}:${padZero(data.executionStartTime.second)}`;
+  const executionStartDate = `${startDate}T${startTime}Z`; // Assuming UTC ('Z')
+
+  // Constructing the end date-time string
+  const endDate = `${data.executionEndDate.year}-${padZero(data.executionEndDate.month)}-${padZero(data.executionEndDate.day)}`;
+  const endTime = `${padZero(data.executionEndTime.hour)}:${padZero(data.executionEndTime.minute)}:${padZero(data.executionEndTime.second)}`;
+  const executionEndDate = `${endDate}T${endTime}Z`; // Assuming UTC ('Z')
+
+  // Returning the result
+  return {
+    executionStartDate,
+    executionEndDate
   };
-
-  // Format the UTC date to ET using toLocaleString
-  const formattedDate = utcDate.toLocaleString('en-US', options);
-
-  // Reformat the date string to match "MM/dd/yyyy hh:mm a" format
-  const [date, time] = formattedDate.split(', ');
-  const [month, day, year] = date.split('/');
-  return `${month}/${day}/${year} ${time}`;
 }
 
-// Usage example
-const result = convertUTCtoET('2024-10-03T20:50:10Z');
-console.log(result); // Outputs: "10/03/2024 04:50 PM"
+// Example usage
+const jsonData = {
+  "executionStartDate": { "year": 2024, "month": 4, "day": 17 },
+  "executionEndDate": { "year": 2024, "month": 4, "day": 30 },
+  "executionStartTime": { "hour": 0, "minute": 0, "second": 0, "timeMeridian": null },
+  "executionEndTime": { "hour": 23, "minute": 0, "second": 0, "timeMeridian": null }
+};
+
+console.log(convertToISOFormat(jsonData));
+// Output: { executionStartDate: "2024-04-17T00:00:00Z", executionEndDate: "2024-04-30T23:00:00Z" }
