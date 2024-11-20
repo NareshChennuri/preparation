@@ -1,31 +1,27 @@
-function convertToISOFormat(data) {
-  // Helper function to pad single digits with leading zeros
-  const padZero = (num) => num.toString().padStart(2, '0');
+function validateStartAndEndDate(
+  startDate: { year: number; month: number; day: number },
+  endDate: { year: number; month: number; day: number }
+): string | null {
+  // Convert start and end dates to JavaScript Date objects
+  const start = new Date(startDate.year, startDate.month - 1, startDate.day);
+  const end = new Date(endDate.year, endDate.month - 1, endDate.day);
 
-  // Constructing the start date-time string
-  const startDate = `${data.executionStartDate.year}-${padZero(data.executionStartDate.month)}-${padZero(data.executionStartDate.day)}`;
-  const startTime = `${padZero(data.executionStartTime.hour)}:${padZero(data.executionStartTime.minute)}:${padZero(data.executionStartTime.second)}`;
-  const executionStartDate = `${startDate}T${startTime}Z`; // Assuming UTC ('Z')
+  // Check if the end date is earlier than the start date
+  if (end < start) {
+    return "Error: End date must be the same or later than the start date.";
+  }
 
-  // Constructing the end date-time string
-  const endDate = `${data.executionEndDate.year}-${padZero(data.executionEndDate.month)}-${padZero(data.executionEndDate.day)}`;
-  const endTime = `${padZero(data.executionEndTime.hour)}:${padZero(data.executionEndTime.minute)}:${padZero(data.executionEndTime.second)}`;
-  const executionEndDate = `${endDate}T${endTime}Z`; // Assuming UTC ('Z')
-
-  // Returning the result
-  return {
-    executionStartDate,
-    executionEndDate
-  };
+  // Return null if validation passes
+  return null;
 }
 
 // Example usage
-const jsonData = {
-  "executionStartDate": { "year": 2024, "month": 4, "day": 17 },
-  "executionEndDate": { "year": 2024, "month": 4, "day": 30 },
-  "executionStartTime": { "hour": 0, "minute": 0, "second": 0, "timeMeridian": null },
-  "executionEndTime": { "hour": 23, "minute": 0, "second": 0, "timeMeridian": null }
-};
+const startDate = { year: 2024, month: 12, day: 23 };
+const endDate = { year: 2024, month: 11, day: 29 };
 
-console.log(convertToISOFormat(jsonData));
-// Output: { executionStartDate: "2024-04-17T00:00:00Z", executionEndDate: "2024-04-30T23:00:00Z" }
+const validationResult = validateStartAndEndDate(startDate, endDate);
+if (validationResult) {
+  console.error(validationResult);
+} else {
+  console.log("Dates are valid.");
+}
