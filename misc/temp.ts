@@ -29,3 +29,13 @@ function parseInput(input) {
   text-align: right;
   flex-shrink: 0;
 }
+
+
+.top-right-align {
+  display: flex;
+  justify-content: flex-end; /* Align content to the right */
+  align-items: flex-start;  /* Align content to the top */
+  text-align: right;        /* Ensure text aligns right */
+  height: 100%;             /* Optional: Ensure it spans the cell's height */
+  padding-top: 0;           /* Adjust padding to control spacing */
+}
