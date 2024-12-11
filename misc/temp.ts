@@ -4,3 +4,11 @@ function parseInput(input) {
     return { text, number: parseInt(number, 10) };
   });
 }
+
+
+<div *ngFor="let item of data">
+  <div class="align-column">
+    <span class="left-align">{{ item.text }}</span>
+    <span class="right-align">{{ item.number }}</span>
+  </div>
+</div>
