@@ -1,118 +1,99 @@
 <!-- Main Container -->
 <div class="container mt-4">
 
-  <!-- Top Section: Carousel and Training Events -->
+  <!-- Top Section: Hero and Upcoming Events -->
   <div class="row mb-5">
-    <!-- Carousel Section -->
-    <div class="col-lg-8">
-      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <!-- Carousel Item 1 -->
-          <div class="carousel-item active">
-            <img src="assets/images/woman-working.jpg" class="d-block w-100" alt="Woman working">
-            <div class="carousel-caption text-left bg-light p-3 rounded">
-              <h5>Structured query language is now available...</h5>
-              <p>Starting July 12, 2024 - 6 weeks - 12 seats left</p>
-              <a href="#" class="btn btn-primary">Learn more</a>
-            </div>
-          </div>
-        </div>
-        <!-- Carousel Controls -->
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
+    <!-- Hero Section -->
+    <div class="col-md-8 d-flex flex-column justify-content-center">
+      <h2 class="font-weight-bold">Learn AI, Data Science, Python, and Java</h2>
+      <p class="mb-4">
+        Learn to code, AI, and more. Leap from your life from your comfort zone and join a lively and supportive coding community and innovate with others who are learning the same code as you.
+      </p>
+      <a href="#" class="btn btn-primary">Get started</a>
     </div>
+    <!-- Image Section -->
+    <div class="col-md-4">
+      <img src="assets/images/woman-working.jpg" alt="Learn Coding" class="img-fluid rounded">
+    </div>
+  </div>
 
-    <!-- Training Events Section -->
-    <div class="col-lg-4">
-      <h5 class="font-weight-bold">Upcoming training events</h5>
+  <!-- Upcoming Events Section -->
+  <div class="row mb-5">
+    <div class="col-lg-4 offset-lg-8">
+      <h5 class="font-weight-bold mb-3">Upcoming training events</h5>
       <ul class="list-unstyled">
         <li class="mb-3">
-          <a href="#" class="font-weight-bold text-primary">Oracle SQL</a>
-          <div class="small">Starting July 12, 2024<br>6 weeks - 12 seats left</div>
+          <a href="#" class="text-primary font-weight-bold">Oracle SQL</a>
+          <div class="small text-muted">Starting July 12, 2024<br>6 weeks - 12 seats left</div>
         </li>
         <li class="mb-3">
-          <a href="#" class="font-weight-bold text-primary">Cloud Connect: ERICA</a>
-          <div class="small">July 17, 2024<br>10 hrs - 6 seats left</div>
+          <a href="#" class="text-primary font-weight-bold">Cloud Connect: ERICA</a>
+          <div class="small text-muted">July 17, 2024<br>10 hrs - 6 seats left</div>
+        </li>
+        <li class="mb-3">
+          <a href="#" class="text-primary font-weight-bold">Splunk Vendor Workshop</a>
+          <div class="small text-muted">August 11, 2024<br>10 hrs - 17 seats left</div>
         </li>
         <li>
-          <a href="#" class="font-weight-bold text-primary">Splunk Vendor Workshop</a>
-          <div class="small">August 11, 2024<br>10 hrs - 17 seats left</div>
+          <a href="#" class="text-primary font-weight-bold">Java Tech Talk</a>
+          <div class="small text-muted">August 29, 2024<br>10 hrs - 26 seats left</div>
         </li>
       </ul>
       <a href="#" class="text-primary">Full schedule →</a>
     </div>
   </div>
 
-  <!-- Middle Section: Academy, Technology Focus Group, Volunteer -->
+  <!-- Features Section -->
   <div class="row text-center mb-5">
     <!-- Academy Resources -->
-    <div class="col-lg-4">
+    <div class="col-md-4 mb-4">
       <div class="p-4 border rounded">
         <div class="mb-3">
           <i class="fa fa-graduation-cap fa-3x text-primary"></i>
         </div>
         <h5 class="font-weight-bold">Academy resources</h5>
-        <p>Learn at your own pace while leveling up your skills.</p>
-        <a href="#" class="text-primary">Explore courses</a>
+        <p>Learn at your own pace while leveling up your skills as you master coding languages, frameworks, and principles.</p>
+        <a href="#" class="text-primary">Explore schedule</a>
       </div>
     </div>
 
     <!-- Technology Focus Group -->
-    <div class="col-lg-4">
+    <div class="col-md-4 mb-4">
       <div class="p-4 border rounded border-primary">
         <div class="mb-3">
           <i class="fa fa-calendar fa-3x text-primary"></i>
         </div>
         <h5 class="font-weight-bold">Technology Focus Group</h5>
-        <p>Our global learning community brings developers together.</p>
-        <a href="#" class="text-primary">View calendar</a>
+        <p>Expert-led learning for beginners and other skill levels. Each facilitated event is designed to teach you a set of skills.</p>
+        <a href="#" class="text-primary">Explore schedule</a>
       </div>
     </div>
 
-    <!-- Volunteer -->
-    <div class="col-lg-4">
+    <!-- EET Lab -->
+    <div class="col-md-4 mb-4">
       <div class="p-4 border rounded">
         <div class="mb-3">
-          <i class="fa fa-users fa-3x text-primary"></i>
+          <i class="fa fa-cogs fa-3x text-primary"></i>
         </div>
-        <h5 class="font-weight-bold">Volunteer</h5>
-        <p>Help design and facilitate learning events like Tech Talks.</p>
-        <a href="#" class="text-primary">Start here</a>
+        <h5 class="font-weight-bold">EET lab</h5>
+        <p>We are dedicated to building products that empower the world to confidently navigate digital assets.</p>
+        <a href="#" class="text-primary">Explore the lab</a>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Section: Image and Text (EET Lab) -->
+  <!-- Volunteering Section -->
   <div class="row align-items-center">
-    <div class="col-lg-6">
-      <img src="assets/images/man-smiling.jpg" class="img-fluid rounded" alt="Man Smiling">
+    <div class="col-md-6">
+      <img src="assets/images/man-smiling.jpg" class="img-fluid rounded" alt="Volunteering">
     </div>
-    <div class="col-lg-6">
-      <h4 class="font-weight-bold">EET lab</h4>
-      <p>Does your team need support for proof of concept efforts? Partner with EET Labs where experts help you achieve success.</p>
-      <a href="#" class="btn btn-primary">Our services</a>
+    <div class="col-md-6">
+      <h4 class="font-weight-bold">Volunteering opportunities</h4>
+      <p>
+        Become an facilitator for Technology Focus Group and teach code at various levels based on the level you prefer to teach. Facilitators can choose the best platforms and options available to them for teaching in our virtual sandbox environments.
+      </p>
+      <a href="#" class="btn btn-primary">Get involved</a>
     </div>
   </div>
 
 </div>
-
-
-.carousel-caption {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 10px 15px;
-  border-radius: 5px;
-}
-.text-primary {
-  cursor: pointer;
-  text-decoration: underline;
-}
