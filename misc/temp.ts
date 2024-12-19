@@ -1,99 +1,161 @@
-<!-- Main Container -->
 <div class="container mt-4">
-
-  <!-- Top Section: Hero and Upcoming Events -->
-  <div class="row mb-5">
-    <!-- Hero Section -->
-    <div class="col-md-8 d-flex flex-column justify-content-center">
-      <h2 class="font-weight-bold">Learn AI, Data Science, Python, and Java</h2>
-      <p class="mb-4">
-        Learn to code, AI, and more. Leap from your life from your comfort zone and join a lively and supportive coding community and innovate with others who are learning the same code as you.
-      </p>
-      <a href="#" class="btn btn-primary">Get started</a>
+  <!-- Main banner with carousel -->
+  <div class="row mb-4">
+    <div class="col-lg-8">
+      <div id="trainingCarousel" class="carousel slide shadow-sm" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#trainingCarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#trainingCarousel" data-slide-to="1"></li>
+          <li data-target="#trainingCarousel" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img
+              src="https://via.placeholder.com/800x400"
+              class="d-block w-100"
+              alt="SQL Training"
+            />
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Structured Query Language (SQL)</h5>
+              <p>Starting July 12, 2024 • 6 weeks • 12 seats left</p>
+              <button class="btn btn-primary">Learn more</button>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://via.placeholder.com/800x400"
+              class="d-block w-100"
+              alt="Cloud Connect Training"
+            />
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Cloud Connect: ERICA</h5>
+              <p>Starting July 17, 2024 • 10 hrs • 6 seats left</p>
+              <button class="btn btn-primary">Learn more</button>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://via.placeholder.com/800x400"
+              class="d-block w-100"
+              alt="Splunk Workshop"
+            />
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Splunk Vendor Workshop</h5>
+              <p>Starting August 11, 2024 • 10 hrs • 17 seats left</p>
+              <button class="btn btn-primary">Learn more</button>
+            </div>
+          </div>
+        </div>
+        <a
+          class="carousel-control-prev"
+          href="#trainingCarousel"
+          role="button"
+          data-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a
+          class="carousel-control-next"
+          href="#trainingCarousel"
+          role="button"
+          data-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
     </div>
-    <!-- Image Section -->
+
+    <!-- Upcoming training events -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          Upcoming training events
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>Oracle SQL</strong><br />
+            Starting July 12, 2024<br />
+            6 weeks • 12 seats left
+          </li>
+          <li class="list-group-item">
+            <strong>Cloud Connect: ERICA</strong><br />
+            July 17, 2024<br />
+            10 hrs • 6 seats left
+          </li>
+          <li class="list-group-item">
+            <strong>Splunk Vendor Workshop</strong><br />
+            August 11, 2024<br />
+            10 hrs • 17 seats left
+          </li>
+        </ul>
+        <div class="card-footer">
+          <a href="#" class="btn btn-link">Full schedule</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features section -->
+  <div class="row text-center mb-4">
     <div class="col-md-4">
-      <img src="assets/images/woman-working.jpg" alt="Learn Coding" class="img-fluid rounded">
-    </div>
-  </div>
-
-  <!-- Upcoming Events Section -->
-  <div class="row mb-5">
-    <div class="col-lg-4 offset-lg-8">
-      <h5 class="font-weight-bold mb-3">Upcoming training events</h5>
-      <ul class="list-unstyled">
-        <li class="mb-3">
-          <a href="#" class="text-primary font-weight-bold">Oracle SQL</a>
-          <div class="small text-muted">Starting July 12, 2024<br>6 weeks - 12 seats left</div>
-        </li>
-        <li class="mb-3">
-          <a href="#" class="text-primary font-weight-bold">Cloud Connect: ERICA</a>
-          <div class="small text-muted">July 17, 2024<br>10 hrs - 6 seats left</div>
-        </li>
-        <li class="mb-3">
-          <a href="#" class="text-primary font-weight-bold">Splunk Vendor Workshop</a>
-          <div class="small text-muted">August 11, 2024<br>10 hrs - 17 seats left</div>
-        </li>
-        <li>
-          <a href="#" class="text-primary font-weight-bold">Java Tech Talk</a>
-          <div class="small text-muted">August 29, 2024<br>10 hrs - 26 seats left</div>
-        </li>
-      </ul>
-      <a href="#" class="text-primary">Full schedule →</a>
-    </div>
-  </div>
-
-  <!-- Features Section -->
-  <div class="row text-center mb-5">
-    <!-- Academy Resources -->
-    <div class="col-md-4 mb-4">
-      <div class="p-4 border rounded">
-        <div class="mb-3">
-          <i class="fa fa-graduation-cap fa-3x text-primary"></i>
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+          <h5 class="card-title">Academy resources</h5>
+          <p class="card-text">
+            Learn at your own pace while leveling up your skills as you master coding languages, frameworks, and principles.
+          </p>
+          <a href="#" class="btn btn-link">Explore courses</a>
         </div>
-        <h5 class="font-weight-bold">Academy resources</h5>
-        <p>Learn at your own pace while leveling up your skills as you master coding languages, frameworks, and principles.</p>
-        <a href="#" class="text-primary">Explore schedule</a>
       </div>
     </div>
-
-    <!-- Technology Focus Group -->
-    <div class="col-md-4 mb-4">
-      <div class="p-4 border rounded border-primary">
-        <div class="mb-3">
-          <i class="fa fa-calendar fa-3x text-primary"></i>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+          <h5 class="card-title">Technology Focus Group</h5>
+          <p class="card-text">
+            Our global learning community brings developers together with an interest in collaborating and upskilling in technical disciplines.
+          </p>
+          <a href="#" class="btn btn-link">View calendar</a>
         </div>
-        <h5 class="font-weight-bold">Technology Focus Group</h5>
-        <p>Expert-led learning for beginners and other skill levels. Each facilitated event is designed to teach you a set of skills.</p>
-        <a href="#" class="text-primary">Explore schedule</a>
       </div>
     </div>
-
-    <!-- EET Lab -->
-    <div class="col-md-4 mb-4">
-      <div class="p-4 border rounded">
-        <div class="mb-3">
-          <i class="fa fa-cogs fa-3x text-primary"></i>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <i class="fas fa-users fa-3x mb-3"></i>
+          <h5 class="card-title">Volunteer</h5>
+          <p class="card-text">
+            Would you like to help design and facilitate learning events like Tech Talks, Cohorts, Facilitated Training, Vendor Workshops, codeathons and more?
+          </p>
+          <a href="#" class="btn btn-link">Start here</a>
         </div>
-        <h5 class="font-weight-bold">EET lab</h5>
-        <p>We are dedicated to building products that empower the world to confidently navigate digital assets.</p>
-        <a href="#" class="text-primary">Explore the lab</a>
       </div>
     </div>
   </div>
 
-  <!-- Volunteering Section -->
-  <div class="row align-items-center">
-    <div class="col-md-6">
-      <img src="assets/images/man-smiling.jpg" class="img-fluid rounded" alt="Volunteering">
+  <!-- EET lab section -->
+  <div class="row">
+    <div class="col-lg-8">
+      <img
+        src="https://via.placeholder.com/800x400"
+        alt="EET Lab"
+        class="img-fluid rounded shadow-sm"
+      />
     </div>
-    <div class="col-md-6">
-      <h4 class="font-weight-bold">Volunteering opportunities</h4>
-      <p>
-        Become an facilitator for Technology Focus Group and teach code at various levels based on the level you prefer to teach. Facilitators can choose the best platforms and options available to them for teaching in our virtual sandbox environments.
-      </p>
-      <a href="#" class="btn btn-primary">Get involved</a>
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">EET Lab</h5>
+          <p class="card-text">
+            Does your team need support for an upcoming proof of concept or technical learning effort? Partner with EET Labs where our experts work with you to achieve the right design for a successful outcome.
+          </p>
+          <button class="btn btn-primary">Our services</button>
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
