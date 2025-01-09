@@ -1,39 +1,62 @@
-<footer class="bg-light py-4">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3">
-        <h5>Our values</h5>
-        <ul class="list-unstyled">
-          <li>Deliver together</li>
-          <li>Act responsibly</li>
-          <li>Realize the power of our people</li>
-          <li>Trust the team</li>
-        </ul>
-      </div>
-      <div class="col-md-3">
-        <h5>Our purpose</h5>
-        <p>To help make financial lives better, through the power of every connection</p>
-      </div>
-      <div class="col-md-3">
-        <h5>Responsible Growth</h5>
-        <ul class="list-unstyled">
-          <li>We must grow and win in the market — no excuses</li>
-          <li>We must grow with our customer-focused strategy</li>
-          <li>We must grow within our risk framework</li>
-          <li>We must grow in a sustainable manner</li>
-        </ul>
-      </div>
-      <div class="col-md-3">
-        <h5>Eight lines of business</h5>
-        <p>Serving the core financial needs of people, companies, and institutional investors through eight lines of business</p>
-      </div>
-    </div>
-    <div class="text-center mt-4">
-      <img src="path-to-logo.png" alt="Bank of America Logo" class="mb-2" style="max-height: 40px;">
-      <div class="d-flex justify-content-center">
-        <a href="#" class="mr-3">Contact us</a>
-        <span>Bank of America, N.A. Member FDIC – ©2024 Bank of America Corporation. All rights reserved.</span>
-      </div>
-    </div>
-  </div>
-</footer>
+<mat-toolbar>
+  <button mat-icon-button [matMenuTriggerFor]="filterMenu" aria-label="Filter options">
+    <mat-icon>filter_list</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-menu #filterMenu="matMenu">
+  <button mat-menu-item (click)="applyFilter('All')">All</button>
+  <button mat-menu-item (click)="applyFilter('East')">East</button>
+  <button mat-menu-item (click)="applyFilter('West')">West</button>
+</mat-menu>
+
+<div>
+  <!-- Display the selected filter -->
+  <p>Selected Filter: {{ selectedFilter }}</p>
+</div>
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-filter-dropdown',
+  templateUrl: './filter-dropdown.component.html',
+  styleUrls: ['./filter-dropdown.component.css'],
+})
+export class FilterDropdownComponent {
+  selectedFilter: string = 'All';
+
+  applyFilter(region: string): void {
+    this.selectedFilter = region;
+    // Perform any action based on the selected filter
+    console.log(`Filter applied: ${region}`);
+    // Example: You can filter data here or trigger another function
+    this.filterData(region);
+  }
+
+  filterData(region: string): void {
+    if (region === 'All') {
+      console.log('Displaying all data.');
+    } else {
+      console.log(`Filtering data for region: ${region}`);
+    }
+    // Add your data filtering logic here
+  }
+}
+
+
+mat-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  background-color: #3f51b5;
+  color: white;
+}
+
+button[mat-icon-button] {
+  color: white;
+}
+
+div {
+  margin-top: 20px;
+  font-size: 16px;
+}
