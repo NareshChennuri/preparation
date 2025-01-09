@@ -60,3 +60,15 @@ div {
   margin-top: 20px;
   font-size: 16px;
 }
+
+
+/* Set the width of the mat-menu */
+.custom-menu .mat-menu-content {
+  width: 300px;
+}
+
+/* Change the hover color to blue */
+.custom-menu .mat-menu-item:hover {
+  background-color: #1976d2; /* Blue color */
+  color: white; /* Optional: Change text color to white */
+}
