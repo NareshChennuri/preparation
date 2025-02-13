@@ -13,3 +13,21 @@ calculatedEndTime(startTime: string, finalMinutes: number): string {
 
   return `${this.formatTime(formattedHour)}:${this.formatTime(minutes)}:00 ${period}`;
 }
+
+
+// Converts time string 'hh:mm:ss A' to total minutes from midnight
+convertToMinutes(time: string): number {
+  const [hourMinSec, period] = time.split(' ');  
+  const [hour, min] = hourMinSec.split(':').map(Number);
+
+  let totalMinutes = hour * 60 + min; 
+  if (period === 'PM' && hour !== 12) totalMinutes += 12 * 60;
+  if (period === 'AM' && hour === 12) totalMinutes -= 12 * 60;
+
+  return totalMinutes;
+}
+
+// Formats number into two-digit time format
+formatTime(value: number): string {
+  return value < 10 ? `0${value}` : `${value}`;
+}
