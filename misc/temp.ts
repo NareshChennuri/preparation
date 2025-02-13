@@ -1,33 +1,34 @@
-calculatedEndTime(startTime: string, finalMinutes: number): string {
-  if (!startTime) return '';
+.duration-field {
+  position: relative;
 
-  const startTotalMinutes = this.convertToMinutes(startTime);
-  const endTotalMinutes = (startTotalMinutes + finalMinutes) % (24 * 60); // Handle overflow past midnight
+  .duration-input {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+    padding: 8px;
+    width: 100%;
 
-  const hours = Math.floor(endTotalMinutes / 60);
-  const minutes = endTotalMinutes % 60;
-  const period = hours >= 12 ? 'PM' : 'AM';
+    mat-icon {
+      margin-left: auto;
+    }
+  }
 
-  let formattedHour = hours % 12;
-  formattedHour = formattedHour === 0 ? 12 : formattedHour; // Convert 0 to 12 for AM/PM format
+  .duration-dropdown {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
 
-  return `${this.formatTime(formattedHour)}:${this.formatTime(minutes)}:00 ${period}`;
-}
-
-
-// Converts time string 'hh:mm:ss A' to total minutes from midnight
-convertToMinutes(time: string): number {
-  const [hourMinSec, period] = time.split(' ');  
-  const [hour, min] = hourMinSec.split(':').map(Number);
-
-  let totalMinutes = hour * 60 + min; 
-  if (period === 'PM' && hour !== 12) totalMinutes += 12 * 60;
-  if (period === 'AM' && hour === 12) totalMinutes -= 12 * 60;
-
-  return totalMinutes;
-}
-
-// Formats number into two-digit time format
-formatTime(value: number): string {
-  return value < 10 ? `0${value}` : `${value}`;
+    mat-option {
+      padding: 10px;
+      cursor: pointer;
+      &:hover {
+        background: #f1f1f1;
+      }
+    }
+  }
 }
