@@ -1,33 +1,45 @@
-<mat-menu #filterMenu="matMenu" class="custom-menu">
-  <div class="menu-header">
-    <span>Filter Options</span>
-    <button mat-icon-button (click)="filterMenu.close()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
-  <mat-divider></mat-divider>
+exportToExcel(): void {
+  // Define data (first row as headers)
+  const data = [
+    ['ID', 'Name', 'Age'], // Headers
+    [1, 'John Doe', 30],
+    [2, 'Jane Smith', 28],
+  ];
 
-  <mat-radio-group [(ngModel)]="selectedOption">
-    <mat-radio-button *ngFor="let option of radioOptions" [value]="option">
-      {{ option }}
-    </mat-radio-button>
-  </mat-radio-group>
+  // Create a worksheet
+  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
 
-  <mat-divider></mat-divider>
+  // Define bold style
+  const boldStyle = { font: { bold: true } };
 
-  <mat-checkbox *ngFor="let checkbox of checkBoxOptions" [(ngModel)]="checkbox.selected">
-    {{ checkbox.label }}
-  </mat-checkbox>
+  // Get first row dynamically
+  const range = XLSX.utils.decode_range(ws['!ref'] || ''); // Get range of sheet
+  const firstRow = range.s.r; // First row index (always 0)
 
-  <mat-divider></mat-divider>
+  // Apply bold style to the first row
+  for (let col = range.s.c; col <= range.e.c; col++) {
+    const cellAddress = XLSX.utils.encode_cell({ r: firstRow, c: col });
+    if (!ws[cellAddress]) ws[cellAddress] = {}; // Ensure the cell exists
+    ws[cellAddress].s = boldStyle; // Apply style
+  }
 
-  <div class="menu-actions">
-    <button mat-button (click)="applyFilters()">Apply</button>
-    <button mat-button (click)="clearFilters()">Cancel</button>
-  </div>
-</mat-menu>
+  // Set column width
+  ws['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 10 }];
 
-<button mat-button [matMenuTriggerFor]="filterMenu">
-  Open Filters
-</button>
+  // Create workbook
+  const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };
+
+  // Write file
+  const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+  // Save file
+  this.saveAsExcelFile(excelBuffer, 'SampleReport');
+}
+
+saveAsExcelFile(buffer: any, fileName: string): void {
+  const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+  saveAs(data, `${fileName}.xlsx`);
+}
