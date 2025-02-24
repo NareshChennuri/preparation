@@ -1,45 +1,62 @@
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-exportToExcel(): void {
-  // Define data (first row as headers)
-  const data = [
-    ['ID', 'Name', 'Age'], // Headers
-    [1, 'John Doe', 30],
-    [2, 'Jane Smith', 28],
-  ];
-
-  // Create a worksheet
-  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
-
-  // Define bold style
-  const boldStyle = { font: { bold: true } };
-
-  // Get first row dynamically
-  const range = XLSX.utils.decode_range(ws['!ref'] || ''); // Get range of sheet
-  const firstRow = range.s.r; // First row index (always 0)
-
-  // Apply bold style to the first row
-  for (let col = range.s.c; col <= range.e.c; col++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: firstRow, c: col });
-    if (!ws[cellAddress]) ws[cellAddress] = {}; // Ensure the cell exists
-    ws[cellAddress].s = boldStyle; // Apply style
-  }
-
-  // Set column width
-  ws['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 10 }];
-
-  // Create workbook
-  const wb: XLSX.WorkBook = { Sheets: { 'Sheet1': ws }, SheetNames: ['Sheet1'] };
-
-  // Write file
-  const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
-  // Save file
-  this.saveAsExcelFile(excelBuffer, 'SampleReport');
+export interface ConfirmationDialogData {
+  eventId: number; // Change type if needed
 }
 
-saveAsExcelFile(buffer: any, fileName: string): void {
-  const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
-  saveAs(data, `${fileName}.xlsx`);
+@Component({
+  selector: 'app-confirmation-dialog',
+  templateUrl: './confirmation-dialog.component.html'
+})
+export class ConfirmationDialogComponent {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData) { }
+}
+
+<h2 mat-dialog-title>Confirm Delete</h2>
+<mat-dialog-content>
+  <p>Are you sure you want to delete event #{{ data.eventId }}?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close="false">Cancel</button>
+  <button mat-button color="warn" mat-dialog-close="true">Yes</button>
+</mat-dialog-actions>
+
+
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from './confirmation-dialog.component';
+
+@Component({
+  selector: 'app-event-list',
+  template: `
+    <!-- Assume you have an event object with an id -->
+    <button mat-raised-button color="warn" (click)="openDeleteDialog(event.id)">Delete Event</button>
+  `
+})
+export class EventListComponent {
+  constructor(private dialog: MatDialog) { }
+
+  openDeleteDialog(eventId: number): void {
+    const dialogRef = this.dialog.open<ConfirmationDialogComponent, ConfirmationDialogData, boolean>(
+      ConfirmationDialogComponent,
+      {
+        width: '300px',
+        data: { eventId }
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleteEvent(eventId);
+      }
+      // If result is false, do nothing (dialog simply closes)
+    });
+  }
+
+  deleteEvent(eventId: number): void {
+    // Place your deletion logic here using the eventId
+    console.log(`Deleting event with id: ${eventId}`);
+    // For example, call a service to delete the event from the backend
+  }
 }
