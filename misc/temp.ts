@@ -1,8 +1,28 @@
-let percentageChange;
+<mat-form-field appearance="outline">
+  <mat-label>Search</mat-label>
+  <input matInput #searchInput type="text" [(ngModel)]="searchText" (keyup.enter)="onSearch()">
+  
+  <!-- Icons inside the input field -->
+  <div class="suffix-container">
+    <mat-icon class="clickable-icon" (click)="onSearch()">search</mat-icon>
+    <span class="separator">|</span>
+    <mat-icon *ngIf="searchText" class="clickable-icon" (click)="clearSearch()">clear</mat-icon>
+  </div>
+</mat-form-field>
 
-  if (monthBeforeLastCount === 0) {
-    percentageChange = lastMonthCount > 0 ? 100 : 0; // If lastMonthCount > 0, assume 100% increase, else no change.
-  } else {
-    percentageChange = ((lastMonthCount - monthBeforeLastCount) / monthBeforeLastCount) * 100;
-    percentageChange = parseFloat(percentageChange.toFixed(2)); // Round to 2 decimal places
-  }
+
+.suffix-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Adjust spacing between icons */
+}
+
+.separator {
+  font-size: 18px;
+  color: #999; /* Adjust color if needed */
+}
+
+.clickable-icon {
+  cursor: pointer;
+  user-select: none;
+}
