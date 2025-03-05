@@ -1,6 +1,6 @@
 npm install -g @angular/cli
 
-ng new innovation-portal-ui-v1 --style=scss --routing --module
+ng new innovation-portal-ui-v1 --style=scss --routing
 cd innovation-portal-ui-v1
 
 # Install Angular Material
@@ -88,17 +88,3 @@ ng g c features/global-technology-lab/poc-guidelines
 ng g c features/global-technology-lab/poc-summaries
 
 ng g c features/admin-console/admin-dashboard
-
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
