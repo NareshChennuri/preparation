@@ -1,4 +1,6 @@
-npm @angular/cli new innovation-portal-ui-v1 --style=scss --routing
+npm install -g @angular/cli
+
+ng new innovation-portal-ui-v1 --style=scss --routing --module
 cd innovation-portal-ui-v1
 
 # Install Angular Material
@@ -10,16 +12,16 @@ ng g m shared
 ng g m layout
 
 # Generate authentication module and components
-ng g m auth --route auth --module app
+ng g m auth --module app-routing.module.ts
 ng g c auth/login
 ng g s core/auth --flat
 ng g s core/rbac --flat
 
 # Generate feature modules
-ng g m features/academy-resources --route academy-resources --module app
-ng g m features/technology-focus-group --route technology-focus-group --module app
-ng g m features/global-technology-lab --route global-technology-lab --module app
-ng g m features/admin-console --route admin-console --module app
+ng g m features/academy-resources --module app-routing.module.ts
+ng g m features/technology-focus-group --module app-routing.module.ts
+ng g m features/global-technology-lab --module app-routing.module.ts
+ng g m features/admin-console --module app-routing.module.ts
 
 # Generate layout components
 ng g c layout/header
@@ -86,18 +88,3 @@ ng g c features/global-technology-lab/poc-guidelines
 ng g c features/global-technology-lab/poc-summaries
 
 ng g c features/admin-console/admin-dashboard
-
-
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-
-@NgModule({
-  declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
