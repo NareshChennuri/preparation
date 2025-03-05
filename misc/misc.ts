@@ -1,73 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { PreloadDataService } from './core/preload-data.service';
-import { LoaderService } from './core/loader.service';
-import { AuthService } from './core/auth.service';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+const routes: Routes = [
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
+  { path: 'auth', loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule) },
+  { path: 'academy-resources', loadChildren: () => import('./features/academy-resources/academy-resources.module').then(m => m.AcademyResourcesModule) },
+  { path: 'technology-focus-group', loadChildren: () => import('./features/technology-focus-group/technology-focus-group.module').then(m => m.TechnologyFocusGroupModule) },
+  { path: 'global-technology-lab', loadChildren: () => import('./features/global-technology-lab/global-technology-lab.module').then(m => m.GlobalTechnologyLabModule) },
+  { path: 'admin-console', loadChildren: () => import('./features/admin-console/admin-console.module').then(m => m.AdminConsoleModule) },
+  { path: '**', redirectTo: 'auth' } // Fallback route
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
-export class AppComponent implements OnInit {
-  loading: boolean = false;
-
-  constructor(
-    private preloadDataService: PreloadDataService,
-    private loaderService: LoaderService,
-    private authService: AuthService
-  ) {}
-
-  ngOnInit(): void {
-    // Load essential data before app renders
-    this.preloadDataService.loadInitialData();
-
-    // Subscribe to loader state
-    this.loaderService.isLoading.subscribe((state) => {
-      this.loading = state;
-    });
-
-    // Check if user is authenticated (SSO handling)
-    this.authService.checkAuthentication();
-  }
-}
-
-
-
-<app-header></app-header>
-
-<div class="main-container">
-  <app-sidebar></app-sidebar>
-  <div class="content">
-    <router-outlet></router-outlet>
-  </div>
-</div>
-
-<app-footer></app-footer>
-
-<!-- Global Loader -->
-<div class="global-loader" *ngIf="loading">
-  <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-</div>
-
-
-
-.main-container {
-  display: flex;
-  height: 100vh;
-
-  .content {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-}
-
-.global-loader {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.8);
-  padding: 20px;
-  border-radius: 10px;
-}
+export class AppRoutingModule { }
