@@ -1,79 +1,39 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { LoggingService } from './logging.service';
-import { AuthService } from './auth.service';
+function getUniqueStandardIds(data) {
+  const uniqueEntries = new Map();
 
-@Injectable({
-  providedIn: 'root'
-})
-export class RestApiService {
-  private baseUrl = environment.apiUrl; // Define API URL in environment files
+  data.forEach(entry => {
+      const key = `${entry.standardId}-${entry.createdDate}`;
+      if (!uniqueEntries.has(key)) {
+          uniqueEntries.set(key, { standardId: entry.standardId, createdDate: entry.createdDate });
+      }
+  });
 
-  constructor(
-    private http: HttpClient,
-    private loggingService: LoggingService,
-    private authService: AuthService
-  ) {}
-
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: token ? `Bearer ${token}` : ''
-    });
-  }
-
-  get<T>(endpoint: string, params?: any): Observable<T> {
-    return this.http
-      .get<T>(`${this.baseUrl}/${endpoint}`, { headers: this.getHeaders(), params })
-      .pipe(
-        map((response) => response),
-        catchError((error) => this.handleError(error))
-      );
-  }
-
-  post<T>(endpoint: string, body: any): Observable<T> {
-    return this.http
-      .post<T>(`${this.baseUrl}/${endpoint}`, body, { headers: this.getHeaders() })
-      .pipe(
-        map((response) => response),
-        catchError((error) => this.handleError(error))
-      );
-  }
-
-  put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http
-      .put<T>(`${this.baseUrl}/${endpoint}`, body, { headers: this.getHeaders() })
-      .pipe(
-        map((response) => response),
-        catchError((error) => this.handleError(error))
-      );
-  }
-
-  delete<T>(endpoint: string): Observable<T> {
-    return this.http
-      .delete<T>(`${this.baseUrl}/${endpoint}`, { headers: this.getHeaders() })
-      .pipe(
-        map((response) => response),
-        catchError((error) => this.handleError(error))
-      );
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred!';
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      errorMessage = `Server Error: ${error.status} - ${error.message}`;
-    }
-
-    // Log error
-    this.loggingService.logError(errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
+  return Array.from(uniqueEntries.values());
 }
+
+// Example usage
+const data = [
+  { standardId: "NBKHHDX", createdDate: "2025-03-04", pageName: "TFGSignup" },
+  { standardId: "NBKHHDX", createdDate: "2025-03-04", pageName: "TFGCalendar" },
+  { standardId: "ZK1MAMS", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZK2CA7B", createdDate: "2025-03-04", pageName: "TFGSignup" },
+  { standardId: "ZK2CA7B", createdDate: "2025-03-04", pageName: "TFGCalendar" },
+  { standardId: "ZK2J6KI", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZK2J6KI", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZK7GGQZ", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZK7GGQZ", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZKJA2IN", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZKJA2IN", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZKNGSHW", createdDate: "2025-03-04", pageName: "TFGSignup" },
+  { standardId: "ZKNGSHW", createdDate: "2025-03-04", pageName: "TFGCalendar" },
+  { standardId: "ZKS08VZ", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZKS08VZ", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZKW5PJD", createdDate: "2025-03-04", pageName: "TFGSignup" },
+  { standardId: "ZKW5PJD", createdDate: "2025-03-04", pageName: "TFGCalendar" },
+  { standardId: "ZKXE8R9", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZKYCUBS", createdDate: "2025-03-03", pageName: "TFGSignup" },
+  { standardId: "ZKYCUBS", createdDate: "2025-03-03", pageName: "TFGCalendar" },
+  { standardId: "ZKYLBKT", createdDate: "2025-03-03", pageName: "TFGSignup" }
+];
+
+console.log(getUniqueStandardIds(data));
