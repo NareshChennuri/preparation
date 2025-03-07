@@ -45,30 +45,32 @@ export class EventDropdownComponent {
 
   buildDropdownOptions(data: ProgramOffering[]): DropdownOption[] {
     let groupedOptions: DropdownOption[] = [];
-    let standaloneOptions: DropdownOption[] = [];
-    let competitionGroup: DropdownOption | null = null;
+    let groups: { [key: number]: DropdownOption } = {};
 
     // Sort the data by longName in ascending order
     data.sort((a, b) => a.longName.localeCompare(b.longName));
 
-    // Process each item
+    // Create groups
     data.forEach((item) => {
-      if (item.id === 135) {
-        // This is the "Competitions" group
-        competitionGroup = {
+      if (item.id === item.refId) {
+        groups[item.id] = {
           type: "group",
           label: item.longName,
           options: []
         };
-      } else if (item.refId === 135) {
-        // These belong under "Competitions"
-        competitionGroup?.options?.push({
+      }
+    });
+
+    // Assign sub-options to their respective groups
+    data.forEach((item) => {
+      if (item.id !== item.refId && groups[item.refId]) {
+        groups[item.refId].options?.push({
           value: item.shortName,
           viewValue: item.longName
         });
       } else if (item.refId === 0) {
-        // Standalone options
-        standaloneOptions.push({
+        // Standalone options (sorted already)
+        groupedOptions.push({
           type: "option",
           value: item.shortName,
           label: item.longName
@@ -76,37 +78,33 @@ export class EventDropdownComponent {
       }
     });
 
-    // Ensure "Competitions" stays in the correct position in the list
-    standaloneOptions.forEach((option, index) => {
-      if (option.label === "Facilitated Training" && competitionGroup) {
-        groupedOptions.push(competitionGroup); // Insert "Competitions" before "Facilitated Training"
-      }
-      groupedOptions.push(option);
+    // Sort sub-options inside each group
+    Object.values(groups).forEach((group) => {
+      group.options?.sort((a, b) => a.viewValue.localeCompare(b.viewValue));
+      groupedOptions.push(group);
     });
-
-    // If "Competitions" is not inserted, add it at the end
-    if (competitionGroup && !groupedOptions.includes(competitionGroup)) {
-      groupedOptions.push(competitionGroup);
-    }
 
     return groupedOptions;
   }
 }
 
 
-<mat-form-field>
-  <mat-label>Select an Event</mat-label>
-  <mat-select [formControl]="eventControl">
-    <ng-container *ngFor="let option of dropdownOptions">
-      <mat-option *ngIf="option.type === 'option'" [value]="option.value">
-        {{ option.label }}
-      </mat-option>
 
-      <mat-optgroup *ngIf="option.type === 'group'" [label]="option.label">
-        <mat-option *ngFor="let subOption of option.options" [value]="subOption.value">
-          {{ subOption.viewValue }}
-        </mat-option>
-      </mat-optgroup>
-    </ng-container>
+<mat-form-field appearance="outline">
+  <mat-label>Select an Option</mat-label>
+  <mat-select (selectionChange)="onOptionChange($event.value)">
+    <mat-option *ngFor="let option of mainOptions" [value]="option">
+      {{ option.longName }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Show second dropdown if a group is selected -->
+<mat-form-field *ngIf="selectedGroup && subOptions.length > 0" appearance="outline">
+  <mat-label>Select a Sub-Option</mat-label>
+  <mat-select [(value)]="selectedSubOption">
+    <mat-option *ngFor="let subOption of subOptions" [value]="subOption">
+      {{ subOption.longName }}
+    </mat-option>
   </mat-select>
 </mat-form-field>
