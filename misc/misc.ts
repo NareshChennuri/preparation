@@ -27,16 +27,16 @@ export class EventDropdownComponent {
   dropdownOptions: DropdownOption[] = [];
 
   programOfferings: ProgramOffering[] = [
-    {"id": 40, "lookupName": "ProgramOfferings", "longName": "Cohorts", "shortName": "COHORTS", "status": "A", "refId": 0},
-    {"id": 41, "lookupName": "ProgramOfferings", "longName": "Office Hours", "shortName": "OFFICEHRS", "status": "A", "refId": 0},
-    {"id": 113, "lookupName": "ProgramOfferings", "longName": "Tech Talks", "shortName": "TECHTALKS", "status": "A", "refId": 0},
-    {"id": 133, "lookupName": "ProgramOfferings", "longName": "Vendor Workshops", "shortName": "VENDORWORKSHOPS", "status": "A", "refId": 0},
-    {"id": 134, "lookupName": "ProgramOfferings", "longName": "Facilitated Training", "shortName": "FACILITATEDTRNG", "status": "A", "refId": 0},
-    {"id": 135, "lookupName": "ProgramOfferings", "longName": "Competitions", "shortName": "COMPETATIONS", "status": "A", "refId": 135},
-    {"id": 179, "lookupName": "ProgramOfferings", "longName": "Quizzes", "shortName": "QUIZZES", "status": "A", "refId": 135},
-    {"id": 180, "lookupName": "ProgramOfferings", "longName": "Codeathon", "shortName": "CODEATHON", "status": "A", "refId": 135},
-    {"id": 181, "lookupName": "ProgramOfferings", "longName": "Crosswords", "shortName": "CROSSWORDS", "status": "A", "refId": 135},
-    {"id": 182, "lookupName": "ProgramOfferings", "longName": "Technical Contest", "shortName": "TECHCONTEST", "status": "A", "refId": 135}
+    { "id": 40, "lookupName": "ProgramOfferings", "longName": "Cohorts", "shortName": "COHORTS", "status": "A", "refId": 0 },
+    { "id": 41, "lookupName": "ProgramOfferings", "longName": "Office Hours", "shortName": "OFFICEHRS", "status": "A", "refId": 0 },
+    { "id": 113, "lookupName": "ProgramOfferings", "longName": "Tech Talks", "shortName": "TECHTALKS", "status": "A", "refId": 0 },
+    { "id": 133, "lookupName": "ProgramOfferings", "longName": "Vendor Workshops", "shortName": "VENDORWORKSHOPS", "status": "A", "refId": 0 },
+    { "id": 134, "lookupName": "ProgramOfferings", "longName": "Facilitated Training", "shortName": "FACILITATEDTRNG", "status": "A", "refId": 0 },
+    { "id": 135, "lookupName": "ProgramOfferings", "longName": "Competitions", "shortName": "COMPETATIONS", "status": "A", "refId": 135 },
+    { "id": 179, "lookupName": "ProgramOfferings", "longName": "Quizzes", "shortName": "QUIZZES", "status": "A", "refId": 135 },
+    { "id": 180, "lookupName": "ProgramOfferings", "longName": "Codeathon", "shortName": "CODEATHON", "status": "A", "refId": 135 },
+    { "id": 181, "lookupName": "ProgramOfferings", "longName": "Crosswords", "shortName": "CROSSWORDS", "status": "A", "refId": 135 },
+    { "id": 182, "lookupName": "ProgramOfferings", "longName": "Technical Contest", "shortName": "TECHCONTEST", "status": "A", "refId": 135 }
   ];
 
   constructor() {
@@ -45,29 +45,30 @@ export class EventDropdownComponent {
 
   buildDropdownOptions(data: ProgramOffering[]): DropdownOption[] {
     let groupedOptions: DropdownOption[] = [];
-    let groups: { [key: number]: DropdownOption } = {};
+    let standaloneOptions: DropdownOption[] = [];
+    let competitionGroup: DropdownOption | null = null;
 
-    // Create groups
+    // Sort the data by longName in ascending order
+    data.sort((a, b) => a.longName.localeCompare(b.longName));
+
+    // Process each item
     data.forEach((item) => {
-      if (item.id === item.refId) {
-        groups[item.id] = {
+      if (item.id === 135) {
+        // This is the "Competitions" group
+        competitionGroup = {
           type: "group",
           label: item.longName,
           options: []
         };
-      }
-    });
-
-    // Assign sub-options to their respective groups
-    data.forEach((item) => {
-      if (item.id !== item.refId && groups[item.refId]) {
-        groups[item.refId].options?.push({
+      } else if (item.refId === 135) {
+        // These belong under "Competitions"
+        competitionGroup?.options?.push({
           value: item.shortName,
           viewValue: item.longName
         });
       } else if (item.refId === 0) {
         // Standalone options
-        groupedOptions.push({
+        standaloneOptions.push({
           type: "option",
           value: item.shortName,
           label: item.longName
@@ -75,10 +76,18 @@ export class EventDropdownComponent {
       }
     });
 
-    // Convert groups to an array
-    Object.values(groups).forEach((group) => {
-      groupedOptions.push(group);
+    // Ensure "Competitions" stays in the correct position in the list
+    standaloneOptions.forEach((option, index) => {
+      if (option.label === "Facilitated Training" && competitionGroup) {
+        groupedOptions.push(competitionGroup); // Insert "Competitions" before "Facilitated Training"
+      }
+      groupedOptions.push(option);
     });
+
+    // If "Competitions" is not inserted, add it at the end
+    if (competitionGroup && !groupedOptions.includes(competitionGroup)) {
+      groupedOptions.push(competitionGroup);
+    }
 
     return groupedOptions;
   }
@@ -88,13 +97,11 @@ export class EventDropdownComponent {
 <mat-form-field>
   <mat-label>Select an Event</mat-label>
   <mat-select [formControl]="eventControl">
-    <!-- Normal options (No Group) -->
     <ng-container *ngFor="let option of dropdownOptions">
       <mat-option *ngIf="option.type === 'option'" [value]="option.value">
         {{ option.label }}
       </mat-option>
 
-      <!-- Grouped options -->
       <mat-optgroup *ngIf="option.type === 'group'" [label]="option.label">
         <mat-option *ngFor="let subOption of option.options" [value]="subOption.value">
           {{ subOption.viewValue }}
