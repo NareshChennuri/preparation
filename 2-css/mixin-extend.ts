@@ -2,7 +2,16 @@
 
 In SCSS (Sassy CSS), 
 
-mixins are powerful feature in SCSS
+Mixins are a powerful way of creating dynamic and reusable styles, 
+
+@mixin highlight-text {
+  color: red;
+  font-size: 25px;
+  font-weight: bold;
+  border: 1px solid blue;
+}
+
+
 - using Mixins we can define 
 - reusable blocks of CSS code
 
