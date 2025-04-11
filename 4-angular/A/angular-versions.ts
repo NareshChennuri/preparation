@@ -23,7 +23,7 @@ Angular 17
         }
 
         <!-- Angular 16 and previous versions -->
-        <div [ngSwitch]="color">
+        <div [ngSwitch]="color"> 
         <app-color *ngSwitchCase="red"/>
         <app-color *ngSwitchCase="blue"/>
         <app-default-color *ngSwitchDefault/>

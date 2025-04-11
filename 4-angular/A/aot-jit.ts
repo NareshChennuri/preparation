@@ -1,5 +1,10 @@
 /*
 
+Use JIT during development for faster rebuilds.
+
+Use AOT + Ivy for production builds for better performance and security.
+
+
 Feature         Ivy (Rendering Engine)  AOT & JIT (Compilers)
 -------------------------------------------------------
 Compilation     Ahead-of-time (AOT)     Ahead-of-time (AOT) or Just-in-time (JIT)
