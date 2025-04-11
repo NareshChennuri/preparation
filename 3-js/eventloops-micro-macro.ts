@@ -2,6 +2,19 @@
 
 Event loop, Microtasks, and Macrotasks are related to the asynchronous programming in javascript
 
+
+JavaScript is single-threaded, but it handles asynchronous tasks using the event loop.
+
+The event loop keeps checking: 
+  If the call stack is empty.
+  If there are microtasks (high priority) or macrotasks(low Piority) to execute.
+
+  Start
+  End
+  Promise (Microtask) // high priority than macrotasks
+  Timeout (Macrotask)
+
+
 Event Loop:
 =============
 event loop allows the execution of non-blocking code by continuously checking the message queue for tasks and it executes them in a loop.
