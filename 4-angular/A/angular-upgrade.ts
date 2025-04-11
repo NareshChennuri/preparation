@@ -5,7 +5,7 @@
 
 > ng generate @angular/core:control-flow
 
-upgrading a fairly simple government site from Angular 5 to 12. 
+upgrading a fairly simple site from Angular 5 to 12. 
 
 I Used the official Angular upgrade guide 
 and paid attention to every step on their checklist. 
