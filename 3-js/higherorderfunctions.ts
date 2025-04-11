@@ -1,5 +1,11 @@
 /*
 
+function that accepts functions as parameters and/or returns a function.
+Map, filter, reduce, forEach, sort, find, some & every ... etc
+
+
+
+
 In Javascript, functions can be 
     - assigned to variables 
     - and they can be passed into other functions as parameters 
