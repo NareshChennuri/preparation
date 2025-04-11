@@ -1,4 +1,12 @@
 /*
+Feature	          Bootstrap 3	     Bootstrap 4
+Layout Engine	    Floats	          Flexbox
+Grid Breakpoints	4	                  5
+CSS Preprocessor	LESS	            Sass
+Components	      Panels, Wells	    Cards
+Utilities	        Limited	          Extensive (m-4 p-4 text-center bg-light etc)
+Browser Support	  IE8+	             IE10+
+
 
 Bootstrap is a css framework 
 - for faster and easier web development
