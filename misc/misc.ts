@@ -1,18 +1,5 @@
 import { RRule } from 'rrule';
 
-interface DateStruct {
-  year: number;
-  month: number;
-  day: number;
-}
-
-interface TimeStruct {
-  hour: number;
-  minute: number;
-  second: number;
-  timeMeridian?: 'AM' | 'PM' | null;
-}
-
 function formatToEST(date: Date): string {
   return date.toLocaleString('en-US', {
     timeZone: 'America/New_York',
@@ -25,30 +12,16 @@ function formatToEST(date: Date): string {
   }).replace(',', '') + ' EST';
 }
 
-export function getNextOccurrenceAndExDates(
+export function getNextOccurrenceAndExDatesFromISO(
   rruleString: string,
-  executionStartDate: DateStruct,
-  executionStartTime: TimeStruct,
-  executionEndDate: DateStruct,
+  executionStartDateISO: string,
+  executionEndDateISO: string,
   exDates: string[] = []
 ): { nextOccurrenceFormatted: string | null; updatedExDates: string[] } {
-  const start = new Date(
-    executionStartDate.year,
-    executionStartDate.month - 1,
-    executionStartDate.day,
-    executionStartTime.hour,
-    executionStartTime.minute,
-    executionStartTime.second
-  );
-
-  const until = new Date(
-    executionEndDate.year,
-    executionEndDate.month - 1,
-    executionEndDate.day,
-    23, 59, 59
-  );
-
   try {
+    const start = new Date(executionStartDateISO);
+    const until = new Date(executionEndDateISO);
+
     const options = RRule.parseString(rruleString);
     options.dtstart = start;
     options.until = until;
@@ -56,7 +29,7 @@ export function getNextOccurrenceAndExDates(
     const rule = new RRule(options);
     const now = new Date();
 
-    const next = rule.after(now, true);
+    const next = rule.after(now, true); // inclusive
     if (!next) return { nextOccurrenceFormatted: null, updatedExDates: exDates };
 
     const nextISO = next.toISOString();
@@ -68,7 +41,7 @@ export function getNextOccurrenceAndExDates(
       updatedExDates
     };
   } catch (error) {
-    console.error('Invalid RRULE:', error);
+    console.error('Invalid RRULE or date:', error);
     return { nextOccurrenceFormatted: null, updatedExDates: exDates };
   }
 }
