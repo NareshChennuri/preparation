@@ -1,17 +1,5 @@
 import { RRule } from 'rrule';
 
-function formatToEST(date: Date): string {
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/New_York',
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).replace(',', '') + ' EST';
-}
-
 export function getNextOccurrenceAndExDatesFromISO(
   rruleString: string,
   executionStartDateISO: string,
@@ -21,6 +9,10 @@ export function getNextOccurrenceAndExDatesFromISO(
   try {
     const start = new Date(executionStartDateISO);
     const until = new Date(executionEndDateISO);
+
+    // Remove seconds from both start and until
+    start.setSeconds(0, 0);
+    until.setSeconds(59, 999); // end of the minute
 
     const options = RRule.parseString(rruleString);
     options.dtstart = start;
@@ -32,12 +24,14 @@ export function getNextOccurrenceAndExDatesFromISO(
     const next = rule.after(now, true); // inclusive
     if (!next) return { nextOccurrenceFormatted: null, updatedExDates: exDates };
 
-    const nextISO = next.toISOString();
+    // Trim seconds and milliseconds
+    next.setSeconds(0, 0);
+    const nextISO = next.toISOString(); // e.g., "2025-10-02T21:15:00Z"
+
     const updatedExDates = [...exDates, nextISO];
-    const nextFormatted = formatToEST(next);
 
     return {
-      nextOccurrenceFormatted: nextFormatted,
+      nextOccurrenceFormatted: nextISO,
       updatedExDates
     };
   } catch (error) {
