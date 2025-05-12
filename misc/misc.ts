@@ -64,3 +64,8 @@ export function getNextOccurrenceAndExDatesFromISO(
     return { nextOccurrenceFormatted: null, updatedExDates: exDates };
   }
 }
+
+
+function toCompactZFormat(date: Date): string {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
