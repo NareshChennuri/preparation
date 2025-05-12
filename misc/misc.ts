@@ -16,6 +16,10 @@ function toCompactZFormat(date: Date): string {
   return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
 
+function getDateKey(date: Date): string {
+  return date.toISOString().slice(0, 10).replace(/-/g, ''); // e.g. '20250601'
+}
+
 export function getNextOccurrenceAndExDatesFromISO(
   rruleString: string,
   executionStartDateISO: string,
@@ -25,47 +29,36 @@ export function getNextOccurrenceAndExDatesFromISO(
   try {
     const start = new Date(executionStartDateISO);
     const until = new Date(executionEndDateISO);
+    const now = new Date();
 
     const options = RRule.parseString(rruleString);
     options.dtstart = start;
     options.until = until;
 
     const rule = new RRule(options);
-    const now = new Date();
+    const occurrences = rule.between(now, until, true);
 
-    const exDateSet = new Set(exDates);
-
-    // Loop through future occurrences to find one not in exDates
-    const occurrences = rule.between(now, until, true); // include current day
+    const exDateDaySet = new Set(exDates.map(d => getDateKey(new Date(d))));
+    const updatedDates = [...exDates];
     let nextValidDate: Date | null = null;
 
     for (const occ of occurrences) {
-      const occCompact = toCompactZFormat(occ); // e.g., 20250601T120000Z
-      if (!exDateSet.has(occCompact)) {
+      const occDayKey = getDateKey(occ);
+      if (!exDateDaySet.has(occDayKey)) {
         nextValidDate = occ;
-        exDateSet.add(occCompact);
+        exDateDaySet.add(occDayKey);
+        updatedDates.push(toCompactZFormat(occ));
         break;
       }
     }
 
-    if (!nextValidDate) {
-      return {
-        nextOccurrenceFormatted: null,
-        updatedExDates: Array.from(exDateSet)
-      };
-    }
-
     return {
-      nextOccurrenceFormatted: formatToEST(nextValidDate),
-      updatedExDates: Array.from(exDateSet)
+      nextOccurrenceFormatted: nextValidDate ? formatToEST(nextValidDate) : null,
+      updatedExDates: updatedDates
     };
+
   } catch (error) {
     console.error('Invalid RRULE or dates:', error);
     return { nextOccurrenceFormatted: null, updatedExDates: exDates };
   }
-}
-
-
-function toCompactZFormat(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
