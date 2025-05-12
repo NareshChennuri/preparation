@@ -1,14 +1,12 @@
-function parseRRuleDate(dateStr: string): Date {
-  // Convert '20250601T120000Z' to '2025-06-01T12:00:00Z'
-  const isoFormatted = `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}T${dateStr.substring(9, 11)}:${dateStr.substring(11, 13)}:00Z`;
-  return new Date(isoFormatted);
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// Inside your loop
+const occRRuleFormat =
+  `${occ.getUTCFullYear()}${pad(occ.getUTCMonth() + 1)}${pad(occ.getUTCDate())}` +
+  `T${pad(occ.getUTCHours())}${pad(occ.getUTCMinutes())}${pad(occ.getUTCSeconds())}Z`;
+
+if (occ > todayUTC && !exDateSet.has(occRRuleFormat)) {
+  nextValidDate = occ;
+  exDateSet.add(occRRuleFormat); // ✅ Add in RRULE format
+  break;
 }
-
-// Usage
-const exDates = ['20250601T120000Z'];
-
-const exDateSet = new Set(
-  exDates.map(d => parseRRuleDate(d).toISOString().split('T')[0])
-);
-
-console.log(exDateSet); // Set { '2025-06-01' }
