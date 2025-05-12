@@ -1,19 +1,14 @@
-function formatUtcToLocal(utcDateStr) {
-  const date = new Date(utcDateStr);
+const isoDate = '2025-05-13T08:00:00Z';
+const date = new Date(isoDate);
 
-  const options = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true,
-    timeZoneName: 'short'
-  };
+const options = {
+  month: '2-digit',
+  day: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true,
+};
 
-  // Format the date using the user's local timezone
-  const formatted = new Intl.DateTimeFormat('en-US', options).format(date);
-
-  // Remove comma (optional, for cleaner output)
-  return formatted.replace(',', '');
-}
+const formatted = date.toLocaleString('en-US', options);
+console.log(formatted); // "05/13/2025, 08:00 AM"
