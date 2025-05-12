@@ -1,21 +1,55 @@
-const exDateStrings = exDates.map(ex => {
-  const date = new Date(ex);
-  return date.toISOString().split('T')[0]; // e.g., '2025-06-01'
-});
+import { RRule } from 'rrule';
 
-let currentDate = new Date(startDateStr);
-const endDate = new Date(endDateStr);
+interface OccurrenceResult {
+  nextOccurrenceFormatted: string | null;
+  updatedExDates: string[];
+}
 
-let validDate: Date | null = null;
+export function getNextOccurrenceAndExDatesFromISO(
+  rruleString: string,
+  executionStartDateISO: string,
+  executionEndDateISO: string,
+  exDates: string[]
+): OccurrenceResult {
+  const startDate = new Date(executionStartDateISO);
+  const endDate = new Date(executionEndDateISO);
 
-while (currentDate <= endDate) {
-  const currentDateOnly = currentDate.toISOString().split('T')[0];
+  // Normalize exDates to 'YYYY-MM-DD'
+  const exDateSet = new Set(
+    exDates.map(dateStr => new Date(dateStr).toISOString().split('T')[0])
+  );
 
-  if (!exDateStrings.includes(currentDateOnly)) {
-    validDate = new Date(currentDate); // found valid date
-    break;
+  // Today's UTC date (zeroed out time)
+  const todayUTC = new Date();
+  const todayDayOnly = new Date(Date.UTC(
+    todayUTC.getUTCFullYear(),
+    todayUTC.getUTCMonth(),
+    todayUTC.getUTCDate()
+  ));
+
+  // Create rule
+  const rule = RRule.fromString(rruleString);
+  const allOccurrences = rule.between(startDate, endDate, true); // include start/end
+
+  let nextValidDate: Date | null = null;
+
+  for (const occ of allOccurrences) {
+    const occDayOnly = new Date(Date.UTC(
+      occ.getUTCFullYear(),
+      occ.getUTCMonth(),
+      occ.getUTCDate()
+    ));
+
+    const occDateOnlyStr = occ.toISOString().split('T')[0];
+
+    if (occDayOnly > todayDayOnly && !exDateSet.has(occDateOnlyStr)) {
+      nextValidDate = occ;
+      break;
+    }
   }
 
-  // Move to next day
-  currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+  return {
+    nextOccurrenceFormatted: nextValidDate ? nextValidDate.toISOString() : null,
+    updatedExDates: Array.from(exDateSet)
+  };
 }
