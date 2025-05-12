@@ -1,7 +1,7 @@
-function formatToLocalTimeString(dateString: string): string {
-  const date = new Date(dateString);
+function formatUtcToLocal(utcDateStr) {
+  const date = new Date(utcDateStr);
 
-  const options: Intl.DateTimeFormatOptions = {
+  const options = {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -11,17 +11,9 @@ function formatToLocalTimeString(dateString: string): string {
     timeZoneName: 'short'
   };
 
-  // Format according to the user's local time zone
-  const formatter = new Intl.DateTimeFormat('en-US', options);
-  const parts = formatter.formatToParts(date);
+  // Format the date using the user's local timezone
+  const formatted = new Intl.DateTimeFormat('en-US', options).format(date);
 
-  const map: any = {};
-  parts.forEach(p => map[p.type] = p.value);
-
-  return `${map.month}/${map.day}/${map.year} ${map.hour}:${map.minute} ${map.dayPeriod} ${map.timeZoneName}`;
+  // Remove comma (optional, for cleaner output)
+  return formatted.replace(',', '');
 }
-
-// Example usage
-const input = 'Tue May 13 2025 04:00:00 GMT-0400';
-const output = formatToLocalTimeString(input);
-console.log(output); // → e.g., '05/13/2025 04:00 AM EDT' or based on user's time zone
