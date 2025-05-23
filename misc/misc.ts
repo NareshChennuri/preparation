@@ -1,50 +1,137 @@
-const REGION_TIMEZONE_MAP = {
-  'APAC-IST': 'Asia/Kolkata',
-  'APAC-SGT': 'Asia/Singapore',
-  'EMEA-CET': 'Europe/Paris',
-  'EMEA-EET': 'Europe/Bucharest',
-  'EMEA-WET': 'Europe/Lisbon',
-  'US-CST': 'America/Chicago',
-  'US-EST': 'America/New_York',
-  'US-PST': 'America/Los_Angeles'
-};
+// bulk-upload.component.ts
+import { Component, Input } from '@angular/core';
+import * as XLSX from 'xlsx';
 
-/**
- * Check if event is past given a cutoffDays buffer in the region's local time
- * @param {string} startDate - 'YYYY-MM-DD'
- * @param {string} startTime - 'HH:mm:ss'
- * @param {string} regionCode - e.g., 'APAC-IST'
- * @param {number} cutoffDays - how many days before event to consider it "past"
- * @returns {boolean} true if past the cutoff, false otherwise
- */
-function isEventPast(startDate, startTime, regionCode, cutoffDays) {
-  const tz = REGION_TIMEZONE_MAP[regionCode];
-  if (!tz) throw new Error(`Invalid region code: ${regionCode}`);
+@Component({
+  selector: 'app-bulk-upload',
+  templateUrl: './bulk-upload.component.html',
+  styleUrls: ['./bulk-upload.component.css']
+})
+export class BulkUploadComponent {
+  @Input() availableSeats: number = 0;
 
-  // Construct event datetime in ISO format and parse in local time
-  const eventDateTimeStr = `${startDate}T${startTime}`;
-  const eventDateTime = new Date(`${eventDateTimeStr}`);
+  uploadType: 'email' | 'standardId' = 'email';
+  uploadMethod: 'manual' | 'excel' = 'manual';
+  inputData: string = '';
+  excelFile: File | null = null;
 
-  // Add cutoffDays buffer (in milliseconds)
-  const cutoffTime = eventDateTime.getTime() - cutoffDays * 24 * 60 * 60 * 1000;
+  showUploadPopup = false;
+  showValidationResults = false;
 
-  // Get current time in the target timezone
-  const nowUTC = new Date();
-  const formatter = new Intl.DateTimeFormat('en-GB', {
-    timeZone: tz,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-    hour12: false
-  });
+  validEntries: string[] = [];
+  invalidEntries: string[] = [];
 
-  const parts = formatter.formatToParts(nowUTC);
-  const getPart = type => parts.find(p => p.type === type)?.value.padStart(2, '0');
-  const localNowStr = `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}:${getPart('second')}`;
-  const nowInTZ = new Date(`${localNowStr}`);
+  uploadResults = {
+    success: [] as string[],
+    failure: [] as string[]
+  };
 
-  return nowInTZ.getTime() > cutoffTime;
+  private allowedEmailDomains = ['abc.com', 'bbc.com', 'xyz.com'];
+
+  openPopup() {
+    this.showUploadPopup = true;
+    this.inputData = '';
+    this.excelFile = null;
+    this.showValidationResults = false;
+    this.validEntries = [];
+    this.invalidEntries = [];
+    this.uploadResults = { success: [], failure: [] };
+  }
+
+  handleFileInput(event: any) {
+    const file = event.target.files[0];
+    const allowedExtensions = ['xls', 'xlsx', 'csv'];
+    const fileExtension = file?.name.split('.').pop()?.toLowerCase();
+    if (file && fileExtension && allowedExtensions.includes(fileExtension)) {
+      this.excelFile = file;
+    } else {
+      alert('Invalid file type. Please upload only .xls, .xlsx, or .csv files.');
+      this.excelFile = null;
+      event.target.value = '';
+    }
+  }
+
+  processUpload() {
+    let entries: string[] = [];
+
+    if (this.uploadMethod === 'manual') {
+      entries = this.inputData.split(/[\n,;]+/).map(x => x.trim()).filter(Boolean);
+      this.validateEntries(entries);
+    } else if (this.uploadMethod === 'excel' && this.excelFile) {
+      this.readExcel(this.excelFile).then(data => {
+        this.validateEntries(data);
+      });
+    }
+  }
+
+  readExcel(file: File): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const workbook = XLSX.read(e.target.result, { type: 'binary' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const columnIndex = (data[0] as string[]).findIndex((col: string) =>
+          col.toLowerCase().includes(this.uploadType === 'email' ? 'email' : 'standard')
+        );
+        const result = data.slice(1).map((row: any[]) => row[columnIndex]).filter(Boolean);
+        resolve(result);
+      };
+      reader.readAsBinaryString(file);
+    });
+  }
+
+  validateEntries(entries: string[]) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const standardIdRegex = /^[A-Za-z0-9]{7}$/;
+
+    this.validEntries = [];
+    this.invalidEntries = [];
+
+    const seen = new Set<string>();
+
+    for (const entry of entries) {
+      const normalized = entry.trim();
+      if (seen.has(normalized)) continue;
+      seen.add(normalized);
+
+      if (this.uploadType === 'email') {
+        const domain = normalized.split('@')[1];
+        if (emailRegex.test(normalized) && this.allowedEmailDomains.includes(domain)) {
+          this.validEntries.push(normalized);
+        } else {
+          this.invalidEntries.push(normalized);
+        }
+      } else if (this.uploadType === 'standardId' && standardIdRegex.test(normalized)) {
+        this.validEntries.push(normalized);
+      } else {
+        this.invalidEntries.push(normalized);
+      }
+    }
+
+    this.showValidationResults = true;
+  }
+
+  proceedToUpload() {
+    if (this.validEntries.length > this.availableSeats) {
+      alert(`We cannot process your request. Your list exceeds registration cap.\nCurrent available seats: ${this.availableSeats}`);
+      return;
+    }
+
+    const success = this.validEntries.slice(0, this.availableSeats);
+    const failure = this.validEntries.slice(this.availableSeats);
+
+    this.uploadResults.success = success;
+    this.uploadResults.failure = failure;
+    this.showUploadPopup = false;
+    this.showValidationResults = false;
+  }
+
+  goToManagementPage() {
+    window.location.href = '/management';
+  }
+
+  goBackToEdit() {
+    this.showValidationResults = false;
+  }
 }
-
-
-const isPast = isEventPast('2025-05-22', '08:00:00', 'APAC-IST', 1);
-console.log(isPast ? 'Past cutoff' : 'Upcoming');
