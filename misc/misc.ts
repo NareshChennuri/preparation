@@ -1,41 +1,22 @@
-:host {
-  display: block;
-  padding: 1rem;
-  background: #fafafa;
-}
+<div class="team-header">
+  <h3 class="team-title">{{ team.teamName }}</h3>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openEditDialog(team)">
+      <mat-icon>edit</mat-icon> Edit
+    </button>
+    <button mat-menu-item (click)="deleteTeam(team.teamName)">
+      <mat-icon>delete</mat-icon> Delete
+    </button>
+  </mat-menu>
+</div>
 
-.actions {
+
+.team-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-
-  button {
-    margin-right: 0.5rem;
-  }
-}
-
-.team-title {
-  font-weight: 600;
-  font-size: 1.2rem;
   margin: 1rem 0 0.5rem;
-  cursor: pointer;
-  color: #1976d2;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-table {
-  width: 100%;
-  margin-bottom: 2rem;
-}
-
-mat-paginator {
-  margin: 1rem 0;
-}
-
-button[mat-button][color="warn"] {
-  margin-bottom: 0.5rem;
 }
