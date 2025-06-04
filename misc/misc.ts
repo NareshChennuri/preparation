@@ -1,22 +1,41 @@
-<div class="team-header">
-  <h3 class="team-title">{{ team.teamName }}</h3>
-  <button mat-icon-button [matMenuTriggerFor]="menu">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="openEditDialog(team)">
-      <mat-icon>edit</mat-icon> Edit
-    </button>
-    <button mat-menu-item (click)="deleteTeam(team.teamName)">
-      <mat-icon>delete</mat-icon> Delete
-    </button>
-  </mat-menu>
-</div>
+table {
+  table-layout: fixed;
+  width: 100%;
 
+  th.mat-header-cell,
+  td.mat-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.team-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1rem 0 0.5rem;
+  th.mat-header-cell:nth-child(1),
+  td.mat-cell:nth-child(1) {
+    width: 10%;
+  }
+
+  th.mat-header-cell:nth-child(2),
+  td.mat-cell:nth-child(2) {
+    width: 20%;
+  }
+
+  th.mat-header-cell:nth-child(3),
+  td.mat-cell:nth-child(3) {
+    width: 15%;
+  }
+
+  th.mat-header-cell:nth-child(4),
+  td.mat-cell:nth-child(4) {
+    width: 15%;
+  }
+
+  th.mat-header-cell:nth-child(5),
+  td.mat-cell:nth-child(5) {
+    width: 25%;
+  }
+
+  th.mat-header-cell:nth-child(6),
+  td.mat-cell:nth-child(6) {
+    width: 15%;
+  }
 }
