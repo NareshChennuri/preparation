@@ -1,41 +1,52 @@
-table {
-  table-layout: fixed;
+:host {
+  display: block;
+  padding: 1rem;
+  background: #fff;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+mat-form-field {
   width: 100%;
+  margin-bottom: 1rem;
+}
 
-  th.mat-header-cell,
-  td.mat-cell {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+mat-slide-toggle {
+  margin-bottom: 1rem;
+  display: block;
+}
 
-  th.mat-header-cell:nth-child(1),
-  td.mat-cell:nth-child(1) {
-    width: 10%;
-  }
+.filtered-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
 
-  th.mat-header-cell:nth-child(2),
-  td.mat-cell:nth-child(2) {
-    width: 20%;
-  }
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px dashed #ccc;
 
-  th.mat-header-cell:nth-child(3),
-  td.mat-cell:nth-child(3) {
-    width: 15%;
+    button {
+      font-size: 0.75rem;
+    }
   }
+}
 
-  th.mat-header-cell:nth-child(4),
-  td.mat-cell:nth-child(4) {
-    width: 15%;
-  }
+mat-chip-list {
+  margin: 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
 
-  th.mat-header-cell:nth-child(5),
-  td.mat-cell:nth-child(5) {
-    width: 25%;
+  mat-chip {
+    margin: 4px;
+    background: #e0f7fa;
   }
+}
 
-  th.mat-header-cell:nth-child(6),
-  td.mat-cell:nth-child(6) {
-    width: 15%;
-  }
+button[type='submit'],
+button[mat-raised-button] {
+  margin-top: 1rem;
+  float: right;
 }
