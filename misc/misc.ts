@@ -1,52 +1,24 @@
-:host {
-  display: block;
-  padding: 1rem;
-  background: #fff;
-  max-height: 90vh;
-  overflow-y: auto;
+import { debounceTime, switchMap } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+
+
+searchControl = new FormControl('');
+filteredMembers: Member[] = [];
+
+ngOnInit(): void {
+  this.searchControl.valueChanges.pipe(
+    debounceTime(300),
+    switchMap(value => this.http.get<Member[]>(`/api/members/search?q=${value}`))
+  ).subscribe(users => this.filteredMembers = users);
 }
 
-mat-form-field {
-  width: 100%;
-  margin-bottom: 1rem;
-}
 
-mat-slide-toggle {
-  margin-bottom: 1rem;
-  display: block;
-}
+<mat-form-field>
+  <input matInput placeholder="Search members" [formControl]="searchControl" [matAutocomplete]="auto">
+</mat-form-field>
 
-.filtered-list {
-  max-height: 150px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-
-  div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 0;
-    border-bottom: 1px dashed #ccc;
-
-    button {
-      font-size: 0.75rem;
-    }
-  }
-}
-
-mat-chip-list {
-  margin: 1rem 0;
-  display: flex;
-  flex-wrap: wrap;
-
-  mat-chip {
-    margin: 4px;
-    background: #e0f7fa;
-  }
-}
-
-button[type='submit'],
-button[mat-raised-button] {
-  margin-top: 1rem;
-  float: right;
-}
+<mat-autocomplete #auto="matAutocomplete">
+  <mat-option *ngFor="let user of filteredMembers" (onSelectionChange)="addMember(user)">
+    {{ user.fullName }} ({{ user.standardId }})
+  </mat-option>
+</mat-autocomplete>
