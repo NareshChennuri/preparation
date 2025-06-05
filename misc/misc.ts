@@ -1,24 +1,16 @@
-import { debounceTime, switchMap } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+addMember(member: Member): void {
+  const existsInCurrentTeam = this.teamData.members.some(m => m.standardId === member.standardId);
+  const existsInAnyTeam = this.data.currentTeams?.some((team: any) =>
+    team.members.some((m: Member) => m.standardId === member.standardId)
+  );
 
-
-searchControl = new FormControl('');
-filteredMembers: Member[] = [];
-
-ngOnInit(): void {
-  this.searchControl.valueChanges.pipe(
-    debounceTime(300),
-    switchMap(value => this.http.get<Member[]>(`/api/members/search?q=${value}`))
-  ).subscribe(users => this.filteredMembers = users);
+  if (existsInCurrentTeam) {
+    this.snackBar.open('Member already exists in this team.', 'Close', { duration: 3000 });
+  } else if (existsInAnyTeam) {
+    this.snackBar.open('Member is already assigned to another team.', 'Close', { duration: 3000 });
+  } else if (this.teamData.members.length >= this.teamSize) {
+    this.snackBar.open(`Cannot exceed maximum team size of ${this.teamSize}.`, 'Close', { duration: 3000 });
+  } else {
+    this.teamData.members.push(member);
+  }
 }
-
-
-<mat-form-field>
-  <input matInput placeholder="Search members" [formControl]="searchControl" [matAutocomplete]="auto">
-</mat-form-field>
-
-<mat-autocomplete #auto="matAutocomplete">
-  <mat-option *ngFor="let user of filteredMembers" (onSelectionChange)="addMember(user)">
-    {{ user.fullName }} ({{ user.standardId }})
-  </mat-option>
-</mat-autocomplete>
