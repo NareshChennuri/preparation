@@ -1,16 +1,30 @@
-addMember(member: Member): void {
-  const existsInCurrentTeam = this.teamData.members.some(m => m.standardId === member.standardId);
-  const existsInAnyTeam = this.data.currentTeams?.some((team: any) =>
-    team.members.some((m: Member) => m.standardId === member.standardId)
-  );
+import { UrlSegment, Route, UrlSegmentGroup, UrlMatchResult } from '@angular/router';
 
-  if (existsInCurrentTeam) {
-    this.snackBar.open('Member already exists in this team.', 'Close', { duration: 3000 });
-  } else if (existsInAnyTeam) {
-    this.snackBar.open('Member is already assigned to another team.', 'Close', { duration: 3000 });
-  } else if (this.teamData.members.length >= this.teamSize) {
-    this.snackBar.open(`Cannot exceed maximum team size of ${this.teamSize}.`, 'Close', { duration: 3000 });
-  } else {
-    this.teamData.members.push(member);
+
+export function innovationRedirectMatcher(
+  segments: UrlSegment[],
+  group: UrlSegmentGroup,
+  route: Route
+): UrlMatchResult | null {
+  if (!segments.length || segments[0].path !== 'innovation-portal') {
+    return null;
+  }
+
+  // Remove the old base path
+  const newSegments = segments.slice(1); // everything after 'innovation-portal'
+  return {
+    consumed: segments,
+    posParams: {
+      path: new UrlSegment(newSegments.map(s => s.path).join('/'), {})
+    }
+  };
+}
+
+
+{
+  matcher: innovationRedirectMatcher,
+  redirectTo: (route) => {
+    const path = route.posParams?.['path']?.path || '';
+    return `/academy-tfg-portal/${path}`;
   }
 }
