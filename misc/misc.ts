@@ -1,11 +1,10 @@
 submit(): void {
-  const isEdit = !!this.data.teamData;
   const newName = this.teamData.teamName.trim().toLowerCase();
 
-  const nameExists = this.data.currentTeams.some((t: any) => {
-    const match = t.teamName.trim().toLowerCase() === newName;
-    return isEdit
-      ? match && t.teamName !== this.data.teamData.teamName // prevent false positive in edit
+  const nameExists = this.data.currentTeams.some((team: any) => {
+    const match = team.teamName.trim().toLowerCase() === newName;
+    return this.data.mode === 'edit'
+      ? match && team.id !== this.teamData.id  // ignore same team ID in edit
       : match;
   });
 
