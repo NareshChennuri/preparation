@@ -50,17 +50,23 @@ By addressing these performance challenges, the front-end UI lead was able to en
 ====================
 
 
-We have web application and it has a feature that logs users out after liek 2 minutes of inactivity. It logs when the last activity was detected and then when it kicks them out. Well, we noticed people complaining they were being booted out on the middle of their work. Sure enough, logs showed users completing sales moments before being logged out.
+🛠️ The Problem:
+Our web app had a feature that logged users out after 2 minutes of inactivity. Everything looked fine at first — we had a worker or background thread watching for user actions like mouse moves and key presses. Every time the user interacted, the timer reset.
 
-We spent hours reviewing the code. On the surface it looked simple; at startup, we spawned a separate thread that watched the UI thread for activity. If the mouse was moved, clicked, or a key pressed, a timer would just reboot. As long as that timer never reached the configurable limit in minutes, you’d never be booted. We tried it locally, too, setting the timeout to two minutes and seeing that we weren’t getting logged out.
+But we started getting real user complaints — people were getting logged out while actively using the app, often right after completing a major task. Our logs backed them up. We ran tests locally, reproduced it with shorter timers — and everything seemed fine.
 
-So what was going on? Why were the users reporting it? Why was the data showing they were kicked out? We spent two release cycles trying to figure this out with no success. Finally, one day, one of us clicked the Refresh button.
+So what was happening?
 
-You see, this app cached a lot of data locally. We feature a refresh button that resets singletons so they reload, and restarts all processes and pollers so the users can get the latest data. This lets users pick up widespread system changes that are normally cached without having to restart. Well, how does that tie into our problem?
+🔍 The Investigation:
+We found that the issue occurred after users clicked the Refresh button in the app — a feature that reloads app data, resets caches, and restarts polling logic. This refresh re-initialized the monitoring thread that tracks user activity.
 
-The refresh would spawn a new thread to monitor activity - but what about the old one? It was never shut down. That’s right, it kept chugging along, waiting for activity it no longer had access to because that tracking had moved to the new thread. Once that old thread hit the limit, you’d be kicked.
+That’s when the lightbulb went off 💡:
+The old activity-monitoring thread wasn't getting cleaned up.
 
-That was a fun one to track down.
+So every time the user hit Refresh, a new activity watcher started. But the old one kept running in the background — and since it no longer had access to UI events, it thought the user was idle. After two minutes, it would trigger a logout — even though the new watcher was properly tracking activity.
+
+✅ The Fix:
+We fixed it by ensuring that the old inactivity tracking thread was terminated before starting a new one. Here's how we cleaned it up:
 
 
 onmessage = (event) => {
@@ -79,4 +85,43 @@ onmessage = (event) => {
 const worker = new Worker(new URL('./inactivity-worker.js', import.meta.url));
 
 worker.postMessage({ startTimer: true });
+
+---------------
+
+// Updated version
+let inactivityWorker: Worker | null = null;
+
+function startInactivityWatcher() {
+  // Terminate the existing worker if present
+  if (inactivityWorker) {
+    inactivityWorker.terminate();
+  }
+
+  inactivityWorker = new Worker(new URL('./inactivity-worker.js', import.meta.url));
+
+  inactivityWorker.postMessage({ startTimer: true });
+
+  // Forward user events to the worker
+  addEventListener('mousemove', () => {
+    inactivityWorker?.postMessage({ activity: true });
+  });
+
+  addEventListener('keydown', () => {
+    inactivityWorker?.postMessage({ activity: true });
+  });
+}
+
+// Call this on startup and whenever Refresh is triggered
+startInactivityWatcher();
+
+
+
+📌 Summary:
+The bug wasn’t in the timer logic — it was in spawning multiple listeners without killing the old one. Once we added proper cleanup (terminating the old worker before starting a new one), users stopped getting logged out randomly.
+
+It was a great reminder that "restart logic" should include cleanup, especially in environments that use long-running listeners or workers.
+
+Let me know if you want this turned into a slide, case study, or code snippet breakdown.
+
+
 */
