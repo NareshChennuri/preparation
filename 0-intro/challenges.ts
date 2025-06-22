@@ -1,6 +1,13 @@
 /**
  * 
 
+Challenge 1: Handling Performance in a Large Angular App
+Challenge 2: Accessibility Compliance (WCAG)
+Challenge 3: Syncing Onshore-Offshore Teams
+Challenge 4: Bridging the Gap Between UX and Dev
+
+
+
 In my 13 years of experience, I've encountered a variety of challenges that are common in web development.
 
 especially when it comes to the performance and the loading times of the application;
