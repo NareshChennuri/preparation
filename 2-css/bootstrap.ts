@@ -1,11 +1,39 @@
 /*
-Feature	          Bootstrap 3	     Bootstrap 4
-Layout Engine	    Floats	          Flexbox
-Grid Breakpoints	4	                  5
-CSS Preprocessor	LESS	            Sass
-Components	      Panels, Wells	    Cards
-Utilities	        Limited	          Extensive (m-4 p-4 text-center bg-light etc)
-Browser Support	  IE8+	             IE10+
+
+Bootstrap is a front-end framework that provides prebuilt CSS and JavaScript components for building responsive, mobile-first websites. 
+It speeds up development by giving you a standard set of UI tools—like buttons, forms, and grids—so you don’t have to start from scratch. 
+It’s widely used for both prototyping and production websites.
+
+Feature/Change	          Bootstrap 3               Bootstrap 4                   Bootstrap 5
+CSS Preprocessor	        Less	                    Sass	                        Sass
+Grid System	              4-tier (xs, sm, md, lg)	  5-tier (xs, sm, md, lg, xl)	  6-tier (xs, sm, md, lg, xl, xxl)
+Flexbox	                  No (uses floats)	        Yes (flexbox default)	        Yes (improved flex utilities)
+jQuery Dependency	        Yes	                      Yes	                          No (rewritten js components in vanilla js)
+Custom Forms	            Basic browser styles	    Custom form controls	        Enhanced, more utility classes
+Card Component	          No (use panels/wells)	    Yes (new .card component)	    Yes
+Utility Classes	          Basic	                    Many added (spacing, flex)	  Even more (gap, text, etc.)
+Dropdowns, Tooltips	      jQuery-based	            jQuery-based	                Pure JS (no jQuery)
+Icons	                    Glyphicons included	      No icons included             No icons included
+IE Support	              IE8+	                    IE10+	                        IE11 dropped
+Responsive Font Sizes	    No	                      No	                          Yes (rfs enabled by default)
+RTL Support	              No	                      No	                          Yes (official right-to-left)
+Utility API	              No	                      No	                          Yes (custom utility generation)
+Custom Properties	        No	                      Partial (some variables)	    CSS Variables (custom properties)
+
+
+
+Utility Classes
+-----------------------
+Spacing     mt-2, mb-4, p-3
+Display	    d-none, d-flex
+Text	      text-center, text-primary
+Background	bg-dark, bg-info
+Sizing	    w-50, h-100
+Borders	    border, rounded
+Flexbox	    d-flex, align-items-center
+Shadows	    shadow-lg
+Visibility	visible, invisible
+Float	      float-end
 
 
 Bootstrap is a css framework 

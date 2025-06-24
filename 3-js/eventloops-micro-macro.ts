@@ -1,4 +1,8 @@
 /*
+Event loop // for asynchronous programming
+Microtask: (process.nextTick(), Promise, callback, async functions, queueMicrotask)
+Macrotask: (setTimeout(), setInterval(), setImmediate())
+----------------
 
 Event loop, Microtasks, and Macrotasks are related to the asynchronous programming in javascript
 

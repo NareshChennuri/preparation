@@ -29,7 +29,7 @@ Padding - Clears an area around the content. The padding is transparent
 Border - A border that goes around the padding and content
 Margin - Clears an area outside the border. The margin is transparent
 
-Border-box
+Border-box  // Include padding and border in the element's total width and height:
 ------------------
 If you want to make sure that all form elements in your design have the same height, just declare box-sizing: border-box
 

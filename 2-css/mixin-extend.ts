@@ -1,5 +1,9 @@
 /*
 
+Mixins - When you use a mixin, its CSS is copied into each place you include it.
+Extends - The selector gets all the styles from the extended selector like inheritance in OOP, without repeating the CSS code.
+
+
 In SCSS (Sassy CSS), 
 
 Mixins are a powerful way of creating dynamic and reusable styles, 

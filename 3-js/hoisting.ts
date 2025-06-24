@@ -1,11 +1,8 @@
 /*
 
 Rule 1: For variables, only the declaration part is attached to the scope with the default initialization value undefined.
-
 Rule 2: Variables defined with let and const, are not initiated with undefined, they remain un-initialized.
-
 Rule 3: For functions, their whole body gets attached to the scope, unlike variables defined with var .
-
 Rule 4: Functions get attached to the scope first, after that variables get attached.
 
 ---------------------------------

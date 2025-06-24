@@ -13,6 +13,40 @@ aria-hidden="true"
 aria-labelledby
 arila-label
 
+
+ADA (Americans with Disabilities Act):
+What is ADA?
+The ADA is a U.S. civil rights law that prohibits discrimination against individuals with disabilities in all areas of public life, including jobs, schools, transportation, and digital spaces like websites and web applications.
+
+Relevance to Web:
+While the original ADA law predates the internet, U.S. courts and regulators now interpret the ADA as applying to websites and digital content—meaning, companies must ensure their websites are accessible to people with disabilities (such as those with visual, hearing, or motor impairments).
+
+WCAG (Web Content Accessibility Guidelines):
+What is WCAG?
+WCAG is a set of international guidelines developed by the W3C (World Wide Web Consortium) to make web content more accessible to people with disabilities.
+
+How does it work?
+WCAG provides specific criteria and recommendations—such as providing text alternatives for images, ensuring sufficient color contrast, making all functionality available from a keyboard, etc.
+
+Levels:
+WCAG has three levels:
+
+A (basic)
+
+AA (mid, most common legal requirement)
+
+AAA (highest, rarely required)
+
+accessibility tree?
+Just like we have the DOM similarly we have the accessibility tree. We can see this tree in the firefox and Chrome debugger too. This helps the developer to see how the accessibility elements are getting added such as role, focusable, alt tag, aria-labeldby, etc.
+
+accessibility of colors?
+ there are. Lighthouse, no-coffee, many online websites to check correct color-contrast. As well as, for developers in the chrome debugger accessibility related to color is already integrated by default.
+
+ screenreaders
+ JAWS, NVDA (NonVisual Desktop Access), Windows Narrator, VoiceOver (built into MacOS) and Orca (built into Linux).
+
+
 ==========
 
  function srSpeak(text, priority) {

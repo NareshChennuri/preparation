@@ -1,5 +1,8 @@
 /*
 
+Application Security/InfoSec maintains the overall security of web apps across the company.
+CSP rules are defined and maintained by the Security team, sometimes with input from developers for app-specific needs.
+
 Web attacks are malicious activities that target vulnerabilities in web applications, it's important to take appropriate measures to mitigate such attacks.
 
 Cross-Site Scripting (XSS):
