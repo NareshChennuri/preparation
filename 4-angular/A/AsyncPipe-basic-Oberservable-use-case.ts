@@ -1,5 +1,20 @@
 /* 
 
+You (component) ordered food (data) from a kitchen (API via Observable).
+Instead of constantly checking if it's ready...
+You let the waiter (async pipe) bring it to your table (HTML template) when it’s done.
+
+data$ = this.apiService.getData(); // This returns an Observable
+
+<div *ngIf="data$ | async as data">
+  {{ data.title }}
+</div>
+
+You don’t need to:
+Manually subscribe
+Worry about unsubscribing (it’s done automatically!)
+
+
 ##### First the implementation without asyn pipe, with a simple observable, like so:
 
 ```ts

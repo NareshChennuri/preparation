@@ -1,6 +1,15 @@
 /**
  * 
- 
+Angular Hook	What it means
+ngOnInit()	Called once, right after component is created and inputs are set
+ngOnChanges()	Called whenever an @Input() value changes
+ngDoCheck()	Called on every change detection (custom checks)
+ngAfterViewInit()	Called after component's view (HTML) is ready
+ngAfterViewChecked()	Called every time the view is checked/updated
+ngAfterContentInit()	Called when projected content (<ng-content>) is ready
+ngAfterContentChecked()	Called when projected content is checked
+ngOnDestroy()	Called right before component is destroyed (cleanup goes here)
+
 We can divide the complete Angular life cycle events in to two parts: -
 
 • Sequence of events which occurs when the component is loaded first time.

@@ -1,5 +1,26 @@
 /* can acitve user guard ------------------------------ 
 
+const routesList: Routes = [
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
+  {
+    path: 'products',
+    resolve: { productData: ProductResolverService },
+    canActivate: [UserGuardService], // can activate route guard
+    children: [
+      { path: '', component: ProductListComponent },
+      { path: ':id', component: ProductAddComponent },
+      { path: ':id/edit', component: ProductAddComponent }
+    ]
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) // lazy loading
+  },
+  { path: '**', component: PageNotFoundComponent }
+];
+
 Angular, guards are used to control navigation either by allowing or denying access to certain routes. 
 There are several types of guards available, including CanActivate, CanActivateChild, and CanDeactivate.
 

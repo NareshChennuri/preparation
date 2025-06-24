@@ -1,5 +1,44 @@
 /*
 
+Microfrontend means splitting a big web app into smaller apps, so teams can work independently and deploy separately.
+
+⚙️ Common Types of Microfrontend Architectures
+
+1. Module Federation (Webpack 5) – Most popular 🔗
+How it works: Uses Webpack 5 to load other Angular apps at runtime.
+Use Case: Real-time app composition. Great for independent deployment.
+Example: You have a shell app and login, dashboard, admin apps all running separately but loaded on demand.
+
+✅ Pros:
+Fully decoupled apps
+Each team can deploy their own app
+
+2. Iframe-based Microfrontend
+How it works: Embeds other apps via <iframe>.
+Use Case: When apps use different frameworks (Angular + React, etc.).
+Example: One team builds React UI, another uses Angular – all shown inside iframes.
+
+✅ Pros:
+Tech-agnostic
+
+Full isolation
+🚫 Cons:
+Poor communication between apps
+Slow performance
+
+3. Custom Element/Web Component-based
+How it works: Converts Angular components into custom elements using @angular/elements and loads them anywhere.
+
+Use Case: Embed Angular parts into other frontend apps.
+✅ Pros:
+
+Framework-agnostic
+Lightweight
+🚫 Cons:
+
+Limited complex interactions
+
+
 #1 Zero coupling between child projects
 - No importing of functions/objects/classes/etc
 - No shared state
