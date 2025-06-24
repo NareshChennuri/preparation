@@ -1,7 +1,12 @@
 /*
 Transclusion or Content Projection
 
-content projection (configurable components) (content between the element tags)
+“Transclusion or content projection lets you define a placeholder in your component’s template where any content from the parent gets inserted. 
+This is done with <ng-content>. For example, a custom card component can have a header and footer, but whatever you put between <app-card>...</app-card> 
+in the parent shows up inside the card where <ng-content> is. This makes components more reusable and flexible.”
+
+
+content projection (configurable components) (content between the element tags will be replaced in <ng-conten>
 -------------------
     - we can customize look and feel of a component via content projection
     <child-el> some content </child-el>
@@ -24,6 +29,7 @@ Example:
 
 
 
-In this example, the content between the <app-child> tags in the parent component template will be transcluded (projected) into the <ng-content> directive in the child component's template. This allows the child component to display custom content provided by the parent component while maintaining its own structure and functionality.
+In this example, the content between the <app-child> tags in the parent component template will be transcluded (projected) into the <ng-content> directive in the child component's template. 
+This allows the child component to display custom content provided by the parent component while maintaining its own structure and functionality.
 
 */

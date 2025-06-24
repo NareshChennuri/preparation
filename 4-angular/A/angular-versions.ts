@@ -1,4 +1,26 @@
 /*
+
+Version	Release	Major Features
+1.x	2010	AngularJS (MVC, two-way binding, controllers, scopes)
+2	2016	Components, TypeScript, RxJS, rewrite
+4	2017	Smaller bundles, SSR, *ngIf improvements
+5	2017	Build optimizer, PWAs, Universal state transfer
+6	2018	Angular Elements, CLI updates, library support
+7	2018	Virtual scroll, drag/drop, CLI prompts
+8	2019	Differential loading, Ivy preview
+9	2020	Ivy default, improved debugging
+10	2020	Date range picker, stricter CLI
+11	2020	Faster builds, font inlining, better CLI
+12	2021	Ivy everywhere, nullish coalescing, TS 4.2
+13	2021	IE11 dropped, package format, dynamic comp creation
+14	2022	Standalone components, typed forms
+15	2022	Standalone stable, directive composition
+16	2023	Signals (preview), SSR hydration
+17	2023	Signals stable, new control flow, view transitions
+18	2024	Standalone-first, full signals, SSR/SSG
+19*	2024*	(Forecast) More signals/standalone, CLI simplification
+20*	2025*	(Forecast) Standalone everywhere, best SSR, web APIs
+
 Angular 17
 ===========================
 - Logo redesign

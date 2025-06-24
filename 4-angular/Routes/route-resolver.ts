@@ -1,5 +1,95 @@
 /* Route resolver 
 
+Suppose you have a /users/:id route that displays a user’s profile.
+
+You want to:
+Fetch the user’s data before the page loads.
+Only navigate to the page when the data is ready.
+
+
+User clicks link
+      ↓
+Angular checks route's resolver
+      ↓
+Resolver runs (e.g., fetch data)
+      ↓
+(wait... navigation is paused)
+      ↓
+When resolver finishes
+      ↓
+Component is created, data is injected, view is shown
+
+---------------
+const routes: Routes = [
+  {
+    path: 'users/:id',
+    component: UserProfileComponent,
+    resolve: { user: UserResolver }
+  }
+];
+
+------------
+//resolver
+import { Injectable } from '@angular/core';
+import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { UserService } from './user.service';
+
+@Injectable({ providedIn: 'root' })
+export class UserResolver implements Resolve<any> {
+  constructor(private userService: UserService) {}
+
+  resolve(route: ActivatedRouteSnapshot) {
+    const userId = route.paramMap.get('id');
+    return this.userService.getUserById(userId); // returns Observable or Promise
+  }
+}
+-----------------
+//access the resolved data and display in the component
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-user-profile',
+  template: `
+    <h2>{{ user.name }}</h2>
+    <p>Email: {{ user.email }}</p>
+  `
+})
+export class UserProfileComponent {
+  user: any;
+  constructor(private route: ActivatedRoute) {
+    this.user = this.route.snapshot.data['user'];
+  }
+}
+
+
+How Angular Handles Route Resolver and Navigation
+
+User Triggers Navigation:
+The user clicks a link (e.g., /users/123) or you call router.navigate().
+
+Angular Pauses Navigation:
+Before the component is created and shown, Angular checks the route’s resolve property.
+
+Resolver Runs:
+Angular runs the resolver—which might make an HTTP request or perform other async work.
+
+The navigation is paused; the user does not see the new page yet.
+
+A spinner or loader may show (if you want).
+
+Waits for Data:
+Angular waits for the resolver’s observable/promise to finish.
+
+Navigation Continues:
+As soon as the resolver completes (data fetched or error handled):
+
+Angular creates the component, injects the resolved data, and shows the new view.
+
+
+
+
+
 mainly to improve the user experience
 
 Consider an e-commerce application where you have a product detail page. 
