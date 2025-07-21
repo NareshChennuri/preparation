@@ -1,6 +1,6 @@
 /*
 
-Cold Observables: 
+Cold Observables: (Observable)
 =====================
     starts producing values only when a subscription is made to them
     each subscription triggers a separate execution and subscribers receive their own independent stream of data.
@@ -9,7 +9,7 @@ Cold Observables:
     import { interval } from 'rxjs';
     const coldObservable = interval(1000); // Cold observable emitting values every second
 
-Hot Observables:
+Hot Observables: (Subject/BehaviourSubject)
 =====================
     emit values continuously regardless of whether there are any subscribers. 
     Subscribers will share the same stream of values, 

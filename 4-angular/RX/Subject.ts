@@ -10,6 +10,31 @@ We can use 3 methods on Subject
     - next() you can pass new values and all the subscribers will receive it
     - complete() you can close all the subscriptions here
 
+    
+ 
+Feature	                Observable (Cold)       Subject (Hot)
+--------------------------------------------------------------------------
+Emit new value	        No (outside source)	    Yes (subject.next(value))
+Subscribers	            Unicast	                Multicast
+Typical Usage	        Data source	            Data/event bus
+Read/Write	            Read only	            Read and Write
+
+
+Observable
+------------------
+Unicast: Each subscriber gets its own independent execution.
+Read-only for consumers: You can’t push new values from outside (except using an operator inside the observable).
+Example: HTTP calls, timers, streams that emit data but don’t accept it from outside.
+
+Subject
+------------------
+Multicast: One value emitted is shared with all subscribers.
+Read/Write: You can push values into the stream from anywhere using .next().
+Acts as both an Observable and Observer: You can subscribe to it and emit new values to it.
+
+
+
+
 When to use Subject:
 
 When you need multiple subscribers and all the subscribers needs to get the new values simultaneously, you need a Subject.

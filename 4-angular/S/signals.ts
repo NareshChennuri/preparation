@@ -1,5 +1,32 @@
 /*
 
+Added as 'Developer Preview' in v16
+- No automatic change detection 
+- you tell anuglar when data changes
+- angular updates only the parts of the UI where the data is used.
+
+Slightnly more work
+But full control, better performance & smaller bundle size.
+
+import { signal, computed, effect } from '@angular/core';
+
+const counter = signal(0); // Create a signal
+counter.set(1); // Set the value
+// also you can set the value by update()
+counter.update((oldCounter) => oldCounter + 1); // update value
+
+// Computed signals
+const double = computed(() => counter() * 2);
+console.log(double()); // 2
+
+// Effects: Run side-effects when signals change
+effect(() => {
+  console.log('Counter changed:', counter());
+});
+counter.set(5); // This triggers the effect
+
+
+
 "Signals are a new way in Angular to manage and react to data changes.
 Instead of Angular checking the whole app for changes all the time, a signal acts like a special variable that lets Angular know exactly when and where to update the screen—only for the parts that depend on that signal.
 This makes the app faster and more efficient, especially as it gets bigger."

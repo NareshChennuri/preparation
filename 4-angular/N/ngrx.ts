@@ -1,7 +1,24 @@
 /*
 
-Store - Action - Reducter - Selector - Effect
+Store <--> Selector (getTodo) <--> <Compontents> <--> Action (setTodo) *** Effect <--> Reducer
 
+// in module based
+> ng add @ngrx/store
+app.module.ts
+import { StoreModule } from '@ngrx/store';
+import { counterReducer } from './store/counter.reducer';
+@NgModule({
+    imports: [BroserModule, StoreModule.forRoot({counter: counterReducer})],
+})
+
+// in standalone
+> ng add @ngrx/store
+main.ts 
+import { provideStore } from '@ngrx/store';
+import { counterReducer } from './store/counter.reducer';
+bootstrapApplication(AppComponent, {
+    providers: [provideStore({counter: counterReducer})]
+});
 
 NgRx is a state management library for Angular, inspired by Redux. It helps you manage and organize data (state) in your app — especially useful for large applications where many components need to share or update the same data.
 

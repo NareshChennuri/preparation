@@ -1,9 +1,33 @@
 /*
+
+
+| Operator     | Cancels Prev | Runs in Order | Parallel | Ignores New |
+| ------------ | ------------ | ------------- | -------- | ----------- |
+| `switchMap`  | ✅            | ❌             | ✅        | ❌           |
+| `concatMap`  | ❌            | ✅             | ❌        | ❌           |
+| `mergeMap`   | ❌            | ❌             | ✅        | ❌           |
+| `exhaustMap` | ❌            | ❌             | ❌        | ✅           |
+
+
+of('A', 'B', 'C').pipe(
+    swichMap(letter => of(letter).pipe(delay(1000)))
+  ).subscribe(console.log);
+
+| Operator     | Output                 | Timeline                     |
+| ------------ | ---------------------- | ---------------------------- |
+| `concatMap`  | A, B, C                | 1s, 2s, 3s                   |
+| `mergeMap`   | A, B, C (all together) | \~1s (order not guaranteed)  |
+| `switchMap`  | C                      | 1s after C received (only C) |
+| `exhaustMap` | A                      | 1s (only A)                  |
+
+
 // C
 of('A', 'B', 'C').pipe(swichMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
 // A B C -> at a time
+
 of('A', 'B', 'C').pipe(mergeMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
 // A B C -> after 1 sec each will print
+
 of('A', 'B', 'C').pipe(concatMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
 
 

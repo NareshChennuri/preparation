@@ -1,10 +1,30 @@
 /*
 
+| Operator           | Emits when...              | Output                      | Use case                       |
+| ------------------ | -------------------------- | --------------------------- | ------------------------------ |
+| **forkJoin**       | All complete               | Last values of each (once)  | Wait for all to finish         |
+| **combineLatest**  | Any source emits           | Latest values from all      | React to any change            |
+| **zip**            | Each source emits in order | Paired values (by index)    | Match up emissions in sequence |
+| **withLatestFrom** | Main source emits          | Main + latest from other(s) | Grab latest “extra” on event   |
+
+
+
 forkJoin: (multiple Http calls parallel - combines the results once all done)
 -------------
   Use Case: When you need to make several HTTP requests in parallel and wait for all of them to complete before taking further action.
 
   Example: Fetching data from multiple endpoints and processing the combined result once all requests are finished.
+
+
+  forkJoin([
+    api.getUser(),
+    api.getOrders(),
+    api.getNotifications()
+  ]).subscribe(([user, orders, notifications]) => {
+    // Use all results here
+  });
+
+
 
 zip: (deprecated)
 -------------
@@ -12,11 +32,20 @@ zip: (deprecated)
 
   Example: Synchronizing data from different sources where each source provides related information, and you want to process this data only when all sources have new updates.
 
+  zip([of(1, 2, 3), of('a', 'b', 'c')])
+  .subscribe(([num, char]) => { // (1, 'a'), (2, 'b'), ... });
+
+
 combineLatest:
 -------------
   Use Case: When you need to combine the latest values from multiple streams and emit a new value whenever any of the source streams emit a value.
 
   Example: Keeping track of the state of multiple UI inputs and performing some action whenever any input changes.
+
+
+  combineLatest([input1.valueChanges, input2.valueChanges])
+  .subscribe(([val1, val2]) => { // runs whenever either changes  });
+
 
 withLatestFrom:
 -------------
