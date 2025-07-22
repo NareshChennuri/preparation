@@ -1,5 +1,15 @@
 /**
- * 
+
+"Angular lifecycle hooks are methods that give you control over key moments in a component 
+or directive’s existence — like creation, updates, and destruction. 
+They allow us to run logic at specific stages."
+
+Constructor → ngOnChanges (if @input) → ngOnInit → ngDoCheck → 
+ngAfterContentInit (if ng-content) → ngAfterContentChecked (if ng-content) →
+ngAfterViewInit → ngAfterViewChecked →
+ngOnDestroy
+
+
 Angular Hook	What it means
 ngOnInit()	Called once, right after component is created and inputs are set
 ngOnChanges()	Called whenever an @Input() value changes
