@@ -32,6 +32,13 @@ Multicast: One value emitted is shared with all subscribers.
 Read/Write: You can push values into the stream from anywhere using .next().
 Acts as both an Observable and Observer: You can subscribe to it and emit new values to it.
 
+| Subject Type      | Stores Value   | Late Subscribers Get  | Emits Without Data  | Use Case                                   |
+| ----------------- | ------------   | --------------------  | ------------------  | ------------------------------------------ |
+| `Subject`         | ❌ No         | ❌ Nothing            | ✅ Yes              | Event emitters, click handlers             |
+| `BehaviorSubject` | ✅ Last       | ✅ Latest             | ❌ Needs value      | App state, selected item, theme switch     |
+| `ReplaySubject`   | ✅ Last N     | ✅ Last N values      | ✅ Yes              | Logs, playback, shared streams             |
+| `Subject<void>`   | ❌ No         | ❌ Nothing            | ✅ Only void        | Triggers with no payload (refresh, close)  |
+| `AsyncSubject`    | ✅ Final      | ✅ Final on complete  | ✅ Yes              | Final result, config loading, summary data |
 
 
 

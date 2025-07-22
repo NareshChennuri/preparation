@@ -1,6 +1,13 @@
 /*
 
-Void Subject
+Void Subject (A voidSubject is not an official RxJS class)
+
+| Situation                             | Use `voidSubject` |
+| ------------------------------------- | ----------------- |
+| You need to notify something happened | ✅                 |
+| You don't need to pass data           | ✅                 |
+| You want to decouple event triggers   | ✅                 |
+
 
 In most of the scenarios where you use a Subject with subscribers, 
 it's relevant that you get access to the value that has passed. 

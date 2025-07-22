@@ -2,11 +2,17 @@
 
 | Operator           | Emits when...              | Output                      | Use case                       |
 | ------------------ | -------------------------- | --------------------------- | ------------------------------ |
-| **forkJoin**       | All complete               | Last values of each (once)  | Wait for all to finish         |
-| **combineLatest**  | Any source emits           | Latest values from all      | React to any change            |
+| **forkJoin**       | All complete (no partial)  | Last values of each (once)  | Wait for all to finish (all api calls to complete)        |
+| **combineLatest**  | Any source emits           | Latest values from all      | React to any change (dashboard filters)           |
 | **zip**            | Each source emits in order | Paired values (by index)    | Match up emissions in sequence |
 | **withLatestFrom** | Main source emits          | Main + latest from other(s) | Grab latest “extra” on event   |
 
+| Operator             | Emits When                                         | Emits What                                   | Completes When             | Common Use Case Example                                          |
+| -------------------- | -------------------------------------------------- | -------------------------------------------- | -------------------------- | ---------------------------------------------------------------- |
+| **`forkJoin`**       | All source observables **complete**                | **Last emitted value** from each             | ✅ Yes (after all complete) | 📄 Submit form → wait for all API calls (user, address, payment) |
+| **`zip`**            | All sources emit **equal number of times**         | **One combined set** per same-index emission | ❌ May not complete         | 🧾 Pair user IDs with fetched user data step-by-step             |
+| **`combineLatest`**  | **Any source emits** (after all have emitted once) | **Latest value from each source**            | ❌ Runs until unsubscribed  | 📊 Live dashboard: combine price + timestamp + status            |
+| **`withLatestFrom`** | **Main source emits**                              | Main value + latest values from others       | Depends on main source     | 🎤 On button click → capture latest form values or GPS           |
 
 
 forkJoin: (multiple Http calls parallel - combines the results once all done)
@@ -24,7 +30,13 @@ forkJoin: (multiple Http calls parallel - combines the results once all done)
     // Use all results here
   });
 
-
+forkJoin({
+  user: this.http.get('/api/user').pipe(catchError(err => of(null))),
+  settings: this.http.get('/api/settings').pipe(catchError(err => of(null))),
+  stats: this.http.get('/api/stats').pipe(catchError(err => of(null)))
+}).subscribe(result => {
+  console.log('Result (with fallbacks):', result);
+});
 
 zip: (deprecated)
 -------------

@@ -1,5 +1,7 @@
 /*
 
+switchMap, concatMap, mergeMap/flatMap, exhaustMap (higherorder operators in rxjs)
+- basically they Maps each emitted value to another observable
 
 | Operator     | Cancels Prev | Runs in Order | Parallel | Ignores New |
 | ------------ | ------------ | ------------- | -------- | ----------- |
@@ -15,10 +17,19 @@ of('A', 'B', 'C').pipe(
 
 | Operator     | Output                 | Timeline                     |
 | ------------ | ---------------------- | ---------------------------- |
+| `switchMap`  | C                      | 1s after C received (only C) |
 | `concatMap`  | A, B, C                | 1s, 2s, 3s                   |
 | `mergeMap`   | A, B, C (all together) | \~1s (order not guaranteed)  |
-| `switchMap`  | C                      | 1s after C received (only C) |
 | `exhaustMap` | A                      | 1s (only A)                  |
+
+USE CASE
+---------
+| Operator         | Description                                                | Cancels Previous? | Concurrent? | Real-World Use Case Example                                                              |
+| ---------------- | ---------------------------------------------------------- | ----------------- | ----------- | ---------------------------------------------------------------------------------------- |
+| **`switchMap`**  | Switches to new inner observable; cancels the previous one | ✅ Yes             | ❌ No        | 🔍 **Autocomplete search**: cancel old API calls as user types new characters            |
+| **`concatMap`**  | Queues emissions; runs inner observables **sequentially**  | ❌ No              | ❌ No        | 📝 **Save form steps one after another**: ensures each step is submitted in order        |
+| **`mergeMap`**   | Runs all inner observables in **parallel**                 | ❌ No              | ✅ Yes       | 🔄 **Load images concurrently** or **send parallel API calls** (e.g., bulk delete items) |
+| **`exhaustMap`** | Ignores new inner observable if one is already running     | ✅ Skips new       | ❌ No        | 🔐 **Login button click**: ignore repeated clicks while one login request is in progress |
 
 
 // C
@@ -30,9 +41,6 @@ of('A', 'B', 'C').pipe(mergeMap(letter => of(letter).pipe(delay(1000)))).subscri
 
 of('A', 'B', 'C').pipe(concatMap(letter => of(letter).pipe(delay(1000)))).subscribe(console.log);
 
-
-switchMap, concatMap, mergeMap/flatMap, exhaustMap (higherorder operators in rxjs)
-- basically they Maps each emitted value to another observable
 
 switchMap  (Cancels previous inner observable subscriptions)
   - useful for scenarios like autocomplete

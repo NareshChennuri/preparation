@@ -3,8 +3,14 @@
 AsyncSubject only sends the latest value to subscribers when it's COMPLETED.
 
 AsyncSubject is very useful for Ajax requests. 
-Because with most GET requests, you're only going to wait for one response.
 
+| Use Case                                                          | Why `AsyncSubject` Works  |
+| ----------------------------------------------------------------- | ------------------------- |
+| Final exam result or score                                        | Only final result matters |
+| API call where only last emitted value matters                    | Avoids duplicates, caches |
+| One-time app initialization data                                  | Broadcast after ready     |
+| File upload progress (return only the final status)               | Final status only         |
+| Socket or polling stream where only final count/summary is needed | Share result to all       |
 
 
     const rxjs = require('rxjs');
