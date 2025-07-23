@@ -53,15 +53,15 @@ Angular 17
 
         <!-- Angular 17 -->
         @switch (color) {
-        @case ('red') {
-            <app-red-color />
-        }
-        @case ('blue') {
-            <app-blue-color />
-        }
-        @default {
-            <app-default-color />
-        }
+            @case ('red') {
+                <app-red-color />
+            }
+            @case ('blue') {
+                <app-blue-color />
+            }
+            @default {
+                <app-default-color />
+            }
         }        
 
 - Deferrable views (using @deffer templates, we can lazy load components when a condition is met)
