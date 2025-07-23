@@ -20,6 +20,21 @@ ngAfterContentInit()	Called when projected content (<ng-content>) is ready
 ngAfterContentChecked()	Called when projected content is checked
 ngOnDestroy()	Called right before component is destroyed (cleanup goes here)
 
+
+| 🔢 Order | 🔧 Hook Name              | 🕒 Called When                                          | 💡 Use Case Example                                                          |
+| -------- | ------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1        | `constructor()`           | Component is instantiated                               | Inject services, initialize simple variables (avoid DOM or Angular bindings) |
+| 2        | `ngOnChanges()`           | On every change to `@Input()` properties                | React to `@Input()` updates, validate or transform incoming data             |
+| 3        | `ngOnInit()`              | Once after first `ngOnChanges()`                        | Fetch data from API, setup timers, initialize component logic                |
+| 4        | `ngDoCheck()`             | On every change detection run                           | Custom change detection logic (e.g., deep comparison of objects)             |
+| 5        | `ngAfterContentInit()`    | After content (ng-content) is projected                 | Access projected content (content projection via `<ng-content>`)             |
+| 6        | `ngAfterContentChecked()` | After every check of projected content                  | Perform actions after projected content is checked                           |
+| 7        | `ngAfterViewInit()`       | After component's view (and child views) is initialized | Access `ViewChild`, `ViewChildren`, setup 3rd party DOM libraries            |
+| 8        | `ngAfterViewChecked()`    | After every check of the component's views              | Detect view changes or run logic that depends on the DOM updates             |
+| 9        | `ngOnDestroy()`           | Just before Angular destroys the component              | Unsubscribe from observables, clear timers, detach event listeners           |
+
+
+
 We can divide the complete Angular life cycle events in to two parts: -
 
 • Sequence of events which occurs when the component is loaded first time.
