@@ -4,21 +4,26 @@
 or directive’s existence — like creation, updates, and destruction. 
 They allow us to run logic at specific stages."
 
-Constructor → ngOnChanges (if @input) → ngOnInit → ngDoCheck → 
+Constructor → ngOnInit → ngOnChanges (if @input) → ngDoCheck → 
 ngAfterContentInit (if ng-content) → ngAfterContentChecked (if ng-content) →
-ngAfterViewInit → ngAfterViewChecked →
+ngAfterViewInit → ngAfterViewChecked → afterNextRender -> afterEveryRender
 ngOnDestroy
 
+| **Phase**            | **Method**              | **Summary**                                                                                |
+| -------------------- | ----------------------- | ------------------------------------------------------------------------------------------ |
+| **Creation**         | `constructor`           | Standard JavaScript class constructor. Runs when Angular instantiates the component.       |
+| **Change Detection** | `ngOnInit`              | Runs once after Angular has initialized all the component's inputs.                        |
+|                      | `ngOnChanges`           | Runs every time the component's inputs have changed.                                       |
+|                      | `ngDoCheck`             | Runs every time this component is checked for changes.                                     |
+|                      | `ngAfterContentInit`    | Runs once after the component's content has been initialized.                              |
+|                      | `ngAfterContentChecked` | Runs every time this component's content has been checked for changes.                     |
+|                      | `ngAfterViewInit`       | Runs once after the component's view has been initialized.                                 |
+|                      | `ngAfterViewChecked`    | Runs every time the component's view has been checked for changes.                         |
+| **Rendering**        | `afterNextRender`       | Runs once the next time that all components have been rendered to the DOM. *(Angular 17+)* |
+|                      | `afterEveryRender`      | Runs every time all components have been rendered to the DOM. *(Angular 17+)*              |
+| **Destruction**      | `ngOnDestroy`           | Runs once before the component is destroyed.                                               |
 
-Angular Hook	What it means
-ngOnInit()	Called once, right after component is created and inputs are set
-ngOnChanges()	Called whenever an @Input() value changes
-ngDoCheck()	Called on every change detection (custom checks)
-ngAfterViewInit()	Called after component's view (HTML) is ready
-ngAfterViewChecked()	Called every time the view is checked/updated
-ngAfterContentInit()	Called when projected content (<ng-content>) is ready
-ngAfterContentChecked()	Called when projected content is checked
-ngOnDestroy()	Called right before component is destroyed (cleanup goes here)
+
 
 
 | 🔢 Order | 🔧 Hook Name              | 🕒 Called When                                          | 💡 Use Case Example                                                          |
@@ -31,7 +36,9 @@ ngOnDestroy()	Called right before component is destroyed (cleanup goes here)
 | 6        | `ngAfterContentChecked()` | After every check of projected content                  | Perform actions after projected content is checked                           |
 | 7        | `ngAfterViewInit()`       | After component's view (and child views) is initialized | Access `ViewChild`, `ViewChildren`, setup 3rd party DOM libraries            |
 | 8        | `ngAfterViewChecked()`    | After every check of the component's views              | Detect view changes or run logic that depends on the DOM updates             |
-| 9        | `ngOnDestroy()`           | Just before Angular destroys the component              | Unsubscribe from observables, clear timers, detach event listeners           |
+| 9        | `afterNextRender()`         | Runs once the next time that all components have been rendered to the DOM. *(Angular 17+)*              
+| 10       | `afterEveryRender()`        | Runs every time all components have been rendered to the DOM. *(Angular 17+)*                                                        
+| 11       | `ngOnDestroy()`           | Just before Angular destroys the component              | Unsubscribe from observables, clear timers, detach event listeners           |
 
 
 

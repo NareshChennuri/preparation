@@ -12,9 +12,24 @@ const routes: Routes = [{
   path: 'auth',
   loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 },
+
+                      //in auth module route you can have children [] to load child routes
+                       {path: 'academy',
+                        children :[
+                          { path: 'learnings',
+                            loadChildren: './learnings/learnings.module#LearningModule'
+                          }
+                        ]
+                       }
+
 {
   path: 'admin',
   loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+}//lazyloading component Angular 14+
+{
+  path: 'help',
+  //component: HelpComponent,
+  loadComponent: () => import('./help/help.component').then(m => m.HelpComponent)
 }];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -14,10 +14,16 @@
         <p>{{ item }}</p>
         </div>
 
-        <!-- Angular 17 -->
+        <!-- Angular 17 --> contexual variables --> $index, $first, $last, $even, $odd, $empty
         @for (item of items; track item.id) {
-        <p>{{ item }}</p>
-        }
+            @if($event) {
+                <p style="background-color: gray">{{$index}} - {{ item }}</p>
+            } @if($odd) {
+                <p style="background-color: red">{{ item }}</p>
+             }
+        } @$empty {
+            <h1>No records found.</h1>
+         }
 
         <!-- Angular 16 and previous versions -->
         <div [ngSwitch]="color"> 

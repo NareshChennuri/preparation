@@ -1,5 +1,38 @@
 /***** 
 
+A closure is when an inner function has access to the outer function’s variables 
+even after the outer function has returned and has finished executing.
+
+🔹 When to Use in Real Life:
+
+- Creating private variables.
+- In event handlers.
+- In setTimeout / setInterval.
+- For memoization / caching.
+
+const manageBankAccount = function(initialBalance) {
+    let accountBalance = initialBalance;
+    
+    return {
+        getBalance: function() { return accountBalance; },
+        deposit: function(amount) { accountBalance += amount; },
+        withdraw: function(amount) {
+            if (amount > accountBalance) {
+                return 'You cannot draw that much!';
+            }
+
+            accountBalance -= amount;
+        }
+    };
+}
+
+const accountManager = manageBankAccount(0);
+
+accountManager.deposit(1000);
+accountManager.withdraw(500);
+accountManager.getBalance(); // 500
+
+
 A closure is a function defined inside another function and it can access the variables that are defined in the outer function scope.
 
 The closure has access to variables in three scopes; 

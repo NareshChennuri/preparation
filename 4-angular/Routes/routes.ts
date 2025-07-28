@@ -26,10 +26,17 @@ const routesList: Routes = [
       { path: ':id/edit', component: ProductAddComponent }
     ]
   },
-  {
-    path: 'admin',
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) // lazy loading
-  },
+  //lazyloading module
+{
+  path: 'admin',
+  loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+}
+//lazyloading component Angular 14+
+{
+  path: 'help',
+  //component: HelpComponent,
+  loadComponent: () => import('./help/help.component').then(m => m.HelpComponent)
+}
   { path: '**', component: PageNotFoundComponent }
 ];
 

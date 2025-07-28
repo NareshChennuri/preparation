@@ -1,11 +1,30 @@
 /*
 
-Added as 'Developer Preview' in v16
+| API                         | Description                                                    | Example                                      |
+| --------------------------- | -------------------------------------------------------------- | -------------------------------------------- |
+| `signal()`                  | Creates a writable signal                                      | `count = signal(0);`                         |
+| `computed()`                | Creates a derived signal from other signals                    | `double = computed(() => count() * 2);`      |
+| `effect()`                  | Reacts to signal changes with side effects                     | `effect(() => console.log(count()));`        |
+| `input()`                   | Bind reactive inputs (experimental, Angular 17+)               | `@Input() title = input<string>();`          |
+| `set(value)` / `update(fn)` | Updates signal values                                          | `count.set(5)` or `count.update(c => c + 1)` |
+| `peek()`                    | Reads signal without registering dependency (used in `effect`) | `count.peek()`                               |
+
+
+| Use Case                   | How Signals Help                                 |
+| -------------------------- | ------------------------------------------------ |
+| Component State Management | Replace `BehaviorSubject`, `Input` bindings      |
+| Derived Values             | Use `computed()` instead of manual recalculation |
+| Local Change Detection     | Auto-updates DOM without `markForCheck()`        |
+| Side Effects               | Use `effect()` instead of `subscribe()`          |
+| Form State & UI Sync       | Use signals for reactive form state              |
+
+
+Added as 'Developer Preview' in v16 stable in v17
 - No automatic change detection 
 - you tell anuglar when data changes
 - angular updates only the parts of the UI where the data is used.
 
-Slightnly more work
+Slightly more work
 But full control, better performance & smaller bundle size.
 
 import { signal, computed, effect } from '@angular/core';
