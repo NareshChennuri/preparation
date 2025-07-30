@@ -1,76 +1,66 @@
-import 'zone.js';
-import { Component, inject } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
-  template: `
-<!-- create a reactive form 
-
-name required
-email required email
-status required dropdown yes/no
-
-description input required - only status is yes (display only status is yes)
-
-console.log (display all the values)
-
--->
-
-<form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-<div>
-  <input type="text" formControlName="name" placeholder="enter your name"/>
-</div>
-<div>
-  <input type="email" formControlName="email" placeholder="enter email"/>
-</div>
-<div>
-  <select formControlName="status" (change)="statusChange($event)">
-  <option>Yes</option>
-  <option>No</option>
-</select>
-</div>
-<div *ngIf="myForm.controls['status'].value == 'Yes'">
-  <input type="description" formControlName="description" placeholder="enter description"/>
-</div>
-<button type="submit">Submit</button>
-</form>
-  `,
+  selector: 'app-register',
+  templateUrl: './register.component.html',
 })
-export class App {
-  myForm!: FormGroup;
-  private fb = inject(FormBuilder);
+export class RegisterComponent implements OnInit {
+  registerForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {}
+
   ngOnInit() {
-    this.myForm = this.fb.group({
-      name: ['', Validators.required],
+    this.registerForm = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      status: ['', Validators.required],
-      description: [''],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      phoneNumber: ['', [Validators.required, this.validatePhoneNumber()]]
     });
   }
-  statusChange(event :any) {
-    if(event.target.value == 'Yes') {
-      this.myForm.controls['description'].setValidators([Validators.required]);
-    } else {
-      this.myForm.controls['description'].removeValidators([]);
-    }
+
+    validatePhoneNumber(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const phoneNumber: string = control.value;
+      //validate phone number sd
+      let invalid = true;
+      if(invalid) {
+        return { 'invalidPhoneNumber' : { value: phoneNumber} };
+      }
+      return null;
+    };
   }
+
   onSubmit() {
-    if(this.myForm.valid) {
-      console.log(this.myForm.value);
-    } else {
-      console.log('error');
+    if (this.registerForm.valid) {
+      console.log(this.registerForm.value);
     }
   }
 }
 
-bootstrapApplication(App);
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+  <label>Username:</label>
+  <input type="text" formControlName="username" />
+  <div *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+    <small *ngIf="registerForm.get('username')?.errors?.['required']">Username is required.</small>
+    <small *ngIf="registerForm.get('username')?.errors?.['minlength']">Minimum 3 characters.</small>
+  </div>
+
+  <label>Email:</label>
+  <input type="email" formControlName="email" />
+  <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+    <small *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</small>
+    <small *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email format.</small>
+  </div>
+
+  <label>Password:</label>
+  <input type="password" formControlName="password" />
+  <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+    <small *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</small>
+    <small *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimum 6 characters.</small>
+  </div>
+
+  <button type="submit" [disabled]="registerForm.invalid">Register</button>
+</form>

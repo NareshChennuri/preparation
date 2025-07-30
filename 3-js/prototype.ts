@@ -1,56 +1,39 @@
 /*
 
-In JavaScript, you can achieve inheritance through prototype chaining. Here's an example to illustrate how you can create a simple inheritance structure:
+In JavaScript, every function automatically has a prototype property.
+When we use that function as a constructor to create objects, 
+those objects can share methods defined on the prototype.
 
-// Parent class
-function Animal(name) {
+This helps save memory, because instead of each object having its own copy of a method, 
+they all reuse the one from the prototype.
+
+
+For example, if I have a Person constructor and I define a greet method on Person.prototype,
+then every person I create can use that greet method — without duplicating it.
+
+JavaScript also uses something called the prototype chain — if a property or method isn’t 
+found on the object itself, JavaScript looks up the chain to the prototype and continues 
+searching upward.
+
+So overall, the prototype is how JavaScript handles shared behavior and inheritance, 
+and it plays a big role in how objects work behind the scenes.
+
+
+function Person(name) {
   this.name = name;
 }
 
-// Adding a method to the prototype of the parent class
-Animal.prototype.sayHello = function() {
-  console.log(`Hello, I'm ${this.name}`);
+// Add method to prototype
+Person.prototype.greet = function () {
+  return `Hello, I'm ${this.name}`;
 };
 
-// Child class inheriting from the parent class
-function Dog(name, breed) {
-  // Call the parent class constructor
-  Animal.call(this, name);
-  
-  // Additional property for the child class
-  this.breed = breed;
-}
+const p1 = new Person("Alice");
+const p2 = new Person("Bob");
 
-// Set up the prototype chain: Make Dog prototype inherit from Animal prototype
-Dog.prototype = Object.create(Animal.prototype);
-Dog.prototype.constructor = Dog; // Reset the constructor property
+console.log(p1.greet()); // Hello, I'm Alice
+console.log(p2.greet()); // Hello, I'm Bob
 
-// Adding a method to the prototype of the child class
-Dog.prototype.bark = function() {
-  console.log("Woof! Woof!");
-};
 
-// Creating instances of the classes
-const genericAnimal = new Animal("Generic Animal");
-const myDog = new Dog("Buddy", "Labrador");
-
-// Using inherited methods
-genericAnimal.sayHello(); // Outputs: Hello, I'm Generic Animal
-myDog.sayHello();        // Outputs: Hello, I'm Buddy
-
-// Using methods specific to the child class
-myDog.bark();             // Outputs: Woof! Woof!
-In this example:
-
-Animal is the parent class, and Dog is the child class.
-The Animal constructor initializes the name property, and the sayHello method is added to its prototype.
-
-The Dog constructor calls the Animal constructor using Animal.call(this, name) to set up the name property. It also introduces an additional property, breed.
-
-Object.create(Animal.prototype) is used to set up the prototype chain, making Dog inherit from Animal. This allows instances of Dog to access the methods defined in the Animal prototype, including sayHello.
-
-The Dog prototype is further extended with the bark method.
-
-This is a basic example of prototype-based inheritance in JavaScript. Keep in mind that with ECMAScript 6 (ES6) and later, you have the class syntax that provides a more concise and familiar way to define classes and handle inheritance.
 
 */

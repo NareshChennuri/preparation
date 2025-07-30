@@ -20,9 +20,15 @@ You can use the catch() method to handle errors and take appropriate action.
 Promise object provides several methods for handling multiple promises. 
 
 - Promise.race (first settled promise resolved or rejected)
+    rxjs race()
 - Promise.any (first settled promise resolved - ignores rejections)
+    rxjs catchError() + race()
 - Promise.all (all should resolved otherwise gives the rejection error)
+    rxjs forkJoin()
 - Promise.allSettled:(all settled promise resolved and rejected)
+    rxjs combineLatest() + catchError()
+
+
 
 Promise.race(iterable): (first settled promise resolved or rejected)
 =================================

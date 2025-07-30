@@ -1,5 +1,18 @@
 /*
 
+A Promise is a way to handle asynchronous operations 
+— like data fetching, timers, or API calls — in a cleaner and more manageable way.
+
+Think of a Promise like a restaurant order:
+
+You place an order (start an async task).
+You get a token (Promise) that says “I’ll let you know when it’s ready.” --> Pending State
+
+Later, your order is either:
+Fulfilled (food is ready → resolve)
+Rejected (order failed → reject)
+
+
 - Using Promises we can handle asynchronous operations in JavaScript like making http requests 
 - Promises are objects which will represent wheather completion or failure of an asynchronous operation. 
 - When you create a promise, you can pass a callback function that will be executed when the operation is complete. 
@@ -19,27 +32,19 @@ A promise may be in one of 3 possible states:
 A promise goes from pending to fulfilled, 
 or from pending to rejected
 
-—‘fulfilled’ and ‘rejected’ indicate the end of a promise.
-
-Promise users can attach callbacks to handle the fulfilled value or the reason for rejection.
-
-Promises are eager, that means a promise will start doing whatever task you give it as soon as the promise constructor is invoked. 
-If you need lazy, then we should go with Observables in Rxjs library.
 
 const myPromise = new Promise((resolve, reject) => {
   setTimeout(() => {
-    const success = true;
-    if (success) {
-      resolve('Operation successful');
-    } else {
-      reject('Operation failed');
-    }
+    resolve("Order completed!");
   }, 2000);
 });
 
-myPromise
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
+myPromise.then(response => {
+  console.log(response); // "Order completed!"
+}).catch(error => {
+  console.log(error);
+});
+
 
 Promise Chaining
 ======================
@@ -165,19 +170,6 @@ let myPromise = new Promise((resolve, reject) => {
     }
 });
 In this code snippet, myPromise is our custom Promise. The executor function checks a condition (which can be anything). If the condition is met, it calls resolve() with a success message. If not, it calls reject() with an error message.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 19. What is the significance of the executor function in a Promise?
 The executor function in a Promise is significant as it contains the computation or asynchronous operation to be performed. It’s immediately executed by the Promise implementation, providing two functions: resolve and reject. Resolve shifts the Promise from pending to fulfilled state when the operation completes successfully, passing the result as an argument. Reject moves the Promise to rejected state if an error occurs, with the error passed as an argument. This design allows for efficient handling of asynchronous operations within JavaScript, ensuring non-blocking code execution.
