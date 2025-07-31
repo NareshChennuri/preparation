@@ -1,54 +1,114 @@
 /*
 
-Store <--> Selector (getTodo) <--> <Compontents> <--> Action (setTodo) *** Effect <--> Reducer
+### NgRx Interview Questions and Answers
 
-// in module based
-> ng add @ngrx/store
-app.module.ts
-import { StoreModule } from '@ngrx/store';
-import { counterReducer } from './store/counter.reducer';
-@NgModule({
-    imports: [BroserModule, StoreModule.forRoot({counter: counterReducer})],
-})
+**1. What is NgRx?**
+NgRx is a reactive state management library for Angular based on Redux principles. It uses RxJS to manage and react to state changes using actions, reducers, selectors, and effects.
 
-// in standalone
-> ng add @ngrx/store
-main.ts 
-import { provideStore } from '@ngrx/store';
-import { counterReducer } from './store/counter.reducer';
-bootstrapApplication(AppComponent, {
-    providers: [provideStore({counter: counterReducer})]
-});
+**2. What are the commonly used NgRx libraries?**
 
-NgRx is a state management library for Angular, inspired by Redux. It helps you manage and organize data (state) in your app — especially useful for large applications where many components need to share or update the same data.
+* `@ngrx/store`: Main state management
+* `@ngrx/effects`: Handle side effects (like API calls)
+* `@ngrx/entity`: Manage collections of entities
+* `@ngrx/store-devtools`: Debug/store inspection
+* `@ngrx/router-store`: Sync Angular Router with Store
+* `@ngrx/component-store`: Localized state management
 
-Think of it like this:
+**3. What is Redux?**
+Redux is a predictable state container for JavaScript apps. It uses a single immutable store and state is updated via pure reducers in response to dispatched actions.
 
-Imagine your app is like a big classroom.
+**4. Use of NgRx?**
 
-The Store is like the whiteboard that everyone in the class can see.
-If a student (component) wants to change something, they raise their hand (dispatch an Action).
-The teacher (a Reducer) sees the action and updates the whiteboard accordingly.
-The students (other components) just watch the whiteboard (using Selectors) to see updates and react accordingly.
+* Centralized, predictable state management
+* Reactive data flow
+* Side-effect handling (API, logging)
+* Time-travel debugging
 
+**5. State in Angular?**
+State refers to the application's current data (UI, user, etc). Can be local (component) or shared (global services or NgRx).
 
+**6. Can we have multiple states in NgRx?**
+Yes. You can define multiple feature states, each with its own reducer.
 
-NgRx Key Concepts in Simple Terms
-Concept	Simple Meaning
+**7. What is an Action in NgRx?**
+An action is a plain object that describes an event or change that should occur in the app's state.
 
-Store	A single place (like a whiteboard) that holds all your app data
-Action	A message saying "I want to do something" (like ADD_TODO)
-Reducer	A function that takes the current state + action → returns new state
-Selector	A tool to pick specific data from the store (like getTodos)
-Effect	Handles side tasks (like API calls) before updating the store
+**8. How to dispatch an Action?**
+Using the `store.dispatch` method:
 
-NgRx stores the data in memory, inside the browser's JavaScript runtime — not in local storage, session storage, or a database by default.
+```ts
+this.store.dispatch(login({ username, password }));
+```
 
-It's like a big JavaScript object in RAM, managed by NgRx.
+**9. How to pass parameters in Action?**
+Using `props` in `createAction`:
 
-When you create a Store using StoreModule.forRoot(), NgRx sets up a singleton state container.
+```ts
+export const login = createAction('[Auth] Login', props<{ username: string, password: string }>());
+```
 
-This container is attached to Angular’s dependency injection system, and stays in memory as long as the app is running.
+**10. What is a Reducer?**
+A pure function that takes the current state and an action, and returns a new state.
+
+**11. Action vs Reducer in NgRx**
+
+* **Action**: Describes *what happened*.
+* **Reducer**: Describes *how state changes* based on action.
+
+**12. What is a Selector?**
+A function that extracts a slice of state for use in components.
+
+**13. What is createFeatureSelector?**
+Creates a selector for a specific feature state:
+
+```ts
+const selectAuthState = createFeatureSelector<AuthState>('auth');
+```
+
+**14. What is an Effect?**
+A class that listens for specific actions and performs side-effects (API calls, routing), then dispatches new actions.
+
+**15. Purpose of Entity Adapters in NgRx?**
+
+* Simplify state management of collections (add, remove, update)
+* Normalized state structure
+
+**16. What is STORE-devtools?**
+Tool to debug NgRx store using Redux DevTools browser extension. Supports time-travel and state inspection.
+
+**17. Differences: @ngrx/store vs @ngrx/effects vs @ngrx/entity**
+
+* `@ngrx/store`: Store and state updates
+* `@ngrx/effects`: Handle side-effects
+* `@ngrx/entity`: Manage normalized entity collections
+
+**18. Why use NgRx instead of services/Subjects?**
+
+* Predictable, testable state
+* Centralized control of business logic
+* Time-travel/debugging
+* Scalable for large apps
+
+**19. Real-world use cases for NgRx**
+
+* Auth state (login/logout)
+* Shopping cart
+* Role-based UI
+* Data caching
+* Global error/loading state
+
+**20. How to use NgRx in Angular 17?**
+
+* Install NgRx packages
+* Provide store and effects in `main.ts`:
+
+```ts
+provideStore({ auth: authReducer })
+provideEffects([AuthEffects])
+```
+
+* Use `inject(Store)` or constructor injection in standalone components.
+* Works without `NgModules` via standalone APIs.
 
 
 */

@@ -1,3 +1,16 @@
+src/
+├── app/
+│   ├── store/
+│   │   ├── auth.model.ts
+│   │   ├── auth.actions.ts
+│   │   ├── auth.reducer.ts
+│   │   ├── auth.selectors.ts
+│   │   ├── auth.effects.ts
+│   ├── login.component.ts
+│   ├── app.component.ts
+├── main.ts
+
+
 // auth.model.ts
 export interface User {
   id: string;
