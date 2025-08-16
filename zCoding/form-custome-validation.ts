@@ -6,17 +6,17 @@
     <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
       <div>
       <input type="text" id="name" name="name" placeholder="Enter user name" formControlName="name"/>
-      <div *ngIf="submitted && myForm.controls['name'].errors?.['required']">User name is required</div>
+      <div *ngIf="submitted && myForm.get('name').errors?.['required']">User name is required</div>
 </div>
 <div>
       <input type="email" id="email" name="email" placeholder="Enter email" formControlName="email"/>
-      <div *ngIf="submitted && myForm.controls['email'].errors?.['required']">Email is required</div>
-      <div *ngIf="submitted && myForm.controls['email'].errors?.['email']">Email is invalid</div> 
-      <div *ngIf="submitted && myForm.controls['email'].errors?.['containsSubstring']">Email should be with "gmail" domain</div> 
+      <div *ngIf="submitted && myForm.get('email').errors?.['required']">Email is required</div>
+      <div *ngIf="submitted && myForm.get('email').errors?.['email']">Email is invalid</div> 
+      <div *ngIf="submitted && myForm.get('email').errors?.['containsSubstring']">Email should be with "gmail" domain</div> 
 </div>
 <div>
       <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter phone number" formControlName="phoneNumber"/>
-      <div *ngIf="submitted && myForm.controls['phoneNumber'].errors?.['invalidPhoneNumber']">Invalid phone number</div>
+      <div *ngIf="submitted && myForm.get('phoneNumber').errors?.['invalidPhoneNumber']">Invalid phone number</div>
 </div>
       <button type="submit">Submit</button>
 
