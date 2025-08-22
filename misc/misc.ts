@@ -1,58 +1,66 @@
 import { DateTime } from 'luxon';
 import { RRule } from 'rrule';
 
+/**
+ * Finds the next execution DateTime in the given zone.
+ * If that instant is excluded by exdates, returns the next day
+ * at the same local wall-clock time (skipping through consecutive exdates).
+ */
 export function nextExecutionDate(
-  startDate: string,
-  endDate: string,
+  startISO: string,
+  endISO: string,
   zoneId: string,
   rruleStr: string,
-  exdates: string[] = []              // <-- NEW
-): string {
-  const startDateTime = DateTime.fromISO(startDate, { zone: zoneId });
-  const endDateTime = DateTime.fromISO(endDate, { zone: zoneId });
-  const now = DateTime.now().setZone(zoneId);
+  exdates: string[] = []
+): DateTime | null {
+  const startDT = DateTime.fromISO(startISO, { zone: zoneId });
+  const endDT   = DateTime.fromISO(endISO,   { zone: zoneId });
+  const now     = DateTime.now().setZone(zoneId);
 
-  // Normalize exdates to ISO with same zone
-  const exdateSet = new Set(
-    exdates.map(d =>
-      DateTime.fromISO(d, { zone: zoneId }).toISO()
-    )
+  // Normalize EXDATEs to UTC millisecond instants for exact matching
+  // setZone: true respects the offset/Z provided in the string.
+  const exMillis = new Set(
+    exdates
+      .filter(Boolean)
+      .map(d => DateTime.fromISO(d, { setZone: true }).toUTC().toMillis())
   );
 
-  // Helper: bump forward if candidate is in excluded set
-  const bumpIfExcluded = (dt: DateTime): DateTime => {
-    let candidate = dt;
-    while (exdateSet.has(candidate.toISO())) {
-      candidate = candidate.plus({ days: 1 });
-    }
-    return candidate;
-  };
+  const isExcluded = (dt: DateTime) => exMillis.has(dt.toUTC().toMillis());
 
-  if (startDateTime >= now) {
-    return bumpIfExcluded(startDateTime).toISO();
-  }
+  // Parse RRULE (accepts "RRULE:" prefix)
+  let s = (rruleStr ?? '').trim();
+  if (s.startsWith('RRULE:')) s = s.slice(6).trim();
+  const base = RRule.fromString(s);
 
-  // Parse RRULE string
-  let rruleString = rruleStr?.trim() || '';
-  if (rruleString.startsWith('RRULE:')) {
-    rruleString = rruleString.slice(6).trim();
-  }
-  const baseRule = RRule.fromString(rruleString);
-
-  const rrule = new RRule({
-    ...baseRule.origOptions,
-    dtstart: startDateTime.toJSDate(),
-    until: endDateTime.toJSDate()
+  const rule = new RRule({
+    ...base.origOptions,
+    dtstart: startDT.toJSDate(),
+    until: endDT.toJSDate()
   });
 
-  // Iterate occurrences
-  const occs = rrule.all();
-  for (const occ of occs) {
-    const occDT = DateTime.fromJSDate(occ).setZone(zoneId);
-    if (occDT >= now) {
-      return bumpIfExcluded(occDT).toISO();
+  // Helper: if candidate is excluded, move to next day at same local time
+  const skipExcludedDays = (candidate: DateTime): DateTime => {
+    let c = candidate;
+    while (isExcluded(c)) {
+      c = c.plus({ days: 1 });
     }
+    return c;
+  };
+
+  // If start is still ahead of now, start there (but honor exdates)
+  if (startDT >= now) {
+    const cand = skipExcludedDays(startDT);
+    return cand <= endDT ? cand : null;
   }
 
-  return '';
+  // Get the next rrule occurrence >= now
+  const nextJs = rule.after(now.toJSDate(), true); // inclusive
+  if (!nextJs) return null;
+
+  let nextDT = DateTime.fromJSDate(nextJs).setZone(zoneId);
+
+  // If excluded, return next day(s) at same local time
+  nextDT = skipExcludedDays(nextDT);
+
+  return nextDT <= endDT ? nextDT : null;
 }
