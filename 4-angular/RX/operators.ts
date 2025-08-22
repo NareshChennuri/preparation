@@ -49,4 +49,56 @@ ngOnInit() {
       subscribe((res)=> console.log(res));
   }
 
+
+ 🎯 Creation Operators
+
+ of()	Create an observable from static values. Example: of(1,2,3)
+from()	Convert arrays, promises, iterables into observables. Example: from([1,2,3])
+interval()	Emit sequential numbers at fixed time intervals (for polling, timers).
+timer()	Emit after a delay, or after delay + interval. Good for delayed API calls.
+fromEvent()	Convert DOM events into observables (clicks, keyups).
+
+🔄 Transformation Operators
+
+map()	Transform emitted values. Example: convert API response to DTO.
+pluck()	Extract a property from emitted objects. Example: pluck('name').
+scan()	Like reduce — accumulate values over time. Useful for running totals.
+bufferTime()	Collect values for a time window and emit as an array.
+concatMap()	Map and subscribe in order (sequential async calls).
+mergeMap()	Map and subscribe in parallel (parallel async calls).
+switchMap()	Cancel previous subscription when new value arrives (autocomplete, search).
+exhaustMap()	Ignore new emissions while current one is active (login button multiple clicks).
+
+🎛️ Filtering Operators
+
+filter()	Only emit values that satisfy a condition. Example: filter(x => x > 10).
+take(n)	Complete after n emissions.
+takeUntil()	Keep emitting until another observable emits (unsubscribe automatically).
+first()	Take only the first value.
+last()	Take only the last value before completion.
+skip(n)	Ignore the first n emissions.
+distinctUntilChanged()	Suppress duplicate consecutive values (avoid re-rendering in Angular).
+debounceTime(ms)	Emit latest value after silence period. Useful for search/autocomplete.
+throttleTime(ms)	Emit first value, then ignore others for duration (rate limiting).
+
+🔗 Combination Operators
+
+combineLatest()	Combine latest values from multiple observables (e.g., filters + API).
+forkJoin()	Wait for multiple observables to complete, then emit once (parallel API calls).
+zip()	Pair values from multiple observables by emission index.
+concat()	Run observables sequentially (one after another).
+merge()	Run observables concurrently (interleave emissions).
+withLatestFrom()	Combine source emission with latest from another observable.
+
+⚡ Error Handling & Utility Operators
+
+catchError()	Handle errors gracefully and return fallback observable.
+retry(n)	Retry source observable n times on error.
+retryWhen()	Retry with custom logic (e.g., exponential backoff).
+tap()	Perform side effects (logging, debugging) without changing value.
+finalize()	Run cleanup logic when observable completes/errors/unsubscribes.
+delay(ms)	Delay emission of values (simulate API latency).
+timeout(ms)	Throw error if no value is emitted within the given time.
+shareReplay()	Cache and replay last emitted values (useful for caching API responses in Angular). 
+
 */
