@@ -1,66 +1,67 @@
-import { DateTime } from 'luxon';
-import { RRule } from 'rrule';
+export function legacyPortalStripperMatcher(
+  segments: UrlSegment[],
+  _group: UrlSegmentGroup,
+  _route: Route
+): UrlMatchResult | null {
+  if (!segments.length) return null;
 
-/**
- * Finds the next execution DateTime in the given zone.
- * If that instant is excluded by exdates, returns the next day
- * at the same local wall-clock time (skipping through consecutive exdates).
- */
-export function nextExecutionDate(
-  startISO: string,
-  endISO: string,
-  zoneId: string,
-  rruleStr: string,
-  exdates: string[] = []
-): DateTime | null {
-  const startDT = DateTime.fromISO(startISO, { zone: zoneId });
-  const endDT   = DateTime.fromISO(endISO,   { zone: zoneId });
-  const now     = DateTime.now().setZone(zoneId);
-
-  // Normalize EXDATEs to UTC millisecond instants for exact matching
-  // setZone: true respects the offset/Z provided in the string.
-  const exMillis = new Set(
-    exdates
-      .filter(Boolean)
-      .map(d => DateTime.fromISO(d, { setZone: true }).toUTC().toMillis())
-  );
-
-  const isExcluded = (dt: DateTime) => exMillis.has(dt.toUTC().toMillis());
-
-  // Parse RRULE (accepts "RRULE:" prefix)
-  let s = (rruleStr ?? '').trim();
-  if (s.startsWith('RRULE:')) s = s.slice(6).trim();
-  const base = RRule.fromString(s);
-
-  const rule = new RRule({
-    ...base.origOptions,
-    dtstart: startDT.toJSDate(),
-    until: endDT.toJSDate()
-  });
-
-  // Helper: if candidate is excluded, move to next day at same local time
-  const skipExcludedDays = (candidate: DateTime): DateTime => {
-    let c = candidate;
-    while (isExcluded(c)) {
-      c = c.plus({ days: 1 });
-    }
-    return c;
-  };
-
-  // If start is still ahead of now, start there (but honor exdates)
-  if (startDT >= now) {
-    const cand = skipExcludedDays(startDT);
-    return cand <= endDT ? cand : null;
+  const first = segments[0].path;
+  // Match if first segment is one of the legacy prefixes
+  if (first !== 'academy-tfg-portal' && first !== 'innovation-portal') {
+    return null;
   }
 
-  // Get the next rrule occurrence >= now
-  const nextJs = rule.after(now.toJSDate(), true); // inclusive
-  if (!nextJs) return null;
+  const rest = segments.slice(1).map(s => s.path).join('/');
+  return {
+    consumed: segments,
+    posParams: { rest: new UrlSegment(rest, {}) },
+  };
+}
 
-  let nextDT = DateTime.fromJSDate(nextJs).setZone(zoneId);
+const routes: Routes = [
+  // --- base redirects & errors
+  { path: '', redirectTo: 'home-page', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'internal-server-error', component: InternalServerErrorComponent },
 
-  // If excluded, return next day(s) at same local time
-  nextDT = skipExcludedDays(nextDT);
+  // --- lifted routes (were under academy-tfg-portal)
+  { path: 'home-page', loadChildren: () => import('./features/home-page/home-page.module').then(m => m.HomePageModule) },
+  { path: 'codeathon-homepage', loadChildren: () => import('./features/codeathon/codeathon-homepage/codeathon-homepage.module').then(m => m.CodeathonHomepageModule) },
+  { path: 'codeathon', loadChildren: () => import('./features/codeathon/codeathon.module').then(m => m.CodeathonModule) },
+  { path: 'codeathon-flow', loadChildren: () => import('./features/codeathon/codeathon-flow/codeathon-flow.module').then(m => m.CodeathonFlowModule) },
+  { path: 'learning', loadChildren: () => import('./features/learning/learning.module').then(m => m.LearningModule) },
+  { path: 'labappoc', loadChildren: () => import('./features/labappoc/labappoc.module').then(m => m.LabappocModule) },
+  { path: 'admin-console', loadChildren: () => import('./features/admin-console/admin-console.module').then(m => m.AdminConsoleModule) },
+  { path: 'openShift', loadChildren: () => import('./features/codeathon/codeathon.module').then(m => m.CodeathonModule) },
 
-  return nextDT <= endDT ? nextDT : null;
+  // --- cohort redirects
+  { path: 'cohort/ctg-signup', redirectTo: 'ctg/signup', pathMatch: 'prefix' },
+  { path: 'cohort/event-signup', redirectTo: 'event/signup', pathMatch: 'prefix' },
+  { path: 'cohort/tfg-event-report', redirectTo: 'tfg/event-report', pathMatch: 'prefix' },
+  { path: 'cohort/ctg-event-signup', redirectTo: 'ctg/event-signup', pathMatch: 'prefix' },
+  { path: 'cohort/survey-form', redirectTo: 'tfg/survey-form', pathMatch: 'prefix' },
+
+  // --- legacy redirect matcher (handles both academy-tfg-portal & innovation-portal)
+  {
+    matcher: legacyPortalStripperMatcher,
+    component: LegacyRedirectComponent,
+  },
+
+  // --- 404 fallback
+  { path: '**', component: NotFoundComponent },
+];
+
+@Component({
+  selector: 'app-legacy-redirect',
+  template: '',
+})
+export class LegacyRedirectComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  ngOnInit() {
+    const rest = this.route.snapshot.paramMap.get('rest') ?? '';
+    const target = '/' + rest.replace(/^\/+/, '');
+    this.router.navigateByUrl(target || '/', { replaceUrl: true });
+  }
 }
