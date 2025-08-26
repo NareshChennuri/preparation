@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, UrlTree } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-legacy-redirect',
@@ -9,26 +9,20 @@ export class LegacyRedirectComponent {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Current full URL (path + query + fragment)
-    const current = this.router.parseUrl(this.router.url);
+    // Full URL string including query + fragment
+    const currentUrl = this.router.url;
 
-    // Primary outlet segments
-    const primary = current.root.children['primary'];
-    const segments = primary ? [...primary.segments] : [];
+    // Strip leading prefixes
+    let newUrl = currentUrl
+      .replace(/^\/academy-tfg-portal/, '')
+      .replace(/^\/innovation-portal/, '');
 
-    // Remove legacy prefix if present
-    const legacyPrefixes = new Set(['academy-tfg-portal', 'innovation-portal']);
-    if (segments.length && legacyPrefixes.has(segments[0].path)) {
-      segments.shift();
+    // If nothing left (just prefix), go to root
+    if (!newUrl || newUrl === '/') {
+      newUrl = '/';
     }
 
-    // Build target URL, keeping query & fragment
-    const newTree: UrlTree = this.router.createUrlTree(
-      [{ outlets: { primary: segments } }],
-      { queryParams: current.queryParams, fragment: current.fragment }
-    );
-
-    // Navigate (replace history)
-    this.router.navigateByUrl(newTree, { replaceUrl: true });
+    // Navigate as plain string (avoids Angular treating it as matrix params)
+    this.router.navigateByUrl(newUrl, { replaceUrl: true });
   }
 }
