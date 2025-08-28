@@ -1,28 +1,33 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
-@Component({
-  selector: 'app-legacy-redirect',
-  template: '',
-})
-export class LegacyRedirectComponent {
-  constructor(private router: Router) {}
-
-  ngOnInit() {
-    // Full URL string including query + fragment
-    const currentUrl = this.router.url;
-
-    // Strip leading prefixes
-    let newUrl = currentUrl
-      .replace(/^\/academy-tfg-portal/, '')
-      .replace(/^\/innovation-portal/, '');
-
-    // If nothing left (just prefix), go to root
-    if (!newUrl || newUrl === '/') {
-      newUrl = '/';
-    }
-
-    // Navigate as plain string (avoids Angular treating it as matrix params)
-    this.router.navigateByUrl(newUrl, { replaceUrl: true });
+/**
+ * Validates that registrationEndDate is not greater than (eventEndDate - cutOffDays).
+ * 
+ * @param eventEndDate - The event end date (NgbDateStruct)
+ * @param registrationEndDate - The registration end date (NgbDateStruct)
+ * @param cutOffDays - Number of days before eventEndDate that registration should close
+ * @returns true if valid, false otherwise
+ */
+export function validateRegistrationEndDate(
+  eventEndDate: NgbDateStruct | null,
+  registrationEndDate: NgbDateStruct | null,
+  cutOffDays: number
+): boolean {
+  if (!eventEndDate || !registrationEndDate || !cutOffDays) {
+    return false; // invalid input
   }
+
+  // Convert NgbDateStruct to JavaScript Date
+  const toDate = (d: NgbDateStruct): Date =>
+    new Date(d.year, d.month - 1, d.day);
+
+  const eventDate = toDate(eventEndDate);
+  const regDate = toDate(registrationEndDate);
+
+  // Calculate cutoff = eventEndDate - cutOffDays
+  const cutoffDate = new Date(eventDate);
+  cutoffDate.setDate(eventDate.getDate() - cutOffDays);
+
+  // Valid if registrationEndDate is <= cutoffDate
+  return regDate.getTime() <= cutoffDate.getTime();
 }
